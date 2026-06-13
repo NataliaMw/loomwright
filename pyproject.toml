@@ -1,0 +1,23 @@
+[project]
+name = "rollback-room"
+version = "0.1.0"
+description = "Prod breaks; a room of agents debates root cause, drafts a fix, and a rival OSS model adversarially reviews it — high-risk deploys escalate to a human EM. Coordination runs on Band (@mention handoffs)."
+requires-python = ">=3.10"
+dependencies = [
+    "openai>=1.0",
+    "python-dotenv>=1.0",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+live = [
+    "band-sdk[pydantic-ai,langgraph,codex]",
+    "pydantic-ai>=0.0.14",
+    "langgraph>=0.2",
+    "langchain-openai>=0.2",
+    "crewai>=0.40",
+]
+
+[tool.rollback-room]
+offline-demo = "python demo.py"
+live-room = "python band_agents.py"

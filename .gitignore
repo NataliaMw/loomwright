@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.env
+agent_config.yaml
+.venv/
+venv/
+.DS_Store

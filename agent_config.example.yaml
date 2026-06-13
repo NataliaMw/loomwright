@@ -1,0 +1,16 @@
+agents:
+  triage:
+    agent_id: ""
+    api_key: ""
+  rootcause:
+    agent_id: ""
+    api_key: ""
+  fixauthor:
+    agent_id: ""
+    api_key: ""
+  reviewer:
+    agent_id: ""
+    api_key: ""
+  em:
+    agent_id: ""
+    api_key: ""
