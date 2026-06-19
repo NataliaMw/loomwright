@@ -1,135 +1,145 @@
-# Rollback Room
+# 🧵 Loomwright
 
-> Prod breaks at 2am. Instead of one model quietly rubber-stamping its own
-> hotfix, a *room* of specialist agents debates the root cause, drafts a fix,
-> and a **rival model on a different provider** tries to break it. Anything with
-> real blast radius can't ship until a human EM signs off — and no agent can
-> route around that gate.
+### the room that engineers the loop, then runs it
 
-Built on **Band** (`band-sdk`, import root `thenvoi`): every specialist lives in
-one shared chat room and hands work to the next by `@mention`. Only the
-mentioned agent wakes. The `@mention` handoff *is* the workflow — Band is the
-coordination layer, never a wrapper around a hidden pipeline.
+> **Live demo:** https://nataliamw.github.io/loomwright/ — two tasks, two different loops, side by side.
+> **Run it offline in 10 seconds (no keys):** `python demo.py`
+>
+> **Band of Agents Hackathon · Track 2 — Multi-Agent Software Development**
 
-## The problem — who feels the pain
+---
 
-On-call engineers and EMs. When a deploy starts bleeding 5xx, the temptation is
-to let one LLM diagnose, patch, and approve in a single breath. That's exactly
-how a confident-but-wrong hotfix ships: a single model agrees with itself, has
-no adversary, and quietly skips the part where a human owns the risk on a
-money-touching surface.
+## The shift this is built on
 
-The bottleneck was never the patch — it's the *coordination*. You need a triage
-voice, a root-cause voice, an author, an **independent** reviewer, and a human
-with the authority to say "not on billing, not without me." Rollback Room makes
-that handoff sequence the literal program, and forces the second opinion to come
-from a genuinely different brain.
+In June 2026, Addy Osmani and Boris Cherny (the creator of Claude Code) put a name
+to where agentic coding is going: **loop engineering**. The skill is no longer
+writing the perfect prompt — it's designing the *loop* the agent runs inside:
+generate → check → revise, until a real exit condition holds. As Peter Steinberger
+put it in a post that hit 6.5M views eleven days before this hackathon's deadline:
 
-## Agent roster
+> *"You shouldn't be prompting coding agents anymore. You should be designing loops
+> that prompt your agents."*
 
-| Agent | Framework | Role | Hands off to |
-|-------|-----------|------|--------------|
-| `@Triage` | Pydantic AI | Frames the firing alert + suspect deploy diff into a structured incident brief (severity, blast radius, hunks to inspect) | `@RootCause` |
-| `@RootCause` | LangGraph | Argues exactly ONE root cause with `file:line` evidence and writes a precise fix spec | `@FixAuthor` |
-| `@FixAuthor` | Codex (OpenAI-compatible) | Turns the spec into a real unified diff + regression test; revises when bounced | `@Reviewer` |
-| `@Reviewer` | **Featherless OSS model** (a *different* model than `@FixAuthor`) | Adversarially tries to BREAK the fix; bounces weak diffs back; escalates high-risk surfaces | `@FixAuthor` / `@EM` |
-| `@EM` | **human** | Rule-enforced approval for high-blast-radius deploys — no agent can skip it | — |
+There's a catch nobody's solved yet: **building the loop is still manual, expert
+work** — and every coding-agent tool ships the *same* loop for everything. A CSS
+tweak and a database migration get the identical Planner→Coder→Reviewer pipeline.
+That's vibe coding with extra steps.
 
-## How Band is the coordination layer
+**Loomwright closes that gap.** It's a Band room where agents *engineer the loop for
+the specific task*, then *run it* — and pull in the specialists that task needs, on
+demand. Loop engineering, done by a band of agents instead of by hand.
 
-The whole incident is one readable thread of `@mention` handoffs. Three things
-make Band the substrate and not decoration:
+## What it does (in one run)
 
-**1. The handoff sequence.** `oncall` opens the incident by `@mention`ing
-`@Triage`. Triage frames it and `@mention`s `@RootCause`. RootCause posts one
-diagnosis and `@mention`s `@FixAuthor`. FixAuthor posts a diff + test and
-`@mention`s `@Reviewer`. Nobody polls; nobody is orchestrated by a parent
-process. Each agent only wakes because it was named.
+`python demo.py` feeds the room two different tasks and you watch it build two
+different loops:
+
+| | **Task A — bugfix** (pure function) | **Task B — auth change** (high-stakes) |
+|---|---|---|
+| signature gate | a **repro-test** (fails before, passes after) | an **acceptance-test**, end to end |
+| critics | one standing rival reviewer | rival reviewer **+ a SecurityCritic recruited on demand** |
+| max revisions | 2 (tight) | 3 |
+| human gate | none | **a TechLead must sign before it ships** |
+
+Same room. Same agents. **Different loop** — because the loop is engineered for the
+task, not copy-pasted. That difference is the entire point.
+
+## How Band is the coordination layer (not a wrapper)
+
+Three agents, two phases, all on one Band room transcript:
+
+**Phase 1 — design the loop**
+- **@LoopArchitect** (Pydantic AI) reads the task and proposes a loop: which checks
+  gate it, which critics vote, when it may stop, whether a human must sign.
+- **@LoopCritic** (LangGraph) *attacks the proposed exit condition* before any code
+  is written — "this is gameable", "this surface needs a security critic" — and
+  **recruits that specialist into the room on demand** via Band's add-participant
+  tool (`band_add_participant`). This is the most Band-native moment in the system:
+  the room decides, at runtime, that it needs a voice nobody added up front, and
+  adds it.
+
+**Phase 2 — run the loop**
+- **@LoopRunner** (Pydantic AI) executes the assembled loop: generate a revision,
+  let every critic (including the recruited one) attack it, evaluate the required
+  checks, and decide — stop, revise again, or pause for the human gate. Each
+  revision is a real `@mention` bounce in the room.
+
+Take Band out and this is impossible: the loop's *design* and its *execution* live
+on the **same audit trail**, so you can read the loop a room built before you trust
+the code it produced. The transcript *is* the record of both.
 
 ```
-oncall ──@Triage──▶ @RootCause ──▶ @FixAuthor ──▶ @Reviewer
-                                       ▲              │
-                                       └─ bounce back ┘   (revise & re-check)
-                                                      │
-                                          high-risk surface
-                                                      ▼
-                                    ⛔ @EM (human gate — no agent can skip it)
-                                                      │
-                                                approve ──▶ ship
+user ──"new task"──▶ @LoopArchitect ──proposes loop──▶ @LoopCritic
+                                                          │
+                              band_add_participant ◀──────┤ (recruits @SecurityCritic
+                                                          │  when the task is high-stakes)
+                                                          ▼
+                                                     @LoopRunner
+                                          generate → critics attack → revise → re-check
+                                                          │
+                                              ⛔ human gate (high-stakes only)
+                                                          ▼
+                                       verified code + the LoopSpec that produced it
 ```
 
-**2. The back-and-forth repair loop.** `@Reviewer` is a different model on a
-different provider. On its first pass it *fails* the diff and `@mention`s
-`@FixAuthor` BACK with concrete defects ("no regression test reproduces the
-double-charge under client retry; missing rollback plan; clamp the TTL floor").
-`@FixAuthor` revises and re-posts; `@Reviewer` re-checks. The bounce is real
-state moving backward through the room, visible line-by-line in the transcript —
-not a self-critique buried in one model's chain of thought.
+## Why it fits the rubric
 
-**3. The rule-enforced human escalation.** The fix lands on `billing` /
-`payments`. `@Reviewer` classifies that as high-risk and calls
-`room.await_human("EM", ...)`, which *blocks the entire room* until a real person
-replies. There is no code path that ships a high-risk deploy without that reply —
-the gate is enforced by the harness, not by a prompt asking the agent to please
-behave.
+- **Application of Technology** — Band is load-bearing in two distinct ways: dynamic
+  **recruitment** (the room grows its own membership to fit the task) and a visible
+  **design-then-execute** handoff chain, all as `@mention` routing on one trail.
+- **Originality** — nobody else turns *loop engineering itself* into the multi-agent
+  product. Every other Track-2 entry runs a fixed pipeline; Loomwright **synthesizes
+  the pipeline per task**. The thing it generates is the artifact (`LoopSpec`).
+- **Business Value** — the failure mode of agentic coding is confident-but-wrong code
+  shipping because the loop's exit condition was too weak. Loomwright makes the loop
+  *inspectable and task-appropriate*, with a human gate where the stakes demand one.
+- **Presentation** — the whole thesis is one screen: two tasks, two loops, side by
+  side, with the difference highlighted. Open the transcript to see it happen.
 
-## The killer demo moment
+## Architecture
 
-Two different models argue and converge in one visible thread. `@FixAuthor`
-(orchestration model via AI/ML API) writes a confident hotfix. `@Reviewer` (a
-rival OSS model on Featherless) `@mention`s it back — *"you dropped the retry
-guard / no test reproduces the double-charge"* — the author revises, the reviewer
-re-reads and concedes the **logic** is now sound. Only then does it flag the
-**blast radius** and auto-escalate to the human `@EM`, Dana, who approves inline:
-
-> *"APPROVE. I own the risk on billing for INC-4471 — the TTL restore is the
-> smallest safe change and we're actively double-charging. Ship it behind the
-> checkout-idempotency flag and page me if burn rate doesn't drop in 10m. — Dana, EM"*
-
-The room then assembles its own audit artifact from the transcript: incident,
-service, number of author↔reviewer bounces, the human gate, and the full handoff
-chain. The transcript *is* the post-mortem.
-
-## Partner-prize usage
-
-- **AI/ML API** (OpenAI-compatible, `https://api.aimlapi.com/v1`) drives the
-  orchestration / reasoning roles: `@Triage`, `@RootCause`, and `@FixAuthor`.
-- **Featherless** (OpenAI-compatible, `https://api.featherless.ai/v1`) runs the
-  lone OSS specialist `@Reviewer` on a *deliberately different* model. Using a
-  different provider AND a different model is the entire point: the adversarial
-  review has to be a real second brain, not the author grading its own homework.
-
-`models.py` returns the right client per role from env keys and falls back to a
-deterministic canned client when keys are absent — so the offline demo always
-runs with zero credentials.
+| File | Role |
+|---|---|
+| `loopspec.py` | the `Task` and `LoopSpec` — the inspectable loop artifact |
+| `specialists/architect.py` | **@LoopArchitect** — proposes a loop for the task |
+| `specialists/critic.py` | **@LoopCritic** — attacks it, recruits specialists on demand |
+| `specialists/runner.py` | **@LoopRunner** — runs generate→critique→revise to the exit condition |
+| `shared/band_harness.py` | thin Band wrapper + offline `LocalRoom` with `recruit()` |
+| `demo.py` | deterministic two-task demo (zero credentials) |
+| `band_agents.py` | live Band path (`thenvoi` SDK + credentials) |
+| `docs/` | the self-contained web viewer (GitHub Pages) |
 
 ## Run it
 
-### Offline demo — no credentials, deterministic (this is the video)
+**Offline, deterministic, no credentials** (this is what's on video):
 ```bash
 python demo.py
 ```
-Replays the full incident against a local Band room and prints the audit
-artifact. Byte-for-byte reproducible, so it replays cleanly on camera.
 
-### Live Band room
+**Rebuild the web view from a real run:**
 ```bash
-cp .env.example .env
-#   AIMLAPI_API_KEY=...        (redeem partner credits with promo code BANDHACK26)
-#   FEATHERLESS_API_KEY=...    (redeem partner credits with promo code BANDHACK26)
-
-cp agent_config.example.yaml agent_config.yaml
-#   fill agent_id + api_key for each handle (triage / rootcause / fixauthor / reviewer)
-
-python band_agents.py
+python docs/build_data.py   # regenerates docs/data.json + docs/index.html
 ```
-Then drive the room by `@mention`ing `@Triage` from the Band UI. Each agent
-hands off down the chain on its own — coordination is the conversation.
 
-## Signature touch — from Natalia Mawyin
+**Live, on Band** (cross-framework agents over real rooms):
+```bash
+cp .env.example .env                      # add AIMLAPI_API_KEY + FEATHERLESS_API_KEY
+cp agent_config.example.yaml agent_config.yaml   # add Band agent_id/api_key per agent
+pip install -e ".[live]"
+python band_agents.py                     # then @mention @LoopArchitect with a task
+```
 
-I've shipped enough 2am hotfixes to distrust the confident ones. The detail I
-care about most here isn't the model — it's that **Dana, the EM, owns the risk by
-name**, and the room *cannot* lie to her by skipping the gate. The room signs its
-own audit trail: *"the Rollback Room — no high-risk deploy ships without a
-human."* Coordination you can read top-to-bottom is the whole point. — N.M.
+## Tech
+
+- **Band** (`thenvoi`) — the coordination layer: rooms, `@mention` routing, on-demand
+  recruitment.
+- **Cross-framework agents** — Pydantic AI (Architect, Runner) + LangGraph (Critic).
+- **AI/ML API** — orchestration/reasoning roles. **Featherless** — the rival OSS model
+  behind the critics, deliberately a different provider so critique isn't theater.
+- **No build step for the demo** — the loop's control flow is deterministic, so the
+  recording is byte-for-byte reproducible and doesn't depend on a live model.
+
+---
+
+MIT. Built by [Natalia Mawyin](https://github.com/NataliaMw) — because the loop
+deserves to be engineered, not copy-pasted.
