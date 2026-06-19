@@ -20,8 +20,7 @@ sys.path.insert(0, os.path.join(_root, "shared"))
 sys.path.insert(0, _root)
 
 from band_harness import LocalRoom
-from loopspec import Task
-from specialists import architect, critic, runner
+from tasks import REGISTRY
 
 import demo  # reuse the exact room wiring + recruitable critics
 
@@ -43,22 +42,27 @@ def _spec_to_dict(spec) -> dict:
     }
 
 
-async def _capture(task: Task) -> dict:
+async def _capture(entry: dict) -> dict:
+    task = entry["task"]
     room = demo._build_room()
-    await demo._drive(room, task)
+    await demo._drive(room, entry)
     spec = None
     record = None
     transcript = []
+    qa_runs = []
     for msg in room.transcript:
         transcript.append({
             "sender": msg.sender,
             "mentions": msg.mentions,
             "text": msg.text,
+            "qa": (msg.payload or {}).get("qa_results"),
         })
         if (msg.payload or {}).get("loop_spec") is not None:
             spec = msg.payload["loop_spec"]
         if (msg.payload or {}).get("loop_record") is not None:
             record = msg.payload["loop_record"]
+        if (msg.payload or {}).get("qa_results") is not None:
+            qa_runs.append((msg.payload or {})["qa_results"])
     return {
         "task": {"title": task.title, "description": task.description,
                  "kind": task.kind, "touches": task.touches,
@@ -67,22 +71,14 @@ async def _capture(task: Task) -> dict:
         "record": record,
         "transcript": transcript,
         "recruited": room.recruited,
+        "qa_runs": qa_runs,
+        "code": {"buggy": entry["buggy"], "fixed": entry["fixed"], "tests": entry["tests"]},
     }
 
 
 async def main() -> None:
-    task_a = Task(
-        title="Fix off-by-one in pagination offset",
-        description="last page drops one row; pure function, no side effects",
-        touches=["pagination"], kind="bugfix",
-    )
-    task_b = Task(
-        title="Add SSO token refresh to the login flow",
-        description="rotate refresh tokens; touches auth and sessions",
-        touches=["auth", "sessions"], kind="feature",
-    )
-    a = await _capture(task_a)
-    b = await _capture(task_b)
+    a = await _capture(REGISTRY["a"])
+    b = await _capture(REGISTRY["b"])
     data = {
         "tagline": "the room that engineers the loop, then runs it",
         "tasks": [a, b],
