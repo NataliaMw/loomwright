@@ -4,167 +4,213 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <style>
   :root {
-    --ground: #0A1413;
-    --ground-2: #0E1B19;
-    --panel: #102321;
-    --text: #D6E4E1;
-    --muted: #6E8A85;
-    --line: #1C322E;
-    --accent: #4DE0B0;
-    --break: #FF6B5C;
-    --gate: #E8B84B;
-    --blue: #79C8FF;
+    --ground: #0B0A06;
+    --ground-2: #13110A;
+    --panel: #19150C;
+    --panel-2: #211B0F;
+    --text: #EDE6D2;
+    --muted: #9A8E6C;
+    --faint: #6B6047;
+    --line: #2C2616;
+    --line-2: #3D341E;
+    --gold: #D4A24E;
+    --gold-hi: #F2C879;
+    --pass: #5FB97E;
+    --break: #E5564B;
+    --gate: #C77DD6;
     --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+    --serif: "Hoefler Text", "Georgia", "Times New Roman", serif;
     --disp: "Helvetica Neue", "Arial Narrow", system-ui, sans-serif;
     --W: 1280px;
     --H: 720px;
   }
 
   * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; height: 100%; background: #05100E; overflow: hidden; }
+  html, body { margin: 0; padding: 0; height: 100%; background: #050402; overflow: hidden; }
   body { color: var(--text); font-family: var(--mono); -webkit-font-smoothing: antialiased; }
 
-  /* ---------- stage / scaling ---------- */
   #stage-wrap { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; }
   #stage {
     width: var(--W); height: var(--H);
     position: relative; transform-origin: center center;
-    background: var(--ground); box-shadow: 0 40px 120px rgba(0,0,0,0.6); overflow: hidden;
+    background: var(--ground); box-shadow: 0 40px 140px rgba(0,0,0,0.75); overflow: hidden;
   }
 
   .slide {
-    position: absolute; inset: 0; padding: 64px 76px;
+    position: absolute; inset: 0; padding: 60px 72px;
     display: flex; flex-direction: column; justify-content: center;
     opacity: 0; visibility: hidden;
-    transition: opacity .5s ease, transform .5s ease;
-    transform: translateX(40px);
+    transition: opacity .55s ease, transform .55s ease;
+    transform: translateX(44px) scale(.99);
+    background:
+      radial-gradient(120% 90% at 50% -10%, rgba(212,162,78,0.06), transparent 55%),
+      radial-gradient(90% 80% at 90% 110%, rgba(95,185,126,0.05), transparent 55%),
+      var(--ground);
   }
   .slide.active { opacity: 1; visibility: visible; transform: none; z-index: 2; }
-  .slide.prev { transform: translateX(-40px); }
-  .slide-inner { width: 100%; }
+  .slide.prev { transform: translateX(-44px) scale(.99); }
+  .slide-inner { width: 100%; position: relative; z-index: 2; }
 
-  .slide::before {
-    content: ""; position: absolute; right: -180px; top: 50%;
-    width: 520px; height: 520px; transform: translateY(-50%);
-    background: radial-gradient(circle, rgba(77,224,176,0.07), transparent 65%); pointer-events: none;
+  /* recurring serpent-ring watermark, drawn per content slide */
+  .ringmark {
+    position: absolute; right: -120px; top: 50%; transform: translateY(-50%);
+    width: 460px; height: 460px; opacity: .5; pointer-events: none; z-index: 1;
   }
-  #s-cover::before, #s-close::before { display: none; }
+
+  /* gold top hairline + tiny glyph on content slides */
+  .slide.content::after {
+    content: "🐍"; position: absolute; left: 72px; top: 40px;
+    font-size: 13px; filter: grayscale(.3) sepia(.6) saturate(2) hue-rotate(-5deg); opacity: .8;
+  }
 
   /* ---------- entrance animations ---------- */
-  .reveal { opacity: 0; transform: translateY(16px); }
-  .slide.active .reveal { animation: rise .6s cubic-bezier(.2,.7,.2,1) forwards; animation-delay: var(--d, 0s); }
+  .reveal { opacity: 0; transform: translateY(18px); }
+  .slide.active .reveal { animation: rise .65s cubic-bezier(.2,.7,.2,1) forwards; animation-delay: var(--d, 0s); }
   @keyframes rise { to { opacity: 1; transform: none; } }
+  .slide.active .grow { animation: grow .7s cubic-bezier(.2,.7,.2,1) forwards; animation-delay: var(--d, 0s); }
+  .grow { opacity: 0; transform: scale(.94); }
+  @keyframes grow { to { opacity: 1; transform: none; } }
 
   /* ---------- typography ---------- */
-  .eyebrow { font-size: 12px; letter-spacing: 0.34em; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; gap: 14px; margin: 0 0 22px; }
-  .eyebrow .num { color: var(--accent); font-variant-numeric: tabular-nums; }
-  .eyebrow .rule { flex: 1; height: 1px; background: var(--line); }
+  .eyebrow {
+    font-size: 12px; letter-spacing: 0.36em; text-transform: uppercase;
+    color: var(--gold); display: flex; align-items: center; gap: 16px; margin: 0 0 26px;
+  }
+  .eyebrow .num { font-family: var(--serif); font-style: italic; font-size: 18px; letter-spacing: 0; color: var(--gold-hi); }
+  .eyebrow .rule { flex: 1; height: 1px; background: linear-gradient(90deg, var(--line-2), transparent); }
 
-  h1, h2, h3 { font-family: var(--disp); font-weight: 800; line-height: 0.98; margin: 0; }
-  h2 { font-size: 50px; letter-spacing: -0.02em; margin: 0 0 22px; }
-  h2.sm { font-size: 40px; }
-  .stretch { font-stretch: 75%; }
-  p.lede { font-size: 19px; line-height: 1.5; color: var(--text); max-width: 70ch; margin: 0 0 16px; }
-  p.lede.sm { font-size: 16px; }
-  .dim { color: var(--muted); } .mint { color: var(--accent); } .break { color: var(--break); }
-  .gate { color: var(--gate); } .blue { color: var(--blue); }
+  h1, h2, h3 { margin: 0; }
+  h2 { font-family: var(--serif); font-weight: 600; font-size: 60px; line-height: 1.02; letter-spacing: -0.01em; color: var(--text); margin: 0 0 24px; }
+  h2.sm { font-size: 46px; }
+  h2 em { font-style: italic; color: var(--gold-hi); }
+  p.lede { font-size: 20px; line-height: 1.55; color: var(--text); max-width: 66ch; margin: 0 0 16px; }
+  p.lede.sm { font-size: 17px; }
+  .dim { color: var(--muted); } .gold { color: var(--gold-hi); } .break { color: var(--break); }
+  .pass { color: var(--pass); } .gate { color: var(--gate); }
   b, strong { color: #fff; font-weight: 700; }
-  code { color: var(--accent); }
+  code { color: var(--gold-hi); font-family: var(--mono); }
 
   /* ---------- cover ---------- */
-  #s-cover { padding: 0; }
+  #s-cover { padding: 0; background: var(--ground); }
   #s-cover img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-  #cover-veil { position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 40%, rgba(5,16,14,0.35) 100%); }
-  #cover-foot { position: absolute; left: 0; right: 0; bottom: 28px; text-align: center; font-size: 13px; letter-spacing: 0.28em; text-transform: uppercase; color: rgba(214,228,225,0.82); }
-  #cover-foot b { color: var(--accent); }
+  #cover-veil { position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 45%, rgba(5,4,2,0.45) 100%); }
+  #cover-foot { position: absolute; left: 0; right: 0; bottom: 26px; text-align: center; font-size: 13px; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(237,230,210,0.78); }
+  #cover-foot b { color: var(--gold-hi); }
 
   /* ---------- hero ---------- */
-  #s-hero { align-items: center; text-align: center; padding-top: 40px; }
-  #ring-wrap { position: relative; width: 340px; height: 340px; margin: 0 auto 4px; }
+  #s-hero { align-items: center; text-align: center; }
+  #ring-wrap { position: relative; width: 360px; height: 360px; margin: 0 auto 2px; }
   #ring { width: 100%; height: 100%; display: block; background: var(--ground); }
   #ring-label { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; }
-  #ring-phase { font-size: 13px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); min-height: 1.4em; transition: color .3s; }
-  .wordmark { font-family: var(--disp); font-weight: 800; font-size: 64px; letter-spacing: -0.04em; line-height: 0.9; }
-  .tagline { font-size: 24px; letter-spacing: 0.02em; margin-top: 12px; }
-  .tagline .arrow { color: var(--accent); }
-  .meta-row { margin-top: 26px; display: flex; gap: 10px 24px; flex-wrap: wrap; justify-content: center; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
-  .meta-row b { color: var(--accent); font-weight: 700; }
+  #ring-phase { font-size: 12px; letter-spacing: 0.34em; text-transform: uppercase; color: var(--gold); min-height: 1.4em; transition: color .3s; }
+  .wordmark { font-family: var(--serif); font-weight: 600; font-size: 60px; letter-spacing: 0.01em; line-height: 0.9; color: var(--gold-hi); }
+  .tagline { font-family: var(--serif); font-style: italic; font-size: 27px; margin-top: 14px; color: var(--text); }
+  .tagline .arrow { color: var(--gold); font-style: normal; }
+  .meta-row { margin-top: 30px; display: flex; gap: 0; flex-wrap: wrap; justify-content: center; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+  .meta-row span { padding: 0 22px; border-right: 1px solid var(--line-2); }
+  .meta-row span:last-child { border-right: none; }
+  .meta-row b { color: var(--gold-hi); font-weight: 700; }
 
   /* ---------- cards ---------- */
-  .cols { display: grid; gap: 24px; }
+  .cols { display: grid; gap: 22px; }
   .cols-2 { grid-template-columns: 1fr 1fr; }
-  .card { border: 1px solid var(--line); border-radius: 6px; background: var(--panel); padding: 24px; }
-  .card h3 { font-size: 19px; margin: 0 0 10px; letter-spacing: -0.01em; }
-  .card p { margin: 0; font-size: 14px; line-height: 1.5; color: var(--muted); }
-  .card .big { font-family: var(--disp); font-weight: 800; font-size: 46px; letter-spacing: -0.02em; line-height: 1; color: var(--break); margin-bottom: 6px; }
+  .cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .card {
+    border: 1px solid var(--line); border-radius: 8px; background: linear-gradient(180deg, var(--panel-2), var(--panel));
+    padding: 26px; position: relative;
+  }
+  .card.glow { box-shadow: inset 0 1px 0 rgba(242,200,121,0.08), 0 0 0 1px rgba(212,162,78,0.04); }
+  .card h3 { font-family: var(--serif); font-weight: 600; font-size: 22px; margin: 0 0 12px; color: var(--gold-hi); }
+  .card p { margin: 0; font-size: 15px; line-height: 1.55; color: var(--muted); }
+  .card .big { font-family: var(--serif); font-weight: 600; font-size: 44px; line-height: 1; color: var(--break); margin-bottom: 10px; }
+  .card .idx { position: absolute; top: 18px; right: 22px; font-family: var(--serif); font-style: italic; font-size: 30px; color: var(--line-2); }
 
-  .pill { display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; font-size: 12px; background: var(--ground-2); color: var(--text); }
+  /* meet the band — agent chips */
+  .band-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .agent { border: 1px solid var(--line); border-radius: 8px; background: var(--panel); padding: 16px 18px; }
+  .agent .h { display: flex; align-items: center; gap: 9px; margin-bottom: 7px; }
+  .agent .av { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-family: var(--serif); font-size: 14px; color: var(--ground); font-weight: 700; background: var(--gold); }
+  .agent .nm { font-size: 14px; color: var(--gold-hi); font-weight: 700; }
+  .agent .role { font-size: 12.5px; line-height: 1.45; color: var(--muted); }
+  .agent.fw { color: var(--faint); font-size: 11px; letter-spacing: 0.1em; }
+
+  .pill { display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--line-2); border-radius: 999px; padding: 5px 13px; font-size: 12px; background: var(--ground-2); color: var(--text); }
   .pill .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); }
-  .pill.req .dot { background: var(--accent); }
-  .pill.recruit { border-color: var(--accent); color: var(--accent); }
-  .pill.recruit .dot { background: var(--accent); animation: blip 1.4s infinite; }
-  @keyframes blip { 0%,100% { box-shadow: 0 0 0 0 rgba(77,224,176,.5);} 50%{ box-shadow: 0 0 0 5px rgba(77,224,176,0);} }
+  .pill.req .dot { background: var(--pass); }
+  .pill.recruit { border-color: var(--gate); color: var(--gate); }
+  .pill.recruit .dot { background: var(--gate); animation: blip 1.5s infinite; }
+  @keyframes blip { 0%,100% { box-shadow: 0 0 0 0 rgba(199,125,214,.55);} 50%{ box-shadow: 0 0 0 6px rgba(199,125,214,0);} }
   .pillset { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
 
-  .loop-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 12px; }
-  .loop-kind { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; padding: 3px 8px; border-radius: 3px; background: var(--ground-2); border: 1px solid var(--line); color: var(--muted); }
-  .loop-title { font-family: var(--disp); font-weight: 700; font-size: 19px; letter-spacing: -0.01em; }
-  .spec-row { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-top: 1px dashed var(--line); font-size: 13px; }
+  .loop-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 14px; }
+  .loop-kind { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; padding: 4px 9px; border-radius: 4px; background: var(--ground-2); border: 1px solid var(--line-2); color: var(--muted); }
+  .loop-title { font-family: var(--serif); font-weight: 600; font-size: 21px; color: var(--gold-hi); }
+  .spec-row { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-top: 1px dashed var(--line-2); font-size: 14px; }
   .spec-row .k { color: var(--muted); }
-  .spec-row .v { text-align: right; }
-  .fingerprint { margin-top: 12px; font-size: 11px; color: var(--accent); word-break: break-word; line-height: 1.5; opacity: .85; }
+  .fingerprint { margin-top: 14px; font-size: 11.5px; color: var(--gold); word-break: break-word; line-height: 1.5; opacity: .9; }
 
-  .term { background: #07100F; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; line-height: 1.5; overflow: hidden; }
-  .term-bar { display: flex; align-items: center; gap: 7px; padding: 9px 14px; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 11px; letter-spacing: 0.1em; }
-  .term-bar .tb { width: 9px; height: 9px; border-radius: 50%; background: #243a36; }
-  .term-body { padding: 12px 16px; overflow: hidden; }
-  .msg { padding: 6px 0; border-bottom: 1px solid #0c1716; }
+  /* terminal / transcript */
+  .term { background: #0A0805; border: 1px solid var(--line-2); border-radius: 8px; font-size: 13px; line-height: 1.55; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,.4); }
+  .term-bar { display: flex; align-items: center; gap: 8px; padding: 11px 16px; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 11px; letter-spacing: 0.1em; }
+  .term-bar .tb { width: 10px; height: 10px; border-radius: 50%; }
+  .term-bar .tb:nth-child(1){background:#5a4a22}.term-bar .tb:nth-child(2){background:#3d341e}.term-bar .tb:nth-child(3){background:#2c2616}
+  .term-body { padding: 14px 18px; overflow: hidden; }
+  .msg { padding: 6px 0; border-bottom: 1px solid #14110a; }
   .msg:last-child { border-bottom: none; }
-  .sender { color: var(--accent); } .sender.system { color: var(--gate); } .sender.user { color: var(--text); }
-  .arrow-to { color: var(--muted); } .mention { color: var(--blue); } .msg-text { color: var(--text); opacity: .92; }
-  .qa { margin-top: 5px; display: flex; flex-wrap: wrap; gap: 8px; }
-  .qa .chk { font-size: 11px; padding: 2px 8px; border-radius: 3px; border: 1px solid var(--line); }
-  .qa .chk.pass { color: var(--accent); border-color: #1f4f43; } .qa .chk.fail { color: var(--break); border-color: #4f2723; }
+  .sender { color: var(--gold); } .sender.system { color: var(--gate); } .sender.user { color: var(--text); }
+  .arrow-to { color: var(--faint); } .mention { color: var(--gold-hi); } .msg-text { color: var(--text); opacity: .9; }
+  .qa { margin-top: 6px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .qa .chk { font-size: 11px; padding: 3px 9px; border-radius: 4px; border: 1px solid var(--line-2); }
+  .qa .chk.pass { color: var(--pass); border-color: #2c4f38; } .qa .chk.fail { color: var(--break); border-color: #532824; }
 
-  .diff { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  .code { background: #07100F; border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px; font-size: 13px; line-height: 1.5; white-space: pre; overflow-x: auto; }
-  .code .label { display: block; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; }
-  .code.buggy .label { color: var(--break); } .code.fixed .label { color: var(--accent); }
-  .code .del { color: var(--break); } .code .add { color: var(--accent); }
-  .trace { margin-top: 14px; background: #120b0a; border: 1px solid #3a1e1b; border-radius: 6px; padding: 12px 14px; font-size: 12.5px; color: var(--break); white-space: pre-wrap; line-height: 1.45; }
+  /* code diff */
+  .diff { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .code { background: #0A0805; border: 1px solid var(--line-2); border-radius: 8px; padding: 16px 18px; font-size: 13.5px; line-height: 1.55; white-space: pre; overflow-x: auto; }
+  .code .label { display: block; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; }
+  .code.buggy .label { color: var(--break); } .code.fixed .label { color: var(--pass); }
+  .code .del { color: var(--break); } .code .add { color: var(--pass); }
+  .trace { margin-top: 16px; background: #160a08; border: 1px solid #4a221c; border-radius: 8px; padding: 14px 16px; font-size: 13px; color: var(--break); white-space: pre-wrap; line-height: 1.5; }
 
-  .rubric { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
-  .rubric > div { background: var(--panel); padding: 22px 26px; }
-  .rubric .pillar { color: var(--accent); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 8px; }
-  .rubric h3 { font-size: 18px; margin: 0 0 6px; }
-  .rubric p { margin: 0; font-size: 13px; line-height: 1.45; color: var(--muted); }
+  /* screenshot frames */
+  .shot { border: 1px solid var(--line-2); border-radius: 10px; overflow: hidden; background: #fff; box-shadow: 0 20px 60px rgba(0,0,0,.55); position: relative; }
+  .shot img { display: block; width: 100%; }
+  .shot .cap { position: absolute; left: 0; right: 0; bottom: 0; padding: 9px 14px; font-size: 11px; letter-spacing: 0.06em; color: var(--gold-hi); background: linear-gradient(0deg, rgba(11,10,6,0.94), transparent); text-shadow: 0 1px 4px #000; }
+  .shot-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
 
+  /* rubric */
+  .rubric { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line-2); border-radius: 10px; overflow: hidden; }
+  .rubric > div { background: linear-gradient(180deg, var(--panel-2), var(--panel)); padding: 24px 28px; }
+  .rubric .pillar { color: var(--gold); font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; }
+  .rubric h3 { font-family: var(--serif); font-weight: 600; font-size: 21px; margin: 0 0 8px; color: var(--gold-hi); }
+  .rubric p { margin: 0; font-size: 14px; line-height: 1.5; color: var(--muted); }
+
+  /* close */
   #s-close { text-align: center; align-items: center; }
-  .cta { display: inline-block; font-size: 15px; color: var(--ground); background: var(--accent); padding: 13px 24px; border-radius: 4px; text-decoration: none; font-weight: 700; }
-  .cta.ghost { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
-  .cta-row { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; margin-top: 24px; }
-  .signature { margin-top: 34px; font-size: 12px; letter-spacing: 0.1em; color: var(--muted); }
-  .signature .snake { color: var(--accent); }
+  .cta { display: inline-block; font-size: 16px; color: var(--ground); background: var(--gold); padding: 14px 26px; border-radius: 6px; text-decoration: none; font-weight: 700; }
+  .cta.ghost { background: transparent; color: var(--gold-hi); border: 1px solid var(--gold); }
+  .cta-row { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; margin-top: 26px; }
+  .signature { margin-top: 36px; font-family: var(--serif); font-style: italic; font-size: 15px; color: var(--muted); }
+  .signature .snake { font-style: normal; }
 
-  /* ---------- chrome ---------- */
-  #progress { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); width: 0; z-index: 50; transition: width .4s; }
+  /* chrome */
+  #progress { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, var(--gold), var(--gold-hi)); width: 0; z-index: 50; transition: width .4s; }
   #dots { position: fixed; right: 18px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 11px; z-index: 50; }
-  #dots button { width: 9px; height: 9px; padding: 0; border-radius: 50%; border: 1px solid var(--muted); background: transparent; cursor: pointer; transition: all .2s; }
-  #dots button.on { background: var(--accent); border-color: var(--accent); transform: scale(1.35); }
-  #dots button:hover { border-color: var(--accent); }
+  #dots button { width: 9px; height: 9px; padding: 0; border-radius: 50%; border: 1px solid var(--faint); background: transparent; cursor: pointer; transition: all .2s; }
+  #dots button.on { background: var(--gold); border-color: var(--gold); transform: scale(1.4); }
+  #dots button:hover { border-color: var(--gold); }
   #hud { position: fixed; left: 18px; bottom: 16px; z-index: 50; display: flex; gap: 10px; align-items: center; }
-  #hud button { background: none; border: 1px solid var(--line); color: var(--muted); border-radius: 4px; padding: 6px 10px; cursor: pointer; font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; }
-  #hud button:hover { color: var(--accent); border-color: var(--accent); }
-  #counter { position: fixed; right: 22px; bottom: 16px; z-index: 50; font-size: 12px; letter-spacing: 0.18em; color: var(--muted); font-variant-numeric: tabular-nums; }
-  #counter b { color: var(--accent); }
-  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  #hud button { background: none; border: 1px solid var(--line-2); color: var(--muted); border-radius: 5px; padding: 6px 11px; cursor: pointer; font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; }
+  #hud button:hover { color: var(--gold-hi); border-color: var(--gold); }
+  #counter { position: fixed; right: 22px; bottom: 16px; z-index: 50; font-family: var(--serif); font-size: 14px; letter-spacing: 0.1em; color: var(--muted); }
+  #counter b { color: var(--gold-hi); }
+  :focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
 
   @media (prefers-reduced-motion: reduce) {
-    .slide, .reveal { transition: none !important; animation: none !important; opacity: 1; transform: none; }
+    .slide, .reveal, .grow { transition: none !important; animation: none !important; opacity: 1; transform: none; }
     .pill.recruit .dot { animation: none; }
   }
 
-  /* ---------- PRINT → one 16:9 page per slide ---------- */
+  /* PRINT → one 16:9 page per slide */
   @page { size: 1280px 720px; margin: 0; }
   @media print {
     html, body { overflow: visible; height: auto; width: 1280px; margin: 0; padding: 0; background: var(--ground); }
@@ -175,11 +221,10 @@
       position: relative; inset: auto; width: 1280px; height: 720px; margin: 0;
       opacity: 1 !important; visibility: visible !important; transform: none !important;
       page-break-after: always; break-after: page; page-break-inside: avoid; break-inside: avoid;
-      background: var(--ground); -webkit-print-color-adjust: exact; print-color-adjust: exact;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
     }
     .slide:last-child { page-break-after: auto; break-after: auto; }
-    .slide::before { display: block; }
-    .reveal { opacity: 1 !important; transform: none !important; animation: none !important; }
+    .reveal, .grow { opacity: 1 !important; transform: none !important; animation: none !important; }
   }
 </style>
 
@@ -190,7 +235,7 @@
   <button id="btn-next" aria-label="next slide">next →</button>
   <button id="btn-full" aria-label="fullscreen">⛶ present</button>
 </div>
-<div id="counter"><b id="cur">01</b> / <span id="tot">11</span></div>
+<div id="counter"><b id="cur">01</b> / <span id="tot">13</span></div>
 
 <div id="stage-wrap">
 <div id="stage">
@@ -205,12 +250,12 @@
   <!-- 02 — HERO -->
   <section class="slide" id="s-hero" data-name="The loop">
     <div class="slide-inner">
-      <div id="ring-wrap" class="reveal">
-        <canvas id="ring" width="680" height="680" aria-label="The loop, running"></canvas>
+      <div id="ring-wrap" class="grow">
+        <canvas id="ring" width="720" height="720" aria-label="The loop, running"></canvas>
         <div id="ring-label"><div class="wordmark">Ouroboros</div><div id="ring-phase">generate</div></div>
       </div>
-      <p class="tagline reveal" style="--d:.15s">any task <span class="arrow">→</span> the loop it needs</p>
-      <div class="meta-row reveal" style="--d:.3s">
+      <p class="tagline reveal" style="--d:.2s">any task <span class="arrow">→</span> the loop it needs</p>
+      <div class="meta-row reveal" style="--d:.36s">
         <span><b>6</b> agents · one room</span>
         <span>cross-framework · <b>Band</b>-native</span>
         <span>the loop, <b>engineered</b> per task</span>
@@ -219,44 +264,68 @@
   </section>
 
   <!-- 03 — THE SHIFT -->
-  <section class="slide" data-name="The shift">
+  <section class="slide content" data-name="The shift">
+    <canvas class="ringmark" width="460" height="460" data-ring="static"></canvas>
     <div class="slide-inner">
-      <p class="eyebrow reveal"><span class="num">01</span> the shift everyone's standing on <span class="rule"></span></p>
-      <h2 class="stretch reveal" style="--d:.1s">Stop prompting agents.<br />Start designing the <span class="mint">loop</span> they run inside.</h2>
-      <p class="lede reveal" style="--d:.25s">June 2026 gave it a name — <b>loop engineering</b> (Osmani, Cherny). The skill is no longer the perfect prompt; it's the <span class="mint">generate → check → revise</span> loop with a real exit condition. As one post that hit <b>6.5M views</b> put it, eleven days before this deadline:</p>
-      <p class="lede reveal" style="--d:.4s; border-left:2px solid var(--accent); padding-left:18px; font-style:italic">"You shouldn't be prompting coding agents anymore. You should be designing loops that prompt your agents."</p>
+      <p class="eyebrow reveal"><span class="num">i.</span> the shift everyone's standing on <span class="rule"></span></p>
+      <h2 class="reveal" style="--d:.1s; max-width:18ch">Stop prompting agents.<br />Start designing the <em>loop</em> they run inside.</h2>
+      <p class="lede reveal" style="--d:.25s; max-width:60ch">June 2026 named it — <b>loop engineering</b> (Osmani, Cherny). The craft is no longer the perfect prompt; it's the <span class="gold">generate → check → revise</span> loop with a real exit condition.</p>
+      <p class="lede reveal" style="--d:.4s; max-width:60ch; border-left:2px solid var(--gold); padding-left:20px; font-family:var(--serif); font-style:italic; font-size:24px; color:var(--gold-hi)">"You shouldn't be prompting coding agents anymore. You should be designing loops that prompt your agents."</p>
+      <p class="lede sm dim reveal" style="--d:.5s; margin-top:6px">— a post that hit <b style="color:var(--text)">6.5M views</b>, eleven days before this deadline.</p>
     </div>
   </section>
 
   <!-- 04 — THE GAP -->
-  <section class="slide" data-name="The gap">
+  <section class="slide content" data-name="The gap">
     <div class="slide-inner">
-      <p class="eyebrow reveal"><span class="num">02</span> the gap nobody's closed <span class="rule"></span></p>
-      <h2 class="reveal" style="--d:.1s">Every coding tool ships <span class="break">one</span> loop —<br />and runs it for <span class="break">everything</span>.</h2>
-      <div class="cols cols-2 reveal" style="--d:.28s; margin-top:6px">
-        <div class="card"><div class="big">CSS tweak</div><p>Planner → Coder → Reviewer.</p></div>
-        <div class="card"><div class="big">DB migration</div><p>Planner → Coder → Reviewer. <b style="color:var(--break)">The identical pipeline.</b></p></div>
+      <p class="eyebrow reveal"><span class="num">ii.</span> the gap nobody's closed <span class="rule"></span></p>
+      <h2 class="reveal" style="--d:.1s">Every tool ships <span class="break">one</span> loop —<br />and runs it for <em style="color:var(--break);font-style:italic">everything</em>.</h2>
+      <div class="cols cols-2 grow" style="--d:.3s; margin-top:8px">
+        <div class="card glow"><span class="idx">01</span><div class="big">CSS tweak</div><p>Planner → Coder → Reviewer.</p></div>
+        <div class="card glow"><span class="idx">02</span><div class="big">DB migration</div><p>Planner → Coder → Reviewer. <b style="color:var(--break)">The identical pipeline.</b></p></div>
       </div>
-      <p class="lede reveal" style="--d:.45s; margin-top:24px">A one-line bugfix and an auth change that can leak sessions get the <b>same</b> gates, reviewers, and stopping rule. That's vibe coding with extra steps — and building the loop by hand is still expert work nobody's automated.</p>
+      <p class="lede reveal" style="--d:.5s; margin-top:26px; max-width:64ch">A one-line bugfix and an auth change that can leak sessions get the <b>same</b> gates, reviewers, and stopping rule. That's vibe coding with extra steps — and building the loop by hand is still expert work nobody's automated.</p>
     </div>
   </section>
 
   <!-- 05 — WHAT IT IS -->
-  <section class="slide" data-name="What it is">
+  <section class="slide content" data-name="What it is">
+    <canvas class="ringmark" width="460" height="460" data-ring="static"></canvas>
     <div class="slide-inner">
-      <p class="eyebrow reveal"><span class="num">03</span> what ouroboros is <span class="rule"></span></p>
-      <h2 class="reveal" style="--d:.1s">A band of agents that <span class="mint">engineers the loop</span> a task needs — then runs it.</h2>
-      <p class="lede reveal" style="--d:.25s">Point it at a task. The room <b>designs</b> the verification loop for <em>that</em> task — which checks gate it, which critics vote, whether a human must sign — then <b>runs</b> it: generate, let the critics attack, run the real checks, revise until a real exit condition holds.</p>
-      <p class="lede dim reveal" style="--d:.4s">The snake that eats its own tail: the oldest symbol for a loop that feeds itself until the code is whole. What it produces is an artifact you can read — the <span class="mint">LoopSpec</span> — not just a diff you have to trust.</p>
+      <p class="eyebrow reveal"><span class="num">iii.</span> what ouroboros is <span class="rule"></span></p>
+      <h2 class="reveal" style="--d:.1s; max-width:20ch">A band of agents that <em>engineers the loop</em> a task needs — then runs it.</h2>
+      <p class="lede reveal" style="--d:.28s; max-width:62ch">Point it at a task. The room <b>designs</b> the verification loop for <em>that</em> task — which checks gate it, which critics vote, whether a human must sign — then <b>runs</b> it: generate, let the critics attack, run the real checks, revise until a real exit condition holds.</p>
+      <p class="lede dim reveal" style="--d:.42s; max-width:62ch">The snake that eats its own tail — the oldest symbol for a loop that feeds itself until it's whole. What it produces is an artifact you can read, the <span class="gold">LoopSpec</span>, not a diff you have to trust.</p>
     </div>
   </section>
 
-  <!-- 06 — TWO LOOPS -->
-  <section class="slide" data-name="Two loops">
+  <!-- 06 — MEET THE BAND (real agents screenshot) -->
+  <section class="slide content" data-name="The band">
     <div class="slide-inner">
-      <p class="eyebrow reveal"><span class="num">04</span> same room, same agents, different loop <span class="rule"></span></p>
+      <p class="eyebrow reveal"><span class="num">iv.</span> six specialists, two frameworks, one room <span class="rule"></span></p>
+      <div class="cols" style="grid-template-columns: 1.05fr 1fr; gap:30px; align-items:center">
+        <div class="band-grid reveal" style="--d:.12s">
+          <div class="agent"><div class="h"><span class="av">A</span><span class="nm">LoopArchitect</span></div><div class="role">Designs a task-specific verification loop and defends it.</div></div>
+          <div class="agent"><div class="h"><span class="av">C</span><span class="nm">LoopCritic</span></div><div class="role">Attacks the exit condition; recruits missing critics.</div></div>
+          <div class="agent"><div class="h"><span class="av">R</span><span class="nm">LoopRunner</span></div><div class="role">Starts the loop, finalizes once the exit holds.</div></div>
+          <div class="agent"><div class="h"><span class="av">A</span><span class="nm">CodeAuthor</span></div><div class="role">Writes each revision; never reviews its own work.</div></div>
+          <div class="agent"><div class="h"><span class="av">Q</span><span class="nm">QAEngineer</span></div><div class="role">Really executes the checks against the candidate.</div></div>
+          <div class="agent"><div class="h"><span class="av" style="background:var(--break)">R</span><span class="nm">RivalReviewer</span></div><div class="role">Adversarial rival model; bounces failing revisions.</div></div>
+        </div>
+        <div class="shot grow" style="--d:.3s">
+          <img src="band-agents.jpeg" alt="The six agents registered on Band" />
+          <div class="cap">Real — all six registered & public on Band · Pydantic AI + LangGraph</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 — TWO LOOPS -->
+  <section class="slide content" data-name="Two loops">
+    <div class="slide-inner">
+      <p class="eyebrow reveal"><span class="num">v.</span> same room, same agents — <span style="color:var(--gold-hi)">different loop</span> <span class="rule"></span></p>
       <div class="cols cols-2">
-        <div class="card reveal" style="--d:.12s">
+        <div class="card grow" style="--d:.12s">
           <div class="loop-head"><span class="loop-kind">bugfix</span><span class="loop-title">Off-by-one in pagination</span></div>
           <div class="pillset">
             <span class="pill req"><span class="dot"></span>compiles</span>
@@ -268,7 +337,7 @@
           <div class="spec-row"><span class="k">human gate</span><span class="v dim">none</span></div>
           <div class="fingerprint">checks=[compiles,unit-tests,repro-test] critics=[RivalReviewer] max_rev=2 gate=none</div>
         </div>
-        <div class="card reveal" style="--d:.3s; border-color:#3a3320">
+        <div class="card grow" style="--d:.3s; border-color:var(--line-2); box-shadow: inset 0 0 0 1px rgba(199,125,214,0.12)">
           <div class="loop-head"><span class="loop-kind" style="border-color:var(--gate);color:var(--gate)">feature · high-stakes</span><span class="loop-title">SSO token refresh</span></div>
           <div class="pillset">
             <span class="pill req"><span class="dot"></span>compiles</span>
@@ -284,20 +353,20 @@
           <div class="fingerprint" style="color:var(--gate)">checks=[…,acceptance-test] critics=[RivalReviewer,SecurityCritic] max_rev=3 gate=TechLead</div>
         </div>
       </div>
-      <p class="lede reveal" style="--d:.5s; margin-top:20px; text-align:center; font-size:17px">Touch <span class="gate">auth</span>, and the room <b>recruits a SecurityCritic mid-flight</b> and demands a human signature. The bugfix gets neither. <b class="mint">Engineered for the task — not copy-pasted.</b></p>
+      <p class="lede reveal" style="--d:.5s; margin-top:22px; text-align:center; font-size:18px">Touch <span class="gate">auth</span>, and the room <b>recruits a SecurityCritic mid-flight</b> and demands a human signature. The bugfix gets neither. <span class="gold" style="font-family:var(--serif);font-style:italic">Engineered for the task — not copy-pasted.</span></p>
     </div>
   </section>
 
-  <!-- 07 — BAND -->
-  <section class="slide" data-name="Band">
+  <!-- 08 — BAND IS LOAD-BEARING -->
+  <section class="slide content" data-name="Band">
     <div class="slide-inner">
-      <p class="eyebrow reveal"><span class="num">05</span> why band is the coordination layer — not a wrapper <span class="rule"></span></p>
-      <h2 class="sm reveal" style="--d:.1s">Take Band out and this is <span class="break">impossible</span>.</h2>
-      <div class="cols cols-2" style="margin-bottom:18px">
-        <div class="card reveal" style="--d:.22s"><h3 class="mint">① Dynamic recruitment</h3><p>The room decides <em>at runtime</em> it needs a voice nobody added up front, and adds it — <code>band_add_participant</code>. Membership grows to fit the task. The most Band-native moment in the system.</p></div>
-        <div class="card reveal" style="--d:.34s"><h3 class="mint">② Design + execution, one trail</h3><p>The loop's <em>design</em> and its <em>execution</em> live on the <b>same audit trail</b> — every handoff an <span class="mention">@mention</span>. You read the loop a room built <em>before</em> you trust the code. The transcript <em>is</em> the record.</p></div>
+      <p class="eyebrow reveal"><span class="num">vi.</span> why band is the coordination layer — not a wrapper <span class="rule"></span></p>
+      <h2 class="sm reveal" style="--d:.1s">Take Band out and this is <span class="break" style="font-style:italic;font-family:var(--serif)">impossible</span>.</h2>
+      <div class="cols cols-2" style="margin-bottom:20px">
+        <div class="card glow grow" style="--d:.24s"><h3>① Dynamic recruitment</h3><p>The room decides <em>at runtime</em> it needs a voice nobody added up front, and adds it — <code>band_add_participant</code>. Membership grows to fit the task. The most Band-native moment in the system.</p></div>
+        <div class="card glow grow" style="--d:.36s"><h3>② Design + execution, one trail</h3><p>The loop's <em>design</em> and its <em>execution</em> live on the <b>same audit trail</b> — every handoff an <span class="mention">@mention</span>. You read the loop a room built <em>before</em> you trust the code. The transcript <em>is</em> the record.</p></div>
       </div>
-      <div class="term reveal" style="--d:.46s">
+      <div class="term reveal" style="--d:.48s">
         <div class="term-bar"><span class="tb"></span><span class="tb"></span><span class="tb"></span>&nbsp;&nbsp;band room · handoff chain</div>
         <div class="term-body">
           <div class="msg"><span class="sender user">user</span> <span class="arrow-to">→</span> <span class="mention">@LoopArchitect</span> <span class="msg-text">— proposes a loop for the task</span></div>
@@ -310,23 +379,41 @@
     </div>
   </section>
 
-  <!-- 08 — REAL RUN -->
-  <section class="slide" data-name="Real run">
+  <!-- 09 — PROOF (real Band conversation screenshot) -->
+  <section class="slide content" data-name="Proof">
     <div class="slide-inner">
-      <p class="eyebrow reveal"><span class="num">06</span> not a mock — the real loop, bouncing <span class="rule"></span></p>
-      <h2 class="sm reveal" style="--d:.1s">The checks <span class="break">really run</span>. Red is real. Green is earned.</h2>
-      <div class="term reveal" style="--d:.22s">
-        <div class="term-bar"><span class="tb"></span><span class="tb"></span><span class="tb"></span>&nbsp;&nbsp;transcript · "Fix off-by-one in pagination offset" · real subprocess QA</div>
+      <p class="eyebrow reveal"><span class="num">vii.</span> this happened in a real band room <span class="rule"></span></p>
+      <div class="cols" style="grid-template-columns: 1fr 1.18fr; gap:34px; align-items:center">
+        <div class="reveal" style="--d:.12s">
+          <h2 class="sm" style="font-size:38px; margin-bottom:18px">Not a diagram.<br />A <em>transcript.</em></h2>
+          <p class="lede sm">The six agents register on Band, connect over WebSocket, and drive the off-by-one loop end-to-end — each handoff a real <span class="mention">@mention</span>. @LoopArchitect proposes the loop; @QAEngineer runs the checks; @RivalReviewer bounces failing revisions.</p>
+          <p class="lede sm dim" style="margin-top:10px">Two of them carry real tools — they patch the file and run the tests. Nothing here is staged.</p>
+        </div>
+        <div class="shot grow" style="--d:.3s">
+          <img src="band-convo.jpeg" alt="Live Band room conversation between the agents" />
+          <div class="cap">Live Band room · LoopArchitect designing the verification loop · 7 participants</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 — REAL RUN -->
+  <section class="slide content" data-name="Real run">
+    <div class="slide-inner">
+      <p class="eyebrow reveal"><span class="num">viii.</span> the loop, bouncing — real subprocess QA <span class="rule"></span></p>
+      <h2 class="sm reveal" style="--d:.08s; font-size:38px">The checks <span class="break">really run</span>. Red is real. Green is <em class="pass" style="color:var(--pass)">earned</em>.</h2>
+      <div class="term reveal" style="--d:.2s">
+        <div class="term-bar"><span class="tb"></span><span class="tb"></span><span class="tb"></span>&nbsp;&nbsp;transcript · "Fix off-by-one in pagination offset" · sandboxed subprocess</div>
         <div class="term-body" id="transcript"></div>
       </div>
     </div>
   </section>
 
-  <!-- 09 — THE BUG -->
-  <section class="slide" data-name="The bug">
+  <!-- 11 — THE BUG -->
+  <section class="slide content" data-name="The bug">
     <div class="slide-inner">
-      <p class="eyebrow reveal"><span class="num">07</span> the real bug, the real fix, the real failure <span class="rule"></span></p>
-      <div class="diff reveal" style="--d:.12s">
+      <p class="eyebrow reveal"><span class="num">ix.</span> the real bug · the real fix · the real failure <span class="rule"></span></p>
+      <div class="diff grow" style="--d:.12s">
         <div class="code buggy"><span class="label">revision 0 — buggy</span>def page(items, page_num, size):
     start = page_num * size
 <span class="del">    end = start + size - 1   # drops last row</span>
@@ -338,36 +425,37 @@
       </div>
       <div class="trace reveal" style="--d:.3s">repro-test ❌  AssertionError: page returned a short page
     assert len(page(list(range(10)), 0, 3)) == 3</div>
-      <p class="lede dim sm reveal" style="--d:.45s; margin-top:14px">If the loop can't make your tests pass in budget, it stops and hands you a <b>verified failure</b> — not a confident wrong answer. The failure mode of agentic coding, closed.</p>
+      <p class="lede dim sm reveal" style="--d:.45s; margin-top:16px; max-width:78ch">Can't make your tests pass in budget? It stops and hands you a <b>verified failure</b> — not a confident wrong answer. The failure mode of agentic coding, closed.</p>
     </div>
   </section>
 
-  <!-- 10 — RUBRIC -->
-  <section class="slide" data-name="Why it wins">
+  <!-- 12 — RUBRIC -->
+  <section class="slide content" data-name="Why it wins">
     <div class="slide-inner">
-      <p class="eyebrow reveal"><span class="num">08</span> all four pillars <span class="rule"></span></p>
-      <div class="rubric reveal" style="--d:.14s">
+      <p class="eyebrow reveal"><span class="num">x.</span> all four pillars <span class="rule"></span></p>
+      <div class="rubric grow" style="--d:.14s">
         <div><div class="pillar">Application of Technology</div><h3>Band is load-bearing twice.</h3><p>Dynamic recruitment + a visible design-then-execute handoff chain, all as <span class="mention">@mention</span> routing on one trail.</p></div>
-        <div><div class="pillar">Originality</div><h3>The pipeline <em>is</em> the product.</h3><p>Every other entry runs a fixed loop. Ouroboros synthesizes the loop per task — the artifact it ships is a <span class="mint">LoopSpec</span>.</p></div>
+        <div><div class="pillar">Originality</div><h3>The pipeline <em>is</em> the product.</h3><p>Every other entry runs a fixed loop. Ouroboros synthesizes the loop per task — the artifact it ships is a <span class="gold">LoopSpec</span>.</p></div>
         <div><div class="pillar">Business Value</div><h3>Confident-wrong code, stopped.</h3><p>Loops made inspectable and task-appropriate, with a human gate exactly where the stakes demand one. Auditable by design.</p></div>
         <div><div class="pillar">Presentation</div><h3>The thesis fits one screen.</h3><p>Two tasks, two loops, side by side, difference highlighted — then open the transcript and watch it happen live.</p></div>
       </div>
     </div>
   </section>
 
-  <!-- 11 — CLOSE -->
+  <!-- 13 — CLOSE -->
   <section class="slide" id="s-close" data-name="Try it">
+    <canvas class="ringmark" width="460" height="460" data-ring="static" style="right:auto;left:50%;transform:translate(-50%,-50%);opacity:.22;width:560px;height:560px"></canvas>
     <div class="slide-inner">
-      <div class="wordmark reveal" style="font-size:60px">Ouroboros</div>
-      <p class="tagline reveal" style="--d:.12s; margin-bottom:4px">any task <span class="arrow">→</span> the loop it needs</p>
-      <div class="code reveal" style="--d:.24s; text-align:left; max-width:720px; margin:22px auto 0; white-space:pre-wrap"><span class="add">$</span> python band_repo.py --repo ../your-project \
-    --test "pytest -q" --file src/thing.py --goal "fix the bug"</div>
-      <p class="lede dim sm reveal" style="--d:.36s; margin:14px auto 0; text-align:center">Six cross-framework agents register on Band, coordinate the loop through <span class="mention">@mention</span> handoffs, patch your real file, and only finalize once <b>your</b> real tests go green. Verified live.</p>
+      <div class="wordmark reveal" style="font-size:64px">Ouroboros</div>
+      <p class="tagline reveal" style="--d:.12s; margin-bottom:6px; font-size:24px">any task <span class="arrow">→</span> the loop it needs</p>
+      <div class="code reveal" style="--d:.24s; text-align:left; max-width:740px; margin:24px auto 0; white-space:pre-wrap; background:#0A0805"><span class="add">$</span> pipx run ouroboros-loop try        <span class="dim"># the real loop, zero keys, zero clone</span>
+<span class="add">$</span> pipx run ouroboros-loop run --repo ../you --test "pytest -q" --file src/x.py</div>
+      <p class="lede dim sm reveal" style="--d:.36s; margin:16px auto 0; text-align:center; max-width:76ch">Published on PyPI — judges run the real loop in one line. Or as a live Band room: six cross-framework agents coordinate through <span class="mention">@mention</span> handoffs, patch your real file, and only finalize once <b>your</b> real tests go green. Verified live.</p>
       <div class="cta-row reveal" style="--d:.48s">
         <a class="cta" href="https://nataliamw.github.io/ouroboros/">Try the live composer →</a>
         <a class="cta ghost" href="https://github.com/NataliaMw/ouroboros">Source · MIT</a>
       </div>
-      <p class="signature reveal" style="--d:.6s"><span class="snake">🐍</span> built by Natalia Mawyin — because the loop deserves to be engineered, not copy-pasted.</p>
+      <p class="signature reveal" style="--d:.6s"><span class="snake">🐍</span> built by the Neon Code team — because the loop deserves to be engineered, not copy-pasted.</p>
     </div>
   </section>
 
@@ -489,12 +577,12 @@
             [
               "unit-tests",
               false,
-              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp31kt4btn/candidate.py\", line 14, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp31kt4btn/candidate.py\", line 9, in _run_tests\n    assert page(data, 0, 3) == [0, 1, 2]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError"
+              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpkt8kfgxq/candidate.py\", line 14, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpkt8kfgxq/candidate.py\", line 9, in _run_tests\n    assert page(data, 0, 3) == [0, 1, 2]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError"
             ],
             [
               "repro-test",
               false,
-              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp4zw3zmwg/candidate.py\", line 13, in <module>\n    _repro()\n    ~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp4zw3zmwg/candidate.py\", line 9, in _repro\n    assert len(page(list(range(10)), 0, 3)) == 3, \"page returned a short page\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: page returned a short page"
+              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpoz6db75m/candidate.py\", line 13, in <module>\n    _repro()\n    ~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpoz6db75m/candidate.py\", line 9, in _repro\n    assert len(page(list(range(10)), 0, 3)) == 3, \"page returned a short page\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: page returned a short page"
             ]
           ]
         },
@@ -513,12 +601,12 @@
             [
               "unit-tests",
               false,
-              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp31kt4btn/candidate.py\", line 14, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp31kt4btn/candidate.py\", line 9, in _run_tests\n    assert page(data, 0, 3) == [0, 1, 2]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError"
+              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpkt8kfgxq/candidate.py\", line 14, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpkt8kfgxq/candidate.py\", line 9, in _run_tests\n    assert page(data, 0, 3) == [0, 1, 2]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError"
             ],
             [
               "repro-test",
               false,
-              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp4zw3zmwg/candidate.py\", line 13, in <module>\n    _repro()\n    ~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp4zw3zmwg/candidate.py\", line 9, in _repro\n    assert len(page(list(range(10)), 0, 3)) == 3, \"page returned a short page\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: page returned a short page"
+              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpoz6db75m/candidate.py\", line 13, in <module>\n    _repro()\n    ~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpoz6db75m/candidate.py\", line 9, in _repro\n    assert len(page(list(range(10)), 0, 3)) == 3, \"page returned a short page\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: page returned a short page"
             ]
           ]
         },
@@ -537,12 +625,12 @@
             [
               "unit-tests",
               false,
-              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp31kt4btn/candidate.py\", line 14, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp31kt4btn/candidate.py\", line 9, in _run_tests\n    assert page(data, 0, 3) == [0, 1, 2]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError"
+              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpkt8kfgxq/candidate.py\", line 14, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpkt8kfgxq/candidate.py\", line 9, in _run_tests\n    assert page(data, 0, 3) == [0, 1, 2]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError"
             ],
             [
               "repro-test",
               false,
-              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp4zw3zmwg/candidate.py\", line 13, in <module>\n    _repro()\n    ~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp4zw3zmwg/candidate.py\", line 9, in _repro\n    assert len(page(list(range(10)), 0, 3)) == 3, \"page returned a short page\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: page returned a short page"
+              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpoz6db75m/candidate.py\", line 13, in <module>\n    _repro()\n    ~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpoz6db75m/candidate.py\", line 9, in _repro\n    assert len(page(list(range(10)), 0, 3)) == 3, \"page returned a short page\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: page returned a short page"
             ]
           ]
         },
@@ -614,12 +702,12 @@
           [
             "unit-tests",
             false,
-            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp31kt4btn/candidate.py\", line 14, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp31kt4btn/candidate.py\", line 9, in _run_tests\n    assert page(data, 0, 3) == [0, 1, 2]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError"
+            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpkt8kfgxq/candidate.py\", line 14, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpkt8kfgxq/candidate.py\", line 9, in _run_tests\n    assert page(data, 0, 3) == [0, 1, 2]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError"
           ],
           [
             "repro-test",
             false,
-            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp4zw3zmwg/candidate.py\", line 13, in <module>\n    _repro()\n    ~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp4zw3zmwg/candidate.py\", line 9, in _repro\n    assert len(page(list(range(10)), 0, 3)) == 3, \"page returned a short page\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: page returned a short page"
+            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpoz6db75m/candidate.py\", line 13, in <module>\n    _repro()\n    ~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpoz6db75m/candidate.py\", line 9, in _repro\n    assert len(page(list(range(10)), 0, 3)) == 3, \"page returned a short page\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: page returned a short page"
           ]
         ],
         [
@@ -631,12 +719,12 @@
           [
             "unit-tests",
             false,
-            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp31kt4btn/candidate.py\", line 14, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp31kt4btn/candidate.py\", line 9, in _run_tests\n    assert page(data, 0, 3) == [0, 1, 2]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError"
+            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpkt8kfgxq/candidate.py\", line 14, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpkt8kfgxq/candidate.py\", line 9, in _run_tests\n    assert page(data, 0, 3) == [0, 1, 2]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError"
           ],
           [
             "repro-test",
             false,
-            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp4zw3zmwg/candidate.py\", line 13, in <module>\n    _repro()\n    ~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp4zw3zmwg/candidate.py\", line 9, in _repro\n    assert len(page(list(range(10)), 0, 3)) == 3, \"page returned a short page\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: page returned a short page"
+            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpoz6db75m/candidate.py\", line 13, in <module>\n    _repro()\n    ~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpoz6db75m/candidate.py\", line 9, in _repro\n    assert len(page(list(range(10)), 0, 3)) == 3, \"page returned a short page\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: page returned a short page"
           ]
         ],
         [
@@ -648,12 +736,12 @@
           [
             "unit-tests",
             false,
-            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp31kt4btn/candidate.py\", line 14, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp31kt4btn/candidate.py\", line 9, in _run_tests\n    assert page(data, 0, 3) == [0, 1, 2]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError"
+            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpkt8kfgxq/candidate.py\", line 14, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpkt8kfgxq/candidate.py\", line 9, in _run_tests\n    assert page(data, 0, 3) == [0, 1, 2]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError"
           ],
           [
             "repro-test",
             false,
-            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp4zw3zmwg/candidate.py\", line 13, in <module>\n    _repro()\n    ~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp4zw3zmwg/candidate.py\", line 9, in _repro\n    assert len(page(list(range(10)), 0, 3)) == 3, \"page returned a short page\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: page returned a short page"
+            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpoz6db75m/candidate.py\", line 13, in <module>\n    _repro()\n    ~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpoz6db75m/candidate.py\", line 9, in _repro\n    assert len(page(list(range(10)), 0, 3)) == 3, \"page returned a short page\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: page returned a short page"
           ]
         ],
         [
@@ -833,7 +921,7 @@
             [
               "acceptance-test",
               false,
-              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp5fr5hv6a/candidate.py\", line 16, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp5fr5hv6a/candidate.py\", line 11, in _run_tests\n    assert out[\"refresh_token\"] != \"r0\", \"refresh token was not rotated\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: refresh token was not rotated"
+              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpmkmar1zn/candidate.py\", line 16, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpmkmar1zn/candidate.py\", line 11, in _run_tests\n    assert out[\"refresh_token\"] != \"r0\", \"refresh token was not rotated\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: refresh token was not rotated"
             ]
           ]
         },
@@ -857,7 +945,7 @@
             [
               "acceptance-test",
               false,
-              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp5fr5hv6a/candidate.py\", line 16, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp5fr5hv6a/candidate.py\", line 11, in _run_tests\n    assert out[\"refresh_token\"] != \"r0\", \"refresh token was not rotated\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: refresh token was not rotated"
+              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpmkmar1zn/candidate.py\", line 16, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpmkmar1zn/candidate.py\", line 11, in _run_tests\n    assert out[\"refresh_token\"] != \"r0\", \"refresh token was not rotated\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: refresh token was not rotated"
             ]
           ]
         },
@@ -881,7 +969,7 @@
             [
               "acceptance-test",
               false,
-              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp5fr5hv6a/candidate.py\", line 16, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp5fr5hv6a/candidate.py\", line 11, in _run_tests\n    assert out[\"refresh_token\"] != \"r0\", \"refresh token was not rotated\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: refresh token was not rotated"
+              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpmkmar1zn/candidate.py\", line 16, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpmkmar1zn/candidate.py\", line 11, in _run_tests\n    assert out[\"refresh_token\"] != \"r0\", \"refresh token was not rotated\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: refresh token was not rotated"
             ]
           ]
         },
@@ -974,7 +1062,7 @@
           [
             "acceptance-test",
             false,
-            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp5fr5hv6a/candidate.py\", line 16, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp5fr5hv6a/candidate.py\", line 11, in _run_tests\n    assert out[\"refresh_token\"] != \"r0\", \"refresh token was not rotated\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: refresh token was not rotated"
+            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpmkmar1zn/candidate.py\", line 16, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpmkmar1zn/candidate.py\", line 11, in _run_tests\n    assert out[\"refresh_token\"] != \"r0\", \"refresh token was not rotated\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: refresh token was not rotated"
           ]
         ],
         [
@@ -991,7 +1079,7 @@
           [
             "acceptance-test",
             false,
-            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp5fr5hv6a/candidate.py\", line 16, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp5fr5hv6a/candidate.py\", line 11, in _run_tests\n    assert out[\"refresh_token\"] != \"r0\", \"refresh token was not rotated\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: refresh token was not rotated"
+            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpmkmar1zn/candidate.py\", line 16, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpmkmar1zn/candidate.py\", line 11, in _run_tests\n    assert out[\"refresh_token\"] != \"r0\", \"refresh token was not rotated\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: refresh token was not rotated"
           ]
         ],
         [
@@ -1008,7 +1096,7 @@
           [
             "acceptance-test",
             false,
-            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp5fr5hv6a/candidate.py\", line 16, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp5fr5hv6a/candidate.py\", line 11, in _run_tests\n    assert out[\"refresh_token\"] != \"r0\", \"refresh token was not rotated\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: refresh token was not rotated"
+            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpmkmar1zn/candidate.py\", line 16, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpmkmar1zn/candidate.py\", line 11, in _run_tests\n    assert out[\"refresh_token\"] != \"r0\", \"refresh token was not rotated\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: refresh token was not rotated"
           ]
         ],
         [
@@ -1191,7 +1279,13 @@
         "concurrency"
       ]
     }
-  ]
+  ],
+  "realrun": {
+    "transcript": "\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n  LOOP ON YOUR REPO\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n  repo : ~/your-project\n  test : python -m pytest -q tests/test_cart.py\n  file : src/cart.py\n  goal : discount_pct is a percentage; 10 means 10% off\n\n  @LoopArchitect: this is a bugfix loop \u2014 exit gate is YOUR test command, max\n  3 revisions, RivalReviewer reads each real run.\n\n  \u2503 QAEngineer \u25b8 revision 0: `python -m pytest -q tests/test_cart.py` \u2192 \u274c\n  \u2503 RivalReviewer \u25b8 still failing:\n      E        +  where -900.0 = total([('x', 100.0)], 10)\n      \n      tests/test_cart.py:10: AssertionError\n      =========================== short test summary info ============================\n      FAILED tests/test_cart.py::test_ten_percent - AssertionError: assert -900.0 =...\n      1 failed, 1 passed in 0.03s\n  \u2503 CodeAuthor \u25b8 patching src/cart.py against the real failure\u2026\n\n  \u2503 QAEngineer \u25b8 revision 1: `python -m pytest -q tests/test_cart.py` \u2192 \u2705\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n  LOOP COMPLETE \u2014 your tests pass\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n  RivalReviewer: ran your real suite, it's green. Shipping.\n  status: shipped after 1 revision(s)",
+    "buggy": "def total(items, discount_pct):\n    subtotal = sum(p for _, p in items)\n    return subtotal - discount_pct * subtotal",
+    "fixed": "def total(items, discount_pct):\n    subtotal = sum(p for _, p in items)\n    return subtotal - (discount_pct / 100) * subtotal",
+    "caption": "A real run of `run_on_repo.py` \u2014 captured, not mocked. The model's fix is gated by the repo's own pytest."
+  }
 }</script>
 
 <script>
@@ -1251,7 +1345,7 @@ document.addEventListener("DOMContentLoaded", function () {
   var wlock = false;
   window.addEventListener("wheel", function (e) {
     if (wlock || Math.abs(e.deltaY) < 8) return;
-    wlock = true; setTimeout(function () { wlock = false; }, 520);
+    wlock = true; setTimeout(function () { wlock = false; }, 540);
     go(idx + (e.deltaY > 0 ? 1 : -1));
   }, { passive: true });
   var tY = null, tX = null;
@@ -1266,51 +1360,59 @@ document.addEventListener("DOMContentLoaded", function () {
     tY = tX = null;
   }, { passive: true });
 
-  /* ---- ouroboros ring ---- */
-  var canvas = document.getElementById("ring");
-  var ctx = canvas.getContext("2d");
-  var phaseEl = document.getElementById("ring-phase");
-  var R = 250, CX = 340, CY = 340, SEG = 150;
-  var phases = ["generate", "check", "revise", "check", "ship ✓"];
-  var ACCENT = "#4DE0B0", BREAK = "#FF6B5C";
-  function draw(t) {
-    ctx.clearRect(0, 0, 680, 680);
-    ctx.fillStyle = "#0A1413"; ctx.fillRect(0, 0, 680, 680);
-    var head = (t * 0.00044) % (Math.PI * 2);
+  /* ---- ouroboros ring drawing (shared) ---- */
+  var GOLD = "#D4A24E", GOLDHI = "#F2C879", BREAK = "#E5564B";
+  function drawRing(ctx, dim, head, opts) {
+    opts = opts || {};
+    var S = dim, R = S * 0.355, CX = S / 2, CY = S / 2, SEG = 170;
+    ctx.clearRect(0, 0, S, S);
+    if (opts.fill) { ctx.fillStyle = opts.fill; ctx.fillRect(0, 0, S, S); }
     for (var i = 0; i < SEG; i++) {
       var frac = i / SEG;
       var a = head - frac * Math.PI * 2;
       var x = CX + Math.cos(a) * R, y = CY + Math.sin(a) * R;
       var lit = frac < 0.34;
-      var rad = Math.max(1.7, 4.6 - frac * 2.3);
+      var rad = Math.max(S * 0.0025, S * 0.0066 - frac * S * 0.0034);
       ctx.beginPath(); ctx.arc(x, y, rad, 0, Math.PI * 2);
       if (lit) {
         var g = 1 - frac / 0.34;
-        ctx.fillStyle = "rgba(77,224,176," + (0.35 + g * 0.65) + ")";
-        ctx.shadowColor = ACCENT; ctx.shadowBlur = 16 * g;
+        ctx.fillStyle = "rgba(242,200,121," + (0.34 + g * 0.66) + ")";
+        ctx.shadowColor = GOLDHI; ctx.shadowBlur = (S * 0.025) * g;
       } else {
-        ctx.fillStyle = "rgba(110,138,133," + (0.5 - frac * 0.4) + ")"; ctx.shadowBlur = 0;
+        ctx.fillStyle = "rgba(154,142,108," + (0.45 - frac * 0.35) + ")"; ctx.shadowBlur = 0;
       }
       ctx.fill();
     }
     ctx.shadowBlur = 0;
     var hx = CX + Math.cos(head) * R, hy = CY + Math.sin(head) * R;
-    ctx.beginPath(); ctx.arc(hx, hy, 8, 0, Math.PI * 2);
-    ctx.fillStyle = "#EAFBF4"; ctx.shadowColor = ACCENT; ctx.shadowBlur = 24; ctx.fill(); ctx.shadowBlur = 0;
+    ctx.beginPath(); ctx.arc(hx, hy, S * 0.012, 0, Math.PI * 2);
+    ctx.fillStyle = "#FBEFCF"; ctx.shadowColor = GOLDHI; ctx.shadowBlur = S * 0.035; ctx.fill(); ctx.shadowBlur = 0;
     ctx.beginPath(); ctx.arc(CX, CY, R, 0, Math.PI * 2);
-    ctx.strokeStyle = "rgba(28,50,46,0.55)"; ctx.lineWidth = 1; ctx.stroke();
+    ctx.strokeStyle = "rgba(61,52,30,0.6)"; ctx.lineWidth = 1; ctx.stroke();
   }
+
+  /* hero animated ring */
+  var canvas = document.getElementById("ring");
+  var ctx = canvas.getContext("2d");
+  var phaseEl = document.getElementById("ring-phase");
+  var phases = ["generate", "check", "revise", "check", "ship ✓"];
   var lastPhase = -1, start = null, raf = null;
   function phaseFor(t) { var cyc = 5200; return Math.floor((t % cyc) / (cyc / phases.length)); }
   function tick(ts) {
     if (start === null) start = ts;
-    var t = ts - start; draw(t);
+    var t = ts - start;
+    drawRing(ctx, 720, (t * 0.00044) % (Math.PI * 2), { fill: "#0B0A06" });
     var p = phaseFor(t);
-    if (p !== lastPhase) { lastPhase = p; phaseEl.textContent = phases[p]; phaseEl.style.color = (phases[p] === "revise") ? BREAK : ACCENT; }
+    if (p !== lastPhase) { lastPhase = p; phaseEl.textContent = phases[p]; phaseEl.style.color = (phases[p] === "revise") ? BREAK : GOLD; }
     raf = requestAnimationFrame(tick);
   }
-  function startRing() { if (reduce) { draw(2600); phaseEl.textContent = "the loop"; return; } if (raf) return; start = null; raf = requestAnimationFrame(tick); }
+  function startRing() { if (reduce) { drawRing(ctx, 720, 2.2, { fill: "#0B0A06" }); phaseEl.textContent = "the loop"; return; } if (raf) return; start = null; raf = requestAnimationFrame(tick); }
   function stopRing() { if (raf) { cancelAnimationFrame(raf); raf = null; } }
+
+  /* static ringmark watermarks */
+  Array.prototype.slice.call(document.querySelectorAll('[data-ring="static"]')).forEach(function (cv) {
+    drawRing(cv.getContext("2d"), cv.width, 2.1, null);
+  });
 
   /* ---- transcript ---- */
   var DATA = JSON.parse(document.getElementById("loom-data").textContent);
@@ -1353,7 +1455,7 @@ document.addEventListener("DOMContentLoaded", function () {
     printing = true;
     stage.style.transform = "none";
     slides.forEach(function (sl) { sl.classList.add("active"); });
-    draw(2600); phaseEl.textContent = "the loop";
+    drawRing(ctx, 720, 2.2, { fill: "#0B0A06" }); phaseEl.textContent = "the loop";
     if (!transcriptPlayed) { transcriptPlayed = true; box.innerHTML = ""; transcript.map(renderMsg).forEach(function (e) { box.appendChild(e); }); }
   }
   function unprep() { printing = false; slides.forEach(function (sl, i) { sl.classList.toggle("active", i === idx); }); fit(); }
