@@ -7,195 +7,682 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%90%8D%3C/text%3E%3C/svg%3E" />
 <style>
   :root {
-    --bg:#0b0d12; --panel:#141821; --ink:#e7ecf3; --muted:#8b97a8; --line:#232a36;
-    --a:#6ea8fe; --b:#f7a072; --ok:#5fd39a; --bad:#ff6b6b; --warn:#f2c14e; --p:#c39bf5;
-    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
-    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    --bg:#0e1411; --bg2:#111a15; --panel:#16201a; --panel2:#192620; --line:rgba(214,230,219,.08);
+    --line2:rgba(214,230,219,.14); --ink:#e6efe8; --muted:#8aa195; --dim:#5f7268; --faint:#465249;
+    --scale:#4fb286;        /* serpent emerald */
+    --scale2:#2f8f6a;       /* deeper scale */
+    --gold:#d9a441;         /* the tail it bites */
+    --gold2:#c4892f;
+    --crit:#c97b6b;         /* recruited / attack */
+    --gate:#9a7fa6;         /* human gate violet */
+    --ok:#7cc49a; --bad:#df9080; --warn:#e0b35a;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, "Cascadia Mono", monospace;
+    --sans: "Space Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Inter, Roboto, sans-serif;
   }
-  * { box-sizing: border-box; }
-  body { margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans); line-height:1.5; }
-  .wrap { max-width:1080px; margin:0 auto; padding:40px 20px 80px; }
-  h1 { font-size:30px; margin:0 0 2px; letter-spacing:-.5px; }
-  .tag { color:var(--muted); font-size:17px; margin:0 0 18px; }
-  .lede { font-size:15px; max-width:800px; margin:0 0 26px; } .lede b{color:var(--a);}
-  .composer { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:18px; }
-  .composer h2 { margin:0 0 14px; font-size:14px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); }
-  .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:12px; }
-  .row .lbl { color:var(--muted); font-size:13px; min-width:64px; }
-  input.title { flex:1; min-width:240px; background:#0e121a; border:1px solid var(--line);
-    color:var(--ink); border-radius:9px; padding:9px 12px; font-family:var(--sans); font-size:14px; }
-  .chip { font-family:var(--sans); font-size:13px; color:var(--ink); background:#0e121a;
-    border:1px solid var(--line); border-radius:999px; padding:6px 13px; cursor:pointer; transition:.12s; }
-  .chip:hover { border-color:var(--a); }
-  .chip.on { border-color:var(--a); background:rgba(110,168,254,.14); color:#cfe1ff; }
-  .chip.surf.on { border-color:var(--b); background:rgba(247,160,114,.14); }
-  button.go { background:var(--a); color:#06101f; border:none; font-weight:600; border-radius:10px;
-    padding:10px 20px; cursor:pointer; font-size:14px; }
-  .loopcard { margin-top:18px; border:1px solid var(--line); border-radius:14px; background:var(--panel); padding:16px 18px; }
-  .loopcard h3 { margin:0 0 8px; font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); }
-  .pill { display:inline-block; font-family:var(--mono); font-size:11.5px; color:var(--ink);
-    border:1px solid var(--line); border-radius:999px; padding:3px 10px; margin:3px 5px 3px 0; }
-  .pill.req { border-color:#2f5a45; } .pill.adv { color:var(--muted); }
-  .pill.crit { color:var(--b); border-color:#4a382b; }
-  .pill.rec { color:var(--p); border-color:#43356b; }
-  .pill.gate { color:var(--warn); border-color:#4a3f23; }
-  .meta { font-family:var(--mono); font-size:12.5px; color:var(--muted); margin-top:8px; } .meta b{color:var(--ink);}
-  .fp { font-family:var(--mono); font-size:11.5px; color:var(--muted); word-break:break-all;
-    background:#0e121a; border:1px solid var(--line); border-radius:8px; padding:8px 10px; margin-top:10px; }
-  .why { color:var(--muted); font-size:12.5px; margin:6px 0 0; padding-left:12px; border-left:2px solid var(--line); }
-  .section-h { margin:34px 0 10px; font-size:12.5px; color:var(--muted); font-family:var(--mono); }
-  .gallery { display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:10px; }
-  .gcard { background:var(--panel); border:1px solid var(--line); border-radius:11px; padding:12px 14px; cursor:pointer; transition:.12s; }
-  .gcard:hover { border-color:var(--a); }
-  .gcard .t { font-size:13.5px; margin-bottom:6px; } .gcard .fp { font-size:10.5px; margin-top:6px; }
-  .qa-note { margin-top:10px; padding:10px 12px; border:1px solid var(--line); border-radius:10px;
-    background:#0e121a; font-size:13px; color:var(--muted); }
-  .qa-note b { color:var(--ok); }
-  footer { margin-top:38px; color:var(--muted); font-size:13px; } footer a{color:var(--a);}
+  * { box-sizing:border-box; }
+  html,body { margin:0; }
+  body { background:radial-gradient(1200px 560px at 50% -12%, rgba(79,178,134,.10), transparent 70%),
+          radial-gradient(900px 480px at 92% 8%, rgba(217,164,65,.06), transparent 70%), var(--bg);
+        color:var(--ink); font-family:var(--sans); line-height:1.5;
+        -webkit-font-smoothing:antialiased; }
+  ::selection { background:rgba(217,164,65,.28); }
+  ::-webkit-scrollbar { width:9px; height:9px; }
+  ::-webkit-scrollbar-thumb { background:rgba(214,230,219,.1); border-radius:9px; }
+  input::placeholder { color:var(--faint); }
+  a { color:var(--scale); }
+
+  @keyframes msgIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes cardIn { from{opacity:0;transform:translateY(14px) scale(.985)} to{opacity:1;transform:translateY(0) scale(1)} }
+  @keyframes rosterIn { from{opacity:0;transform:translateX(-10px)} to{opacity:1;transform:translateX(0)} }
+  @keyframes pulseDot { 0%,100%{opacity:.35} 50%{opacity:1} }
+  @keyframes spin { to{transform:rotate(360deg)} }
+  @keyframes travel { from{offset-distance:0%} to{offset-distance:100%} }
+  @keyframes drawerIn { from{transform:translateX(40px);opacity:0} to{transform:translateX(0);opacity:1} }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration:.001ms !important; animation-iteration-count:1 !important; }
+  }
+
+  .wrap { min-height:100vh; padding:34px 28px 72px; }
+  .inner { max-width:1380px; margin:0 auto; }
+
+  .head { display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap; margin-bottom:24px; }
+  .brand { display:flex; align-items:center; gap:14px; }
+  .mark { width:46px; height:46px; border-radius:13px; display:grid; place-items:center; font-size:23px;
+          background:linear-gradient(140deg,var(--scale),var(--scale2)); box-shadow:0 6px 22px rgba(79,178,134,.30);
+          position:relative; overflow:hidden; }
+  .mark::after { content:""; position:absolute; inset:0; border-radius:13px; border:1px solid rgba(255,255,255,.14); }
+  .brand h1 { font-size:23px; font-weight:700; letter-spacing:-.02em; line-height:1; margin:0; }
+  .brand .sub { font-size:12.5px; color:var(--muted); margin-top:4px; }
+  .stat-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .stat { display:flex; align-items:center; gap:9px; padding:7px 13px; border:1px solid var(--line);
+          border-radius:11px; background:rgba(214,230,219,.02); font-family:var(--mono); font-size:12px; color:var(--muted); }
+  .stat b { color:var(--gold); font-weight:600; }
+  .live-dot { width:7px; height:7px; border-radius:50%; background:var(--scale);
+              box-shadow:0 0 8px var(--scale); animation:pulseDot 2.2s infinite; }
+  .stat .chan { color:var(--ink); }
+
+  .layout { display:grid; grid-template-columns:248px 1fr; gap:20px; align-items:start; }
+
+  .rail { position:sticky; top:20px; border:1px solid var(--line); background:var(--panel); border-radius:16px; padding:16px 14px; }
+  .rail .cap { font-family:var(--mono); font-size:10px; letter-spacing:.09em; text-transform:uppercase; color:var(--dim); margin-bottom:12px; padding:0 4px; }
+  .ag { display:flex; align-items:center; gap:10px; padding:8px; border-radius:10px; border:1px solid transparent; animation:rosterIn .35s ease both; }
+  .ag.rec { border-color:rgba(201,123,107,.28); background:rgba(201,123,107,.05); }
+  .ag .av { position:relative; flex:none; }
+  .ag .badge { width:30px; height:30px; border-radius:8px; display:grid; place-items:center; font-family:var(--mono);
+               font-size:10px; font-weight:600; color:#11160f; }
+  .ag .pres { position:absolute; right:-2px; bottom:-2px; width:9px; height:9px; border-radius:50%; background:var(--scale); border:2px solid var(--panel); }
+  .ag .nm { font-size:12.5px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .ag.rec .nm { color:#e0a99b; }
+  .ag .rl { font-size:10.5px; color:var(--dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .ag .who { min-width:0; flex:1; }
+  .rail .note { margin-top:14px; padding:11px 12px; border-radius:10px; border:1px dashed rgba(201,123,107,.32);
+                background:rgba(201,123,107,.05); font-size:11px; line-height:1.45; color:var(--muted); }
+  .rail .note code { color:#dca08f; font-family:var(--mono); font-size:10px; }
+
+  .composer { border:1px solid var(--line2); background:linear-gradient(180deg,var(--panel2),var(--bg2)); border-radius:16px; padding:18px 18px 16px; margin-bottom:20px; }
+  .composer .t1 { font-size:15.5px; font-weight:600; margin-bottom:3px; }
+  .composer .t2 { font-size:12.5px; color:var(--muted); margin-bottom:14px; }
+  .composer .t2 b { color:var(--scale); font-weight:600; }
+  .crow { display:flex; gap:10px; margin-bottom:13px; }
+  .crow input { flex:1; min-width:0; appearance:none; background:var(--bg2); border:1px solid var(--line2);
+                border-radius:11px; padding:13px 15px; color:var(--ink); font-family:var(--sans); font-size:14px; outline:none; transition:border-color .15s; }
+  .crow input:focus { border-color:rgba(217,164,65,.6); }
+  .go { appearance:none; border:none; cursor:pointer; font-family:var(--sans); font-weight:700; font-size:14px;
+        color:#1a1408; background:linear-gradient(140deg,#e6b75c,var(--gold2)); padding:0 22px; border-radius:11px;
+        box-shadow:0 6px 20px rgba(217,164,65,.28); white-space:nowrap; transition:filter .15s; }
+  .go:hover { filter:brightness(1.06); }
+  .chips { display:flex; flex-wrap:wrap; gap:8px; }
+  .chip { appearance:none; cursor:pointer; font-family:var(--sans); font-size:12px; font-weight:500; color:var(--muted);
+          background:rgba(214,230,219,.04); border:1px solid var(--line2); padding:6px 11px; border-radius:8px;
+          display:inline-flex; align-items:center; gap:7px; transition:.15s; }
+  .chip:hover { border-color:rgba(214,230,219,.26); color:var(--ink); }
+
+  .board { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; }
+  .card { border:1px solid var(--line); background:var(--panel); border-radius:16px; overflow:hidden; cursor:pointer; transition:border-color .15s, transform .15s; animation:cardIn .4s ease both; }
+  .card:hover { border-color:rgba(214,230,219,.2); transform:translateY(-1px); }
+  .card.ship { border-color:rgba(124,196,154,.28); }
+  .card.hs { border-color:rgba(201,123,107,.22); }
+  .ch { display:flex; align-items:center; gap:11px; padding:14px 16px; border-bottom:1px solid var(--line); }
+  .ch .ico { width:30px; height:30px; flex:none; border-radius:9px; display:grid; place-items:center; font-size:15px; }
+  .ch .ti { flex:1; min-width:0; }
+  .ch .task { font-size:13.5px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .ch .kind { font-size:11px; color:var(--dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .phase { flex:none; display:flex; align-items:center; gap:6px; padding:5px 9px; border-radius:7px; font-size:11px;
+           font-weight:600; border:1px solid var(--line2); }
+  .phase .pd { width:6px; height:6px; border-radius:50%; }
+  .cbody { display:flex; }
+  .ringwrap { width:222px; flex:none; padding:10px 8px 14px; border-right:1px solid var(--line); display:flex; flex-direction:column; align-items:center; gap:6px; }
+  .ring { position:relative; width:220px; height:150px; }
+  .ring svg { position:absolute; inset:0; overflow:visible; }
+  .snake { position:absolute; left:0; top:0; width:13px; height:13px; border-radius:50%;
+           offset-path:path('M 110 17 A 58 58 0 1 1 110 133 A 58 58 0 1 1 110 17'); offset-rotate:0deg;
+           animation:travel 5.5s linear infinite; border:2px solid rgba(230,239,232,.85); z-index:3; }
+  .node { position:absolute; transform:translate(-50%,-50%); z-index:4; font-family:var(--mono); font-size:9px;
+          font-weight:600; padding:4px 7px; border-radius:6px; white-space:nowrap; transition:all .3s; }
+  .ouro-c { position:absolute; left:110px; top:75px; transform:translate(-50%,-50%); font-size:19px; z-index:2; opacity:.5; }
+  .ringlabel { font-size:12.5px; font-weight:600; transition:color .3s; }
+  .revrow { display:flex; gap:5px; justify-content:center; margin-top:6px; align-items:center; }
+  .revrow .rl { font-family:var(--mono); font-size:9px; color:var(--dim); }
+  .revdot { width:7px; height:7px; border-radius:50%; transition:all .3s; }
+  .spec { flex:1; min-width:0; padding:13px 15px; }
+  .spec .cap { font-family:var(--mono); font-size:9.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--dim); margin-bottom:5px; }
+  .srow { display:flex; justify-content:space-between; gap:10px; padding:5px 0; border-bottom:1px solid rgba(214,230,219,.04); }
+  .srow:last-child { border-bottom:none; }
+  .srow .k { font-size:11.5px; color:var(--muted); flex:none; }
+  .srow .v { font-size:11.5px; color:#d6e0d8; text-align:right; font-weight:500; }
+  .cfoot { padding:10px 16px; border-top:1px solid var(--line); display:flex; align-items:center; gap:9px; background:rgba(214,230,219,.015); }
+  .cfoot .av { flex:none; width:20px; height:20px; border-radius:6px; display:grid; place-items:center; font-family:var(--mono); font-size:8px; font-weight:600; color:#11160f; }
+  .cfoot .tx { font-size:11.5px; color:var(--muted); flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .cfoot .more { font-size:11px; color:var(--dim); font-weight:600; white-space:nowrap; }
+
+  .empty { border:1px dashed var(--line2); border-radius:16px; padding:48px 20px; text-align:center; color:var(--dim); }
+  .empty .e1 { font-size:30px; margin-bottom:10px; opacity:.7; }
+  .empty .e2 { font-size:14.5px; color:var(--muted); }
+
+  .scrim { position:fixed; inset:0; background:rgba(4,8,6,.64); z-index:40; }
+  .drawer { position:fixed; top:0; right:0; bottom:0; width:480px; max-width:94vw; background:var(--bg2);
+            border-left:1px solid var(--line2); z-index:41; display:flex; flex-direction:column;
+            box-shadow:-30px 0 60px rgba(0,0,0,.5); animation:drawerIn .28s ease both; }
+  .dhead { padding:18px 20px; border-bottom:1px solid var(--line); display:flex; align-items:flex-start; gap:12px; }
+  .dhead .ico { width:32px; height:32px; flex:none; border-radius:9px; display:grid; place-items:center; font-size:16px; }
+  .dhead .ti { flex:1; min-width:0; }
+  .dhead .task { font-size:14px; font-weight:600; line-height:1.3; }
+  .dhead .sub { font-size:11.5px; color:var(--dim); margin-top:2px; }
+  .dx { appearance:none; cursor:pointer; flex:none; width:30px; height:30px; border-radius:8px; border:1px solid var(--line2);
+        background:transparent; color:var(--muted); font-size:16px; line-height:1; transition:border-color .15s; }
+  .dx:hover { border-color:rgba(214,230,219,.3); }
+  .dbody { flex:1; overflow:auto; padding:8px 20px 24px; }
+  .dcap { font-family:var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--dim); padding:12px 0 4px; }
+  .msg { display:flex; gap:12px; padding:9px 0; animation:msgIn .3s ease both; }
+  .msg .av { flex:none; width:30px; height:30px; border-radius:8px; display:grid; place-items:center; font-family:var(--mono); font-size:10.5px; font-weight:600; color:#11160f; }
+  .msg .body { flex:1; min-width:0; }
+  .msg .mh { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:3px; }
+  .msg .nm { font-weight:600; font-size:13px; }
+  .msg .fw { font-family:var(--mono); font-size:9.5px; color:var(--dim); border:1px solid var(--line); padding:1px 6px; border-radius:5px; }
+  .msg .rev { font-family:var(--mono); font-size:9.5px; color:var(--gold); background:rgba(217,164,65,.1); padding:1px 6px; border-radius:5px; }
+  .msg .tx { font-size:13px; color:#cdd9cf; line-height:1.5; }
+  .mentions { color:var(--scale); }
+  .qa { margin-top:8px; display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:11.5px;
+        padding:6px 11px; border-radius:8px; }
+  .qa.ok { background:rgba(124,196,154,.10); border:1px solid rgba(124,196,154,.3); color:#a3d0b6; }
+  .qa.bad { background:rgba(201,123,107,.10); border:1px solid rgba(201,123,107,.3); color:#dca08f; }
+  .trace { margin-top:8px; }
+  .trace summary { cursor:pointer; font-family:var(--mono); font-size:11px; color:var(--dim); list-style:none; }
+  .trace summary::-webkit-details-marker { display:none; }
+  .trace summary:hover { color:var(--muted); }
+  .trace pre { margin:8px 0 0; padding:11px 12px; background:#0b110d; border:1px solid var(--line); border-radius:9px;
+               font-family:var(--mono); font-size:10.5px; line-height:1.45; overflow-x:auto; color:#d6b3a8; white-space:pre; }
+  .divider { display:flex; align-items:center; gap:11px; padding:14px 0 8px; }
+  .divider span:first-child { font-family:var(--mono); font-size:10.5px; letter-spacing:.06em; color:var(--gold); }
+  .divider .hr { flex:1; height:1px; background:rgba(217,164,65,.18); }
+  .recruit { margin:8px 0; padding:11px 13px; border-radius:11px; background:rgba(201,123,107,.07);
+             border:1px dashed rgba(201,123,107,.4); display:flex; align-items:center; gap:9px; }
+  .recruit code { font-family:var(--mono); font-size:10px; color:#dca08f; background:rgba(201,123,107,.14); padding:2px 7px; border-radius:5px; }
+  .recruit span:last-child { font-size:12.5px; color:#e0b3a6; }
+  .gate-row { margin:8px 0; padding:11px 13px; border-radius:11px; background:rgba(154,127,166,.08);
+              border:1px solid rgba(154,127,166,.32); display:flex; align-items:center; gap:9px; font-size:12.5px; color:#c3b3d0; font-weight:500; }
+  .ship-row { margin:10px 0 4px; padding:12px 14px; border-radius:11px; background:rgba(124,196,154,.08);
+              border:1px solid rgba(124,196,154,.28); display:flex; align-items:center; gap:10px; font-size:13px; color:#b0d4bd; font-weight:500; }
+  .running { padding:10px 0; font-size:12px; color:var(--dim); display:flex; align-items:center; gap:9px; }
+  .running .d { width:7px; height:7px; border-radius:50%; background:var(--gold); animation:pulseDot 1.4s infinite; }
+
+  .codepeek { margin-top:14px; border-top:1px solid var(--line); padding-top:14px; }
+  .codetabs { display:flex; gap:6px; margin-bottom:10px; }
+  .codetab { appearance:none; cursor:pointer; font-family:var(--mono); font-size:10.5px; padding:5px 10px; border-radius:7px;
+             border:1px solid var(--line2); background:transparent; color:var(--muted); }
+  .codetab.on { background:rgba(79,178,134,.12); border-color:rgba(79,178,134,.4); color:var(--scale); }
+  .codepeek pre { margin:0; padding:12px 13px; background:#0b110d; border:1px solid var(--line); border-radius:10px;
+                  font-family:var(--mono); font-size:11px; color:#d6e0d8; line-height:1.5; overflow-x:auto; white-space:pre; }
+
+  footer { margin-top:42px; color:var(--muted); font-size:13px; line-height:1.6; }
+  footer code { font-family:var(--mono); font-size:12px; background:rgba(214,230,219,.05); padding:2px 7px; border-radius:6px; color:#d6e0d8; }
+  .sig { margin-top:14px; font-size:12px; color:var(--faint); font-family:var(--mono); }
+  .sig b { color:var(--scale); font-weight:500; }
+
+  @media (max-width: 860px) {
+    .layout { grid-template-columns:1fr; }
+    .rail { position:static; }
+    .board { grid-template-columns:1fr; }
+    .cbody { flex-direction:column; }
+    .ringwrap { width:100%; border-right:none; border-bottom:1px solid var(--line); }
+  }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <h1>🐍 Ouroboros</h1>
-  <p class="tag">any task → the loop it needs</p>
-  <p class="lede">
-    The ouroboros is the snake that eats its own tail — the oldest symbol for a loop
-    that feeds itself until it's whole. That's the idea: the unit of agentic coding in
-    2026 isn't the prompt, it's the <b>loop</b> — generate, check, revise, until a real
-    exit condition holds. Everyone hand-builds those loops, and every coding-agent tool
-    runs the <b>same fixed pipeline</b> for everything. Ouroboros is a Band room that
-    <b>reads a task and synthesizes the loop that task needs</b> — the checks that gate
-    it, the critics it recruits, whether a human must sign — then runs it until the code
-    closes the loop. Give it anything below and watch the loop change.
-  </p>
+<div class="wrap"><div class="inner">
 
-  <div class="composer">
-    <h2>describe a task</h2>
-    <div class="row">
-      <span class="lbl">title</span>
-      <input class="title" id="title" value="Add biometric login to the mobile app" />
+  <div class="head">
+    <div class="brand">
+      <div class="mark">🐍</div>
+      <div>
+        <h1>Ouroboros</h1>
+        <div class="sub">the room that engineers the loop, then runs it</div>
+      </div>
     </div>
-    <div class="row">
-      <span class="lbl">kind</span>
-      <span id="kinds"></span>
+    <div class="stat-row">
+      <div class="stat"><span class="live-dot"></span>Band room · <span class="chan">#loop-engineering</span></div>
+      <div class="stat"><b id="stat-loops">0</b> loops · <b id="stat-agents">4</b> agents</div>
     </div>
-    <div class="row">
-      <span class="lbl">touches</span>
-      <span id="surfaces"></span>
-    </div>
-    <div class="row"><button class="go" id="go">⟳ synthesize the loop</button></div>
   </div>
 
-  <div class="loopcard" id="loopcard"></div>
+  <div class="layout">
 
-  <div class="section-h">— or click a preset; each is a real, distinct loop the room would build —</div>
-  <div class="gallery" id="gallery"></div>
+    <div class="rail">
+      <div class="cap" id="roster-cap">In the room · 4</div>
+      <div id="roster"></div>
+      <div class="note"><code>band_add_participant</code><br>the room recruits runtime specialists only when the task demands it.</div>
+    </div>
+
+    <div>
+      <div class="composer">
+        <div class="t1">Throw a task in. The room engineers its loop.</div>
+        <div class="t2">No fixed pipeline — the loop is <b>synthesized for this task</b>: its gate, its critics, its revisions, and whether a human has to sign.</div>
+        <div class="crow">
+          <input id="draft" placeholder="e.g. &laquo;rotate session tokens when privileges change&raquo;" />
+          <button class="go" id="go">Engineer loop ↵</button>
+        </div>
+        <div class="chips" id="chips"></div>
+      </div>
+
+      <div class="empty" id="empty" style="display:none">
+        <div class="e1">🐍</div>
+        <div class="e2">No loops yet. Pick a task above — each one builds its own loop.</div>
+      </div>
+
+      <div class="board" id="board"></div>
+    </div>
+  </div>
 
   <footer>
-    Two of these tasks ship real executable code — the loop runs the generated Python
-    in a sandbox and a buggy revision genuinely fails with an <code>AssertionError</code>
-    before the fix passes. Built on <a href="https://band.ai">Band</a> for the Band of
-    Agents Hackathon (Track 2). Run any task yourself:
-    <code>python demo.py "your task" --kind feature --touches auth,db</code> ·
+    Two tasks here ship <b>real executable code</b> — the loop runs the generated Python in a sandbox, a buggy
+    revision genuinely fails with a real <code>AssertionError</code>, and only the fix passes. Open either
+    <span style="color:var(--gold)">real-QA</span> card to read the actual code, the actual fix, and the actual
+    traceback the room saw. Built on <a href="https://band.ai">Band</a> for the Band of Agents Hackathon (Track 2).
+    Run any task yourself:
+    <br><code>python demo.py "your task" --kind feature --touches auth,db</code> ·
     <a href="https://github.com/NataliaMw/ouroboros">source</a>
+    <div class="sig">it eats its own tail until the tests are green. — <b>made by Natalia</b> 🐍</div>
   </footer>
-</div>
+
+</div></div>
+
+<div id="drawer-root"></div>
 
 <script id="loom-data" type="application/json">__DATA__</script>
 <script>
 const DATA = JSON.parse(document.getElementById('loom-data').textContent);
-const RULES = DATA.rules;   // synthesis rules exported from the Python architect
+const RULES = DATA.rules;
+const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-const KINDS = ["bugfix","refactor","feature","migration"];
-const SURFACES = ["auth","ui","db","schema","payments","billing","pii","api","concurrency","perf","sessions","pagination"];
-let kind = "feature";
-let touches = new Set(["auth","ui","pii"]);
+const AGENTS = {
+  "You":              { initials:"U",  color:"#8aa195", framework:"task",                 role:"asks for the task" },
+  "user":             { initials:"U",  color:"#8aa195", framework:"task",                 role:"asks for the task" },
+  "LoopArchitect":    { initials:"LA", color:"#6f9bb0", framework:"synthesis",            role:"designs the loop" },
+  "LoopCritic":       { initials:"LC", color:"#c97b6b", framework:"loop critic",          role:"checks the exit condition" },
+  "LoopRunner":       { initials:"LR", color:"#5fa0a6", framework:"runner",               role:"runs the loop" },
+  "RivalReviewer":    { initials:"RR", color:"#c97b6b", framework:"standing critic",      role:"attacks the exit gate" },
+  "CodeAuthor":       { initials:"CA", color:"#7cc49a", framework:"author · subprocess",  role:"writes each revision" },
+  "QAEngineer":       { initials:"QA", color:"#d9a441", framework:"qa.py · subprocess",   role:"runs the real checks" },
+  "SecurityCritic":   { initials:"SC", color:"#c97b6b", framework:"recruited",            role:"recruited · security" },
+  "PrivacyCritic":    { initials:"PR", color:"#b87fa0", framework:"recruited",            role:"recruited · privacy" },
+  "A11yCritic":       { initials:"AY", color:"#6f9bb0", framework:"recruited",            role:"recruited · a11y" },
+  "ContractCritic":   { initials:"CC", color:"#5fa0a6", framework:"recruited",            role:"recruited · API contract" },
+  "RaceCritic":       { initials:"RC", color:"#bd8f46", framework:"recruited",            role:"recruited · concurrency" },
+  "PerfCritic":       { initials:"PC", color:"#5fa0a6", framework:"recruited",            role:"recruited · performance" },
+  "TechLead":         { initials:"TL", color:"#9a7fa6", framework:"human",                role:"recruited · human sign-off" },
+};
+const BASE_ROSTER = ["LoopArchitect","RivalReviewer","CodeAuthor","QAEngineer"];
+const ag = n => AGENTS[n] || { initials:(n||"?").slice(0,2).toUpperCase(), color:"#8aa195", framework:"", role:"" };
+function hexA(h,a){ const n=parseInt(h.slice(1),16); return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`; }
 
-// ---- synthesis (mirror of specialists/architect.py) ----
-function highStakes(kind, ts) {
+const KIND_ICON = { bugfix:"🐛", refactor:"♻️", feature:"✨", migration:"🗄️" };
+const SURF_ICON = { auth:"🔐", ui:"🎨", db:"🗄️", schema:"🧬", payments:"💳", billing:"🧾", pii:"🛡️",
+  api:"🔌", concurrency:"🔀", perf:"⚡", sessions:"🔑", pagination:"📄" };
+
+function highStakes(kind, ts){
   const risky = new Set(["auth","billing","payments","migration","schema","pii","db","secrets","infra","data-deletion"]);
-  return [...ts].some(t => risky.has(t)) || kind === "migration";
+  return [...ts].some(t=>risky.has(t)) || kind==="migration";
 }
-function synthesize(title, kind, ts) {
-  const checks = [
-    {name:"compiles", required:true, why:"the code has to at least build before anything else matters"},
-    {name:"unit-tests", required:true, why:"behavior is pinned by tests, not vibes"},
-  ];
-  if (kind==="bugfix") checks.push({name:"repro-test",required:true,why:"fails before the fix, passes after"});
-  if (kind==="refactor"){ checks.push({name:"behavior-unchanged",required:true,why:"refactors must not change observable behavior"});
-    checks.push({name:"perf-no-regress",required:false,why:"a refactor that ships a slowdown is a bug"}); }
-  if (kind==="feature") checks.push({name:"acceptance-test",required:true,why:"the new behavior is demonstrated end to end"});
-  if (kind==="migration") checks.push({name:"rollback-plan",required:true,why:"every migration needs a tested way back"});
+function synthesize(title, kind, ts){
+  const checks = [ {name:"compiles", required:true}, {name:"unit-tests", required:true} ];
+  if (kind==="bugfix") checks.push({name:"repro-test",required:true});
+  if (kind==="refactor"){ checks.push({name:"behavior-unchanged",required:true}); checks.push({name:"perf-no-regress",required:false}); }
+  if (kind==="feature") checks.push({name:"acceptance-test",required:true});
+  if (kind==="migration") checks.push({name:"rollback-plan",required:true});
   const seenC = new Set(checks.map(c=>c.name));
-  ts.forEach(s => { const c = RULES.checks[s]; if (c && !seenC.has(c[0])){ checks.push({name:c[0],required:c[2],why:c[1]}); seenC.add(c[0]); }});
+  ts.forEach(s=>{ const c=RULES.checks[s]; if(c && !seenC.has(c[0])){ checks.push({name:c[0],required:c[2]}); seenC.add(c[0]); }});
 
-  const critics = [{handle:"RivalReviewer", lens:"adversarial correctness", rec:false}];
+  const critics = [{handle:"RivalReviewer", rec:false}];
   const seen = new Set(["RivalReviewer"]);
-  ts.forEach(s => { const c = RULES.critics[s]; if (c && !seen.has(c[0])){ critics.push({handle:c[0],lens:c[1],rec:true}); seen.add(c[0]); }});
+  ts.forEach(s=>{ const c=RULES.critics[s]; if(c && !seen.has(c[0])){ critics.push({handle:c[0],lens:c[1],rec:true}); seen.add(c[0]); }});
 
   const hs = highStakes(kind, ts);
-  const rationale = [
-    `kind is '${kind}', so the loop centers on ` + ({bugfix:"a reproduction test as the exit gate",
-      refactor:"behavior-equivalence, not new tests", feature:"an end-to-end acceptance test",
-      migration:"a tested rollback path"}[kind] || "the default build+test gates"),
-  ];
-  if (hs) rationale.push(`touches a high-stakes surface (${[...ts].join(", ")||"—"}), so a human gate is added and a security/privacy critic is recruited`);
+  const gate = ({bugfix:"repro-test", refactor:"behavior-snapshot", feature:"acceptance-test e2e", migration:"dry-run + rollback"}[kind]) || "acceptance-test";
+  const maxRev = kind==="bugfix"?2:3;
   return { title, kind, touches:[...ts], checks, critics,
-    max_revisions: kind==="bugfix"?2:3,
-    human_gate: hs ? "TechLead" : null,
-    exit_condition:"all required checks pass AND no critic still objects", rationale };
-}
-function fingerprint(L){
-  return `checks=[${L.checks.map(c=>c.name).join(",")}] critics=[${L.critics.map(c=>c.handle).join(",")}] max_rev=${L.max_revisions} gate=${L.human_gate||"none"}`;
+    max_revisions: maxRev, human_gate: hs ? "TechLead" : null, gate,
+    recruits: critics.filter(c=>c.rec).map(c=>c.handle),
+    fingerprint:`checks=[${checks.map(c=>c.name).join(",")}] critics=[${critics.map(c=>c.handle).join(",")}] max_rev=${maxRev} gate=${hs?"TechLead":"none"}` };
 }
 
-// ---- render ----
-function renderLoop(L, realQA) {
-  const checks = L.checks.map(c=>`<span class="pill ${c.required?'req':'adv'}">${c.name}${c.required?'':' · advisory'}</span>`).join('');
-  const critics = L.critics.map(c=>`<span class="pill ${c.rec?'rec':'crit'}">@${c.handle}${c.rec?' · recruited':''}</span>`).join('');
-  const gate = L.human_gate ? `<span class="pill gate">⛔ ${L.human_gate} signs</span>` : '<span class="pill adv">no human gate</span>';
-  const why = L.rationale.map(r=>`<p class="why">${r}</p>`).join('');
-  document.getElementById('loopcard').innerHTML =
-    `<h3>the loop the room built for: ${L.title}</h3>`
-    + `<div>${checks}</div><div style="margin-top:6px">${critics} ${gate}</div>`
-    + `<div class="meta">exit: ${L.exit_condition} · <b>max ${L.max_revisions} revisions</b></div>`
-    + `<h3 style="margin-top:14px">why this shape</h3>${why}`
-    + `<div class="fp">${fingerprint(L)}</div>`
-    + (realQA ? `<div class="qa-note">✓ this task ships real code — in the CLI the loop <b>actually runs the tests</b>: revision 0 fails with a real AssertionError, the loop bounces, the fix passes.</div>` : '');
+const FAILS = {
+  bugfix:  ["the edge case is still red.","passes the happy path, breaks on zero."],
+  refactor:["an observable behavior changed.","a snapshot test blew up."],
+  feature: ["the empty case isn't covered.","the e2e acceptance fails on the last step."],
+  migration:["rollback leaves orphaned rows.","the migration isn't idempotent."],
+};
+const RECRUIT_LINE = {
+  SecurityCritic:"I add a token-replay check to the gate and demand a human signs before ship.",
+  PrivacyCritic:"No PII in logs or plaintext — I add a privacy assertion to the gate.",
+  A11yCritic:"The gate now includes a contrast + keyboard-nav check.",
+  ContractCritic:"Existing clients must not break — I add a contract test to the gate.",
+  RaceCritic:"I require a race test — no lost updates under concurrent access.",
+  PerfCritic:"The gate now includes a p95 benchmark — zero latency regression.",
+};
+
+function realTimeline(t){
+  const ev = [];
+  let dividerDone = false;
+  t.transcript.forEach((m, i) => {
+    const who = m.sender==="user" ? "You" : m.sender;
+    const mentions = m.mentions||[];
+    // system banners → recruit / gate events
+    if (m.sender==="system"){
+      if (/recruit|➕|band_add_participant/.test(m.text)){
+        ev.push({ kind:"recruit", recruit:mentions[0]||"", text:`@${mentions[0]||"specialist"} joined the room`, pause:900 });
+        return;
+      }
+      if (/escalat|⛔|awaiting/i.test(m.text)){
+        ev.push({ kind:"gate", text:`Human gate — awaiting @${mentions[0]||"TechLead"} to sign.`, pause:1000 });
+        return;
+      }
+    }
+    // drop a "Running the loop" divider right before the first CodeAuthor revision
+    if (!dividerDone && m.sender==="CodeAuthor"){ ev.push({ kind:"divider", text:"Running the loop", pause:650 }); dividerDone = true; }
+    const rev = /revision (\d+)/i.test(m.text) ? `Revision ${m.text.match(/revision (\d+)/i)[1]}` : null;
+    ev.push({ kind:"msg", who, mentions, text:m.text, qa:m.qa||null, rev, pause: i===0?700:1000 });
+  });
+  ev.push({ kind:"ship", text: t.loop.human_gate ? "Verified + signed. Shipped with its LoopSpec." : "Verified. Shipped with its LoopSpec.", pause:0 });
+  return ev;
+}
+function synthTimeline(L){
+  const ev = [];
+  ev.push({ kind:"msg", who:"You", mentions:["LoopArchitect"], text:`New task: ${L.title}`, pause:700 });
+  const human = L.human_gate ? ", and a human gate" : ", no human gate";
+  ev.push({ kind:"msg", who:"LoopArchitect", mentions:["RivalReviewer"], text:`Proposing the loop: gate on ${L.gate}, a rival reviewer, max ${L.max_revisions} revisions${human}.`, pause:1100 });
+  if (L.recruits.length){
+    const names = L.recruits.join(" and ");
+    ev.push({ kind:"msg", who:"RivalReviewer", mentions:L.recruits, text:`That exit condition is gameable on this surface. It needs ${names} — recruiting them.`, pause:1000 });
+    L.recruits.forEach(k=>{
+      ev.push({ kind:"recruit", recruit:k, text:`@${k} joined the room`, pause:850 });
+      ev.push({ kind:"msg", who:k, mentions:[], text:RECRUIT_LINE[k]||"Reinforcing the gate for this surface.", pause:1000 });
+    });
+  } else {
+    ev.push({ kind:"msg", who:"RivalReviewer", mentions:[], text:`Exit condition is solid and deterministic for a ${L.kind}. No recruits needed.`, pause:950 });
+  }
+  ev.push({ kind:"divider", text:"Running the loop", pause:650 });
+  const fails = FAILS[L.kind] || FAILS.feature;
+  const pool = [...L.recruits, "RivalReviewer"];
+  const reqChecks = L.checks.filter(c=>c.required).map(c=>c.name);
+  for (let r=1; r<=L.max_revisions; r++){
+    const last = r===L.max_revisions;
+    ev.push({ kind:"msg", who:"CodeAuthor", mentions:["QAEngineer"], rev:`Revision ${r}`,
+      text: r===1 ? "Writing the first revision and sending it to QA." : `Applied the critic's note, resending revision ${r}.`, pause:900 });
+    const atk = pool[(r-1)%pool.length];
+    ev.push({ kind:"msg", who:atk, mentions:["CodeAuthor"], text: last ? "Diff is scoped, no out-of-scope side effects. I approve." : fails[(r-1)%fails.length], pause:950 });
+    const qa = reqChecks.map((c,i)=> last ? [c,true,"__ouroboros_ok__"] : [c, i===0, i===0?"__ouroboros_ok__":"AssertionError"]);
+    ev.push({ kind:"msg", who:"QAEngineer", mentions:["RivalReviewer"], rev:`Revision ${r}`,
+      text: last ? `ran the checks on revision ${r} (real subprocess): all required checks green.` : `ran the checks on revision ${r} (real subprocess): ${Math.max(1,reqChecks.length-1)} check(s) failing.`,
+      qa, pause:1050 });
+  }
+  if (L.human_gate){
+    ev.push({ kind:"recruit", recruit:"TechLead", text:"@TechLead joined the room", pause:900 });
+    ev.push({ kind:"gate", text:"Human gate — waiting for @TechLead to sign.", pause:1050 });
+    ev.push({ kind:"msg", who:"TechLead", mentions:[], text:"Reviewed the diff and the checks. Signed. ✍️", pause:900 });
+  }
+  ev.push({ kind:"ship", text: L.human_gate ? "Verified + signed. Shipped with its LoopSpec." : "Verified. Shipped with its LoopSpec.", pause:0 });
+  return ev;
 }
 
-function buildChips() {
-  document.getElementById('kinds').innerHTML = KINDS.map(k=>`<span class="chip kind ${k===kind?'on':''}" data-k="${k}">${k}</span>`).join('');
-  document.getElementById('surfaces').innerHTML = SURFACES.map(s=>`<span class="chip surf ${touches.has(s)?'on':''}" data-s="${s}">${s}</span>`).join('');
-  document.querySelectorAll('.chip.kind').forEach(el=>el.onclick=()=>{ kind=el.dataset.k; buildChips(); run(); });
-  document.querySelectorAll('.chip.surf').forEach(el=>el.onclick=()=>{ const s=el.dataset.s; touches.has(s)?touches.delete(s):touches.add(s); buildChips(); run(); });
+const realByTitle = {};
+DATA.tasks.forEach(t => { realByTitle[t.task.title] = t; });
+let loops = [];
+let recruited = new Set();
+let selectedId = null;
+let seq = 0;
+const timers = [];
+
+function accentFor(L){
+  if (L.human_gate) return "#c97b6b";
+  if (L.recruits.length) return "#bd8f46";
+  return ({bugfix:"#6f9bb0", refactor:"#9a7fa6", feature:"#7cc49a", migration:"#bd8f46"}[L.kind]) || "#6f9bb0";
 }
-function run(){ renderLoop(synthesize(document.getElementById('title').value, kind, touches), false); }
 
-document.getElementById('go').onclick = run;
-document.getElementById('title').addEventListener('keydown', e=>{ if(e.key==='Enter') run(); });
+function addTask(title, kind, ts){
+  title = (title||"").trim(); if(!title) return;
+  const real = realByTitle[title] || null;
+  let L, timeline, code=null;
+  if (real){
+    const lp = real.loop;
+    L = { title, kind:lp.task.kind, touches:lp.task.touches,
+      checks:lp.checks.map(c=>({name:c.name,required:c.required})),
+      critics:lp.critics.map(c=>({handle:c.handle,rec:c.recruited_on_demand})),
+      max_revisions:lp.max_revisions, human_gate:lp.human_gate,
+      gate:(lp.checks.filter(c=>c.required).slice(-1)[0]||{}).name||"tests",
+      recruits:lp.critics.filter(c=>c.recruited_on_demand).map(c=>c.handle), fingerprint:lp.fingerprint };
+    timeline = realTimeline(real);
+    code = real.code;
+    (real.recruited||[]).forEach(r=> recruited.add(r));
+    if (lp.human_gate) recruited.add(lp.human_gate);
+  } else {
+    L = synthesize(title, kind, new Set(ts));
+    timeline = synthTimeline(L);
+  }
+  const id = ++seq;
+  loops.push({ id, title, kind:L.kind, touches:L.touches, L, real:!!real, timeline, idx:0, done:false, code });
+  render();
+  runLoop(id);
+}
 
-// gallery from the real Python run + extra synthesized presets
-const realTitles = new Set(DATA.tasks.map(t=>t.task.title));
-const presets = DATA.gallery;  // [{title,kind,touches}]
-document.getElementById('gallery').innerHTML = presets.map((g,i)=>{
-  const L = synthesize(g.title, g.kind, new Set(g.touches));
-  return `<div class="gcard" data-i="${i}">
-    <div class="t">${g.title}</div>
-    <span class="pill adv">${g.kind}</span>${realTitles.has(g.title)?'<span class="pill req">real QA</span>':''}
-    <div class="fp">${fingerprint(L).split(' critics')[0]}</div>
+function runLoop(id){
+  const advance = () => {
+    const lp = loops.find(l=>l.id===id); if(!lp) return;
+    if (lp.idx >= lp.timeline.length){ lp.done=true; render(); return; }
+    const e = lp.timeline[lp.idx];
+    if (e.kind==="recruit") recruited.add(e.recruit);
+    lp.idx++;
+    render();
+    timers.push(setTimeout(advance, reduce ? 60 : (e.pause||900)));
+  };
+  advance();
+}
+
+const STAGE = {
+  queue:   { label:"Queued",        color:"#5f7268" },
+  design:  { label:"Designing",     color:"#6f9bb0" },
+  generate:{ label:"Generating",    color:"#d9a441" },
+  critique:{ label:"Critics",       color:"#c97b6b" },
+  check:   { label:"Check",         color:"#7cc49a" },
+  gate:    { label:"Human gate",    color:"#9a7fa6" },
+  ship:    { label:"Shipped ✓",     color:"#7cc49a" },
+};
+function stageOf(lp){
+  if (lp.idx===0) return {s:STAGE.queue, rev:0};
+  const e = lp.timeline[lp.idx-1];
+  const revN = e.rev ? parseInt((e.rev.match(/\d+/)||[0])[0],10) : 0;
+  if (e.kind==="ship") return {s:STAGE.ship, rev:lp.L.max_revisions};
+  if (e.kind==="gate") return {s:STAGE.gate, rev:revN};
+  if (e.kind==="recruit" || e.kind==="divider") return {s:STAGE.design, rev:revN};
+  if (e.kind==="msg"){
+    if (e.who==="CodeAuthor") return {s:STAGE.generate, rev:revN};
+    if (e.who==="QAEngineer") return {s:STAGE.check, rev:revN};
+    if (e.who==="You"||e.who==="LoopArchitect") return {s:STAGE.design, rev:revN};
+    return {s:STAGE.critique, rev:revN};
+  }
+  return {s:STAGE.design, rev:revN};
+}
+function node(active, c){
+  return active
+    ? `border:1px solid ${c};color:#fff;background:${hexA(c,.16)};box-shadow:0 0 14px ${hexA(c,.55)}`
+    : `border:1px solid rgba(214,230,219,.1);color:#7c8b81;background:#121a14;box-shadow:none`;
+}
+const esc = s => String(s==null?"":s).replace(/[&<>]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+function testsToText(tests){
+  if (typeof tests === "string") return tests;
+  if (tests && typeof tests === "object") return Object.entries(tests).map(([k,v])=>`# ${k}\n${v}`).join("\n");
+  return "";
+}
+function fmt(text, mentions){
+  let html = esc(text);
+  (mentions||[]).forEach(m=>{ html = html.replace(new RegExp("@?"+m.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"),"g"), `<span class="mentions">@${m}</span>`); });
+  return html;
+}
+
+function render(){
+  document.getElementById('stat-loops').textContent = loops.length;
+  const rosterKeys = [...BASE_ROSTER, ...[...recruited].filter(r=>!BASE_ROSTER.includes(r))];
+  document.getElementById('stat-agents').textContent = rosterKeys.length;
+  document.getElementById('roster-cap').textContent = `In the room · ${rosterKeys.length}`;
+
+  document.getElementById('roster').innerHTML = rosterKeys.map(k=>{
+    const a = ag(k); const rec = !BASE_ROSTER.includes(k);
+    return `<div class="ag ${rec?'rec':''}">
+      <div class="av"><div class="badge" style="background:${a.color}">${a.initials}</div><span class="pres"></span></div>
+      <div class="who"><div class="nm">${k}</div><div class="rl">${a.role}</div></div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('empty').style.display = loops.length ? 'none' : 'block';
+  document.getElementById('board').innerHTML = loops.map(cardHTML).join('');
+  document.querySelectorAll('[data-open]').forEach(el=> el.onclick = ()=>{ selectedId = +el.dataset.open; renderDrawer(); });
+  renderDrawer();
+}
+
+function cardHTML(lp){
+  const L = lp.L, acc = accentFor(L);
+  const {s, rev} = stageOf(lp);
+  const c = s.color;
+  const phaseText = s.label.replace(" ✓","");
+  const icon = KIND_ICON[L.kind] || "✨";
+  const revealed = lp.timeline.slice(0, lp.idx).filter(e=>e.kind==="msg");
+  const tail = revealed.length ? revealed[revealed.length-1] : null;
+  const dots = [];
+  for (let i=0;i<L.max_revisions;i++){ const on=i<rev; dots.push(`<span class="revdot" style="background:${on?c:'rgba(214,230,219,.12)'};box-shadow:${on?'0 0 7px '+hexA(c,.6):'none'}"></span>`); }
+  const criticsText = L.recruits.length ? "reviewer + " + L.recruits.map(x=>x.replace("Critic","")).join(" + ") : "1 rival reviewer";
+
+  return `<div class="card ${s===STAGE.ship?'ship':''} ${L.human_gate?'hs':''}" data-open="${lp.id}">
+    <div class="ch">
+      <div class="ico" style="background:${hexA(acc,.14)};border:1px solid ${hexA(acc,.3)}">${icon}</div>
+      <div class="ti"><div class="task">${esc(L.title)}</div><div class="kind">${L.kind}${lp.real?' · real QA':''} · touches ${esc(L.touches.join(", ")||"—")}</div></div>
+      <div class="phase" style="color:${c}"><span class="pd" style="background:${c}"></span>${phaseText}</div>
+    </div>
+    <div class="cbody">
+      <div class="ringwrap">
+        <div class="ring">
+          <svg width="220" height="150">
+            <circle cx="110" cy="75" r="58" fill="none" stroke="rgba(214,230,219,.07)" stroke-width="1.5"></circle>
+            <g style="transform-box:view-box;transform-origin:110px 75px;animation:spin 16s linear infinite">
+              <circle cx="110" cy="75" r="58" fill="none" stroke="${c}" stroke-width="1.5" stroke-dasharray="3 9" stroke-linecap="round" opacity=".85"></circle>
+            </g>
+          </svg>
+          <div class="snake" style="background:${c};box-shadow:0 0 12px ${hexA(c,.7)}"></div>
+          <div class="ouro-c" style="color:${c}">🐍</div>
+          <div class="node" style="left:110px;top:17px;${node(s===STAGE.generate,c)}">Generate</div>
+          <div class="node" style="left:160px;top:104px;${node(s===STAGE.critique,c)}">Critics</div>
+          <div class="node" style="left:60px;top:104px;${node(s===STAGE.check,c)}">Check</div>
+        </div>
+        <div style="text-align:center;width:100%">
+          <div class="ringlabel" style="color:${c}">${s.label}</div>
+          <div class="revrow"><span class="rl">rev</span>${dots.join('')}</div>
+        </div>
+      </div>
+      <div class="spec">
+        <div class="cap">LoopSpec</div>
+        <div class="srow"><span class="k">Gate</span><span class="v">${esc(L.gate)}</span></div>
+        <div class="srow"><span class="k">Critics</span><span class="v" style="color:${L.recruits.length?'#d9a441':'#d6e0d8'}">${esc(criticsText)}</span></div>
+        <div class="srow"><span class="k">Max rev</span><span class="v" style="color:${L.max_revisions>2?'#d9a441':'#d6e0d8'}">${L.max_revisions}</span></div>
+        <div class="srow"><span class="k">Human gate</span><span class="v" style="color:${L.human_gate?'#c3b3d0':'#d6e0d8'}">${L.human_gate?L.human_gate+' signs':'none'}</span></div>
+      </div>
+    </div>
+    <div class="cfoot">
+      ${tail ? `<span class="av" style="background:${ag(tail.who).color}">${ag(tail.who).initials}</span>
+        <span class="tx">${fmt(tail.text, tail.mentions)}</span>` : `<span class="tx" style="color:var(--faint)">queued…</span>`}
+      <span class="more">view transcript →</span>
+    </div>
   </div>`;
-}).join('');
-document.querySelectorAll('.gcard').forEach(el=>el.onclick=()=>{
-  const g = presets[+el.dataset.i];
-  document.getElementById('title').value = g.title;
-  kind = g.kind; touches = new Set(g.touches); buildChips();
-  renderLoop(synthesize(g.title, g.kind, new Set(g.touches)), realTitles.has(g.title));
-  window.scrollTo({top:0, behavior:'smooth'});
-});
+}
 
-buildChips();
-run();
+function qaSummary(qa){ return qa.map(([n,ok])=>`${n} ${ok?'✅':'❌'}`).join('  '); }
+function firstFailTrace(qa){
+  const f = (qa||[]).find(([,ok,detail])=> !ok && detail && detail!=="__ouroboros_ok__" && detail.length>20);
+  return f ? f[2] : null;
+}
+function renderDrawer(){
+  const root = document.getElementById('drawer-root');
+  const lp = loops.find(l=>l.id===selectedId);
+  if (!lp){ root.innerHTML=''; return; }
+  const L = lp.L, acc = accentFor(L);
+  const revealed = lp.timeline.slice(0, lp.idx);
+
+  const items = revealed.map(e=>{
+    if (e.kind==="divider") return `<div class="divider"><span>▶ ${esc(e.text)}</span><span class="hr"></span></div>`;
+    if (e.kind==="recruit") return `<div class="recruit"><code>band_add_participant</code><span>${fmt(e.text,[e.recruit])}</span></div>`;
+    if (e.kind==="gate") return `<div class="gate-row"><span>⛔</span><span>${fmt(e.text,["TechLead"])}</span></div>`;
+    if (e.kind==="ship") return `<div class="ship-row"><span>✓</span><span>${esc(e.text)}</span></div>`;
+    const a = ag(e.who);
+    const ok = e.qa ? e.qa.every(x=>x[1]) : null;
+    let qaBlock = "";
+    if (e.qa){
+      qaBlock = `<div class="qa ${ok?'ok':'bad'}">${ok?'✅':'❌'} ${qaSummary(e.qa)}</div>`;
+      const tr = firstFailTrace(e.qa);
+      if (tr) qaBlock += `<details class="trace"><summary>see the real traceback ↘</summary><pre>${esc(tr)}</pre></details>`;
+    }
+    return `<div class="msg">
+      <div class="av" style="background:${a.color}">${a.initials}</div>
+      <div class="body">
+        <div class="mh"><span class="nm" style="color:${a.color}">${esc(e.who)}</span>
+          <span class="fw">${esc(a.framework)}</span>
+          ${e.rev?`<span class="rev">${esc(e.rev)}</span>`:''}</div>
+        <div class="tx">${fmt(e.text, e.mentions)}</div>
+        ${qaBlock}
+      </div>
+    </div>`;
+  }).join('');
+
+  const codeBlock = lp.code ? codePeekHTML(lp) : "";
+  const running = !lp.done ? `<div class="running"><span class="d"></span>the loop is still running…</div>` : "";
+
+  root.innerHTML = `
+    <div class="scrim" data-close></div>
+    <div class="drawer">
+      <div class="dhead">
+        <div class="ico" style="background:${hexA(acc,.14)};border:1px solid ${hexA(acc,.3)}">${KIND_ICON[L.kind]||'✨'}</div>
+        <div class="ti"><div class="task">${esc(L.title)}</div>
+          <div class="sub">${L.kind}${lp.real?' · real QA':''} · loop engineered in the room</div></div>
+        <button class="dx" data-close>✕</button>
+      </div>
+      <div class="dbody">
+        <div class="dcap">Band transcript · audit trail</div>
+        ${items}
+        ${running}
+        ${codeBlock}
+      </div>
+    </div>`;
+  root.querySelectorAll('[data-close]').forEach(el=> el.onclick = ()=>{ selectedId=null; renderDrawer(); });
+  root.querySelectorAll('.codetab').forEach(t=> t.onclick = ()=>{
+    const peek = t.closest('.codepeek');
+    peek.querySelectorAll('.codetab').forEach(x=>x.classList.toggle('on', x===t));
+    peek.querySelector('pre').textContent = peek.dataset[t.dataset.tab];
+  });
+  const db = root.querySelector('.dbody');
+  if (db && !lp.done) db.scrollTop = db.scrollHeight;
+}
+function codePeekHTML(lp){
+  const c = lp.code;
+  return `<div class="codepeek" data-buggy="${esc(c.buggy)}" data-fixed="${esc(c.fixed)}" data-tests="${esc(testsToText(c.tests))}">
+    <div class="dcap" style="padding-top:0">the real code · this loop ran it in a sandbox</div>
+    <div class="codetabs">
+      <button class="codetab on" data-tab="buggy">buggy revision</button>
+      <button class="codetab" data-tab="fixed">the fix</button>
+      <button class="codetab" data-tab="tests">the gate (tests)</button>
+    </div>
+    <pre>${esc(c.buggy)}</pre>
+  </div>`;
+}
+
+const CHIP_TASKS = (DATA.gallery||[]).map(g=>({ icon: SURF_ICON[(g.touches||[])[0]] || KIND_ICON[g.kind] || "🧩",
+  label:g.title.length>26?g.title.slice(0,24)+"…":g.title, title:g.title, kind:g.kind, touches:g.touches }));
+document.getElementById('chips').innerHTML = CHIP_TASKS.map((c,i)=>`<button class="chip" data-chip="${i}">${c.icon} ${esc(c.label)}</button>`).join('');
+document.querySelectorAll('[data-chip]').forEach(el=> el.onclick = ()=>{ const c=CHIP_TASKS[+el.dataset.chip]; addTask(c.title, c.kind, c.touches); });
+
+function classify(t){
+  const s = (t||"").toLowerCase();
+  let kind = "feature";
+  if (/(bug|fix|off.?by|crash|incorrect|wrong|negativ)/.test(s)) kind="bugfix";
+  else if (/(refactor|rename|extract|clean|debt|rewrite)/.test(s)) kind="refactor";
+  else if (/(migrat|schema|backfill)/.test(s)) kind="migration";
+  const ts = new Set();
+  const map = { auth:/(auth|token|login|session|privilege|password|oauth|credential)/, payments:/(payment|charge|card|pci|checkout)/,
+    billing:/(billing|invoice|subscription)/, pii:/(pii|personal data|gdpr|privacy)/, db:/(database|table|sql|query|rows)/,
+    schema:/(schema|migrat)/, api:/(api|endpoint|route|contract|webhook|graphql)/, concurrency:/(concurren|race|lock|parallel)/,
+    perf:/(perf|latency|p95|optimi|slow|cache)/, ui:/(css|style|ui|layout|button|responsive|design|color|a11y|accessib)/,
+    pagination:/(paginat|offset|page)/ };
+  Object.entries(map).forEach(([k,re])=>{ if(re.test(s)) ts.add(k); });
+  if (!ts.size) ts.add("api");
+  return { kind, touches:[...ts] };
+}
+function submitDraft(){
+  const v = document.getElementById('draft').value.trim(); if(!v) return;
+  if (realByTitle[v]) addTask(v);
+  else { const {kind,touches}=classify(v); addTask(v, kind, touches); }
+  document.getElementById('draft').value='';
+}
+document.getElementById('go').onclick = submitDraft;
+document.getElementById('draft').addEventListener('keydown', e=>{ if(e.key==='Enter') submitDraft(); });
+
+addTask(DATA.tasks[0].task.title);
+if (DATA.tasks[1]) timers.push(setTimeout(()=> addTask(DATA.tasks[1].task.title), reduce?0:1200));
+render();
 </script>
 </body>
 </html>
