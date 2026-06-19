@@ -148,6 +148,8 @@
   .board { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; }
   .card { border:1px solid var(--line); background:var(--panel); border-radius:16px; overflow:hidden; cursor:pointer; transition:border-color .15s, transform .15s; animation:cardIn .4s ease both; }
   .card:hover { border-color:rgba(240,225,205,.2); transform:translateY(-1px); }
+  .card.justadded { animation:cardIn .4s ease both, justAdded 1.4s ease-out 1; }
+  @keyframes justAdded { 0%{box-shadow:0 0 0 0 rgba(232,119,46,.6)} 60%{box-shadow:0 0 0 10px rgba(232,119,46,0)} 100%{box-shadow:0 0 0 0 rgba(232,119,46,0)} }
   .card.ship { border-color:rgba(52,211,153,.45); box-shadow:0 0 14px rgba(52,211,153,.18); }
   .card.ship .ringlabel { text-shadow:0 0 12px rgba(52,211,153,.4); }
   .card.hs { border-color:rgba(201,139,255,.3); }
@@ -505,7 +507,8 @@ function accentFor(L){
   return ({bugfix:"#e8772e", refactor:"#c98bff", feature:"#34d399", migration:"#ff7a4d"}[L.kind]) || "#e8772e";
 }
 
-function addTask(title, kind, ts){
+function addTask(title, kind, ts, opts){
+  opts = opts || {};
   title = (title||"").trim(); if(!title) return;
   const real = realByTitle[title] || null;
   let L, timeline, code=null;
@@ -526,9 +529,20 @@ function addTask(title, kind, ts){
     timeline = synthTimeline(L);
   }
   const id = ++seq;
-  loops.push({ id, title, kind:L.kind, touches:L.touches, L, real:!!real, timeline, idx:0, done:false, code });
+  const entry = { id, title, kind:L.kind, touches:L.touches, L, real:!!real, timeline, idx:0, done:false, code };
+  if (opts.prepend) loops.unshift(entry); else loops.push(entry);
   render();
   runLoop(id);
+  if (opts.prepend){
+    requestAnimationFrame(()=>{
+      const el = document.querySelector(`.card[data-cardid="${id}"]`);
+      if (el){
+        el.scrollIntoView({ behavior:'smooth', block:'center' });
+        el.classList.add('justadded');
+        setTimeout(()=> el.classList.remove('justadded'), 1400);
+      }
+    });
+  }
 }
 
 const SPEED = 2.4;   // compress the scripted pauses so the loop resolves to Shipped in ~6s
@@ -808,7 +822,7 @@ function codePeekHTML(lp){
 const CHIP_TASKS = (DATA.gallery||[]).map(g=>({ icon: SURF_ICON[(g.touches||[])[0]] || KIND_ICON[g.kind] || "🧩",
   label:g.title.length>26?g.title.slice(0,24)+"…":g.title, title:g.title, kind:g.kind, touches:g.touches }));
 document.getElementById('chips').innerHTML = CHIP_TASKS.map((c,i)=>`<button class="chip" data-chip="${i}">${c.icon} ${esc(c.label)}</button>`).join('');
-document.querySelectorAll('[data-chip]').forEach(el=> el.onclick = ()=>{ const c=CHIP_TASKS[+el.dataset.chip]; addTask(c.title, c.kind, c.touches); });
+document.querySelectorAll('[data-chip]').forEach(el=> el.onclick = ()=>{ const c=CHIP_TASKS[+el.dataset.chip]; addTask(c.title, c.kind, c.touches, {prepend:true}); });
 
 function classify(t){
   const s = (t||"").toLowerCase();
@@ -818,7 +832,7 @@ function classify(t){
   else if (/(migrat|schema|backfill)/.test(s)) kind="migration";
   const ts = new Set();
   const map = { auth:/(auth|token|login|session|privilege|password|oauth|credential)/, payments:/(payment|charge|card|pci|checkout)/,
-    billing:/(billing|invoice|subscription)/, pii:/(pii|personal data|gdpr|privacy)/, db:/(database|table|sql|query|rows)/,
+    billing:/(billing|invoice|subscription)/, pii:/(pii|personal data|gdpr|privacy|email|encrypt|ssn|address|phone number)/, db:/(database|table|sql|query|rows)/,
     schema:/(schema|migrat)/, api:/(api|endpoint|route|contract|webhook|graphql)/, concurrency:/(concurren|race|lock|parallel)/,
     perf:/(perf|latency|p95|optimi|slow|cache)/, ui:/(css|style|ui|layout|button|responsive|design|color|a11y|accessib)/,
     pagination:/(paginat|offset|page)/ };
@@ -827,10 +841,11 @@ function classify(t){
   return { kind, touches:[...ts] };
 }
 function submitDraft(){
-  const v = document.getElementById('draft').value.trim(); if(!v) return;
-  if (realByTitle[v]) addTask(v);
-  else { const {kind,touches}=classify(v); addTask(v, kind, touches); }
-  document.getElementById('draft').value='';
+  const inp = document.getElementById('draft');
+  const v = inp.value.trim(); if(!v) return;
+  if (realByTitle[v]) addTask(v, null, null, {prepend:true});
+  else { const {kind,touches}=classify(v); addTask(v, kind, touches, {prepend:true}); }
+  inp.value=''; inp.focus();
 }
 document.getElementById('go').onclick = submitDraft;
 document.getElementById('draft').addEventListener('keydown', e=>{ if(e.key==='Enter') submitDraft(); });
