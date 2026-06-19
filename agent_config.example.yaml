@@ -1,16 +1,16 @@
 agents:
-  triage:
+  architect:
     agent_id: ""
     api_key: ""
-  rootcause:
+  critic:
     agent_id: ""
     api_key: ""
-  fixauthor:
+  runner:
     agent_id: ""
     api_key: ""
-  reviewer:
+  securitycritic:
     agent_id: ""
     api_key: ""
-  em:
+  a11ycritic:
     agent_id: ""
     api_key: ""

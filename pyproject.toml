@@ -1,7 +1,7 @@
 [project]
-name = "rollback-room"
+name = "loomwright"
 version = "0.1.0"
-description = "Prod breaks; a room of agents debates root cause, drafts a fix, and a rival OSS model adversarially reviews it — high-risk deploys escalate to a human EM. Coordination runs on Band (@mention handoffs)."
+description = "A Band room that engineers a verification loop per task, then runs it. Loop engineering, run by a band of agents — Track 2, Band of Agents Hackathon."
 requires-python = ">=3.10"
 dependencies = [
     "openai>=1.0",
@@ -15,9 +15,8 @@ live = [
     "pydantic-ai>=0.0.14",
     "langgraph>=0.2",
     "langchain-openai>=0.2",
-    "crewai>=0.40",
 ]
 
-[tool.rollback-room]
+[tool.loomwright]
 offline-demo = "python demo.py"
 live-room = "python band_agents.py"

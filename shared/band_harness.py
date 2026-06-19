@@ -124,12 +124,43 @@ class LocalRoom:
         self._handlers: dict[str, Callable[["LocalRoom", RoomMessage], Awaitable[None]]] = {}
         self._humans: set[str] = set()
         self._human_gate: Optional[asyncio.Future] = None
+        self.recruited: list[str] = []
+        self._recruiters: dict[str, Callable[[str], Callable[["LocalRoom", RoomMessage], Awaitable[None]]]] = {}
+        self._auto_human: dict[str, str] = {}
 
     def join(self, handle: str, handler: Callable[["LocalRoom", RoomMessage], Awaitable[None]]) -> None:
         self._handlers[handle] = handler
 
-    def join_human(self, handle: str) -> None:
+    def register_recruitable(self, handle: str,
+                             factory: Callable[[str], Callable[["LocalRoom", RoomMessage], Awaitable[None]]]) -> None:
+        """Make a specialist available to be pulled in later via recruit() — the
+        local stand-in for Band's band_add_participant platform tool."""
+        self._recruiters[handle] = factory
+
+    async def recruit(self, handle: str, lens: str = "") -> None:
+        """Pull a specialist into the room at runtime (models band_add_participant).
+
+        This is coordination the room decides on its own: an agent realizes the
+        task needs a voice nobody added up front, and adds it. Only registered
+        recruitable specialists can be summoned; the act is logged to the trail."""
+        if handle not in self.recruited:
+            self.recruited.append(handle)
+        factory = self._recruiters.get(handle)
+        if factory and handle not in self._handlers:
+            self._handlers[handle] = factory(lens)
+        self.transcript.append(
+            RoomMessage(sender="system", mentions=[handle],
+                        text=f"➕ recruited @{handle} into the room on demand "
+                             f"({lens or 'specialist'}) — band_add_participant")
+        )
+        self._render(self.transcript[-1])
+
+    def join_human(self, handle: str, auto_reply: Optional[str] = None) -> None:
+        """Add a human participant. In a live Band room the human replies in chat;
+        for a deterministic demo, pass auto_reply and the gate resolves with it."""
         self._humans.add(handle)
+        if auto_reply is not None:
+            self._auto_human[handle] = auto_reply
 
     async def post(self, sender: str, text: str, mentions: Optional[list[str]] = None,
                    payload: Optional[dict] = None) -> None:
@@ -150,6 +181,12 @@ class LocalRoom:
                         text=f"⛔ ESCALATION — awaiting @{handle}: {prompt_text}")
         )
         self._render(self.transcript[-1])
+        if handle in self._auto_human:
+            reply = RoomMessage(sender=handle, mentions=[], text=self._auto_human[handle],
+                                payload={"decision": "auto"})
+            self.transcript.append(reply)
+            self._render(reply)
+            return reply
         self._human_gate = asyncio.get_event_loop().create_future()
         return await self._human_gate
 

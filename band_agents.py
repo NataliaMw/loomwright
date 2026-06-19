@@ -1,13 +1,17 @@
-"""Live Band path for the Rollback Room.
+"""Live Band path for Loomwright.
 
 Run: `python band_agents.py`
 
-Builds every specialist as a real Band-connected agent via
+Builds each specialist as a real Band-connected agent via
 `band_harness.make_band_agent` and starts them with `run_band_room`. Each agent
 reads its `agent_id` / `api_key` from `agent_config.yaml` (+ `.env`) using the
-specialist's `config_key`, then joins the shared Band room and waits to be
-@mentioned. Coordination is the conversation: drive the workflow by @mentioning
-@Triage in the room and the agents hand off down the chain on their own.
+specialist's `config_key`, joins the shared Band room, and waits to be @mentioned.
+
+Coordination is the conversation: drive a task by @mentioning @LoopArchitect in
+the room. The Architect proposes a loop, @LoopCritic attacks it (and recruits a
+specialist via the Band add-participant tool when the task needs one), and
+@LoopRunner runs the loop to its exit condition. The transcript is the record of
+both the loop's design and its execution.
 
 Requires the `thenvoi` SDK and credentials. With no creds, use `demo.py` instead.
 """
@@ -18,30 +22,31 @@ import asyncio
 import os
 import sys
 
-_here = os.path.dirname(__file__)
-for _cand in (os.path.join(_here, "shared"), os.path.join(_here, "..", "shared")):
-    if os.path.isdir(_cand):
-        sys.path.insert(0, _cand)
-sys.path.insert(0, os.path.dirname(__file__))
+_here = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(_here, "shared"))
+sys.path.insert(0, _here)
 
 from band_harness import run_band_room
 
-from specialists import triage, rootcause, fixauthor, reviewer
+from specialists import architect, critic, runner
 
 
 MISSION = (
-    "Production just broke. As a room, find the root cause, draft a fix, have a "
-    "RIVAL model adversarially review it, and never ship a high-risk deploy "
-    "without a human EM sign-off. The transcript is the incident audit trail."
+    "Loop engineering, as a room. Given a coding task, do NOT run a fixed pipeline. "
+    "First DESIGN a verification loop that fits this specific task — the checks that "
+    "gate it, the critics that vote, when it's allowed to stop, and whether a human "
+    "must sign. Then RUN that loop: generate, let critics attack, revise, re-check "
+    "until the exit condition holds. Recruit a specialist into the room when the task "
+    "needs a voice nobody added up front. The transcript is the audit trail for both "
+    "the loop you built and the code it produced."
 )
 
 
 def build_specialists():
     return [
-        triage.specialist(),
-        rootcause.specialist(),
-        fixauthor.specialist(),
-        reviewer.specialist(),
+        architect.specialist(),
+        critic.specialist(),
+        runner.specialist(),
     ]
 
 
