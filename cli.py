@@ -100,7 +100,7 @@ HELP = """ouroboros — any task, the loop it needs
                             run the loop on YOUR repo + YOUR tests
                             (add AIMLAPI_API_KEY to let a model write the fixes)
 
-  https://github.com/NataliaMw/ouroboros · https://nataliamw.github.io/ouroboros/
+  https://github.com/NataliaMw/ouroboros · https://ouroboros-rust.vercel.app/
 """
 
 

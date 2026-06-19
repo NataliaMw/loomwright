@@ -12,7 +12,7 @@
 
 **The problem:** every coding-agent tool runs the *same fixed loop* for every task — a CSS tweak and a database migration get the identical Planner→Coder→Reviewer pipeline. When the loop's exit condition is too weak for the task, confident-but-wrong code ships. **Ouroboros builds the loop the specific task needs — and a band of agents builds it, then runs it, on one audit trail.**
 
-> **Try it in the browser (zero install):** https://nataliamw.github.io/ouroboros/ — describe *your* task and the loop synthesizes live; scroll to **"Watch a real run"** to see the loop fix real code, gated by real tests.
+> **Try it in the browser (zero install):** https://ouroboros-rust.vercel.app/ — describe *your* task and the loop synthesizes live; scroll to **"Watch a real run"** to see the loop fix real code, gated by real tests.
 >
 > **Run the real loop yourself — no clone, no keys** (it's published on PyPI):
 > ```bash

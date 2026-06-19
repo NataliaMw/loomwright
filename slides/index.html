@@ -154,12 +154,12 @@
   .term-bar { display: flex; align-items: center; gap: 8px; padding: 11px 16px; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 11px; letter-spacing: 0.1em; }
   .term-bar .tb { width: 10px; height: 10px; border-radius: 50%; }
   .term-bar .tb:nth-child(1){background:#5a4a22}.term-bar .tb:nth-child(2){background:#3d341e}.term-bar .tb:nth-child(3){background:#2c2616}
-  .term-body { padding: 14px 18px; overflow: hidden; }
-  .msg { padding: 6px 0; border-bottom: 1px solid #14110a; }
+  .term-body { padding: 12px 18px; overflow: hidden; }
+  .msg { padding: 4px 0; border-bottom: 1px solid #14110a; }
   .msg:last-child { border-bottom: none; }
   .sender { color: var(--gold); } .sender.system { color: var(--gate); } .sender.user { color: var(--text); }
   .arrow-to { color: var(--faint); } .mention { color: var(--gold-hi); } .msg-text { color: var(--text); opacity: .9; }
-  .qa { margin-top: 6px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .qa { margin-top: 4px; display: flex; flex-wrap: wrap; gap: 7px; }
   .qa .chk { font-size: 11px; padding: 3px 9px; border-radius: 4px; border: 1px solid var(--line-2); }
   .qa .chk.pass { color: var(--pass); border-color: #2c4f38; } .qa .chk.fail { color: var(--break); border-color: #532824; }
 
@@ -172,9 +172,9 @@
   .trace { margin-top: 16px; background: #160a08; border: 1px solid #4a221c; border-radius: 8px; padding: 14px 16px; font-size: 13px; color: var(--break); white-space: pre-wrap; line-height: 1.5; }
 
   /* screenshot frames */
-  .shot { border: 1px solid var(--line-2); border-radius: 10px; overflow: hidden; background: #fff; box-shadow: 0 20px 60px rgba(0,0,0,.55); position: relative; }
-  .shot img { display: block; width: 100%; }
-  .shot .cap { position: absolute; left: 0; right: 0; bottom: 0; padding: 9px 14px; font-size: 11px; letter-spacing: 0.06em; color: var(--gold-hi); background: linear-gradient(0deg, rgba(11,10,6,0.94), transparent); text-shadow: 0 1px 4px #000; }
+  .shot { border: 1px solid var(--line-2); border-radius: 10px; overflow: hidden; background: #0A0805; box-shadow: 0 20px 60px rgba(0,0,0,.55); }
+  .shot img { display: block; width: 100%; max-height: 430px; object-fit: cover; object-position: top; background: #fff; }
+  .shot .cap { display: block; padding: 11px 15px; font-size: 11.5px; letter-spacing: 0.05em; color: var(--gold-hi); background: var(--panel); border-top: 1px solid var(--line-2); }
   .shot-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
 
   /* rubric */
@@ -183,6 +183,52 @@
   .rubric .pillar { color: var(--gold); font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; }
   .rubric h3 { font-family: var(--serif); font-weight: 600; font-size: 21px; margin: 0 0 8px; color: var(--gold-hi); }
   .rubric p { margin: 0; font-size: 14px; line-height: 1.5; color: var(--muted); }
+
+  /* visual-first content blocks */
+  .bigquote { font-family: var(--serif); font-weight: 600; font-size: 60px; line-height: 1.06; letter-spacing: -0.01em; color: var(--text); margin: 8px 0 36px; max-width: 20ch; }
+  .bigquote s { color: var(--muted); }
+  .loopflow { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .loopflow .step { font-size: 18px; padding: 12px 22px; border: 1px solid var(--line-2); border-radius: 999px; background: var(--ground-2); color: var(--text); }
+  .loopflow .step.done { border-color: var(--pass); color: var(--pass); }
+  .loopflow .ar { color: var(--gold); font-size: 22px; }
+  .attrib { margin-top: 36px; font-size: 14px; letter-spacing: 0.08em; color: var(--muted); }
+
+  .pipe { margin-top: 16px; font-size: 15px; color: var(--muted); padding: 10px 14px; border: 1px dashed var(--line-2); border-radius: 6px; background: var(--ground-2); }
+  .verdict { text-align: center; margin-top: 30px; font-size: 26px; font-family: var(--serif); line-height: 1.3; }
+  .verdict .dim { font-size: 17px; font-family: var(--mono); font-style: italic; }
+
+  .flow3 { display: flex; align-items: stretch; gap: 12px; margin-top: 30px; }
+  .flow3 .fstep { flex: 1; border: 1px solid var(--line-2); border-radius: 10px; background: linear-gradient(180deg,var(--panel-2),var(--panel)); padding: 22px 16px; text-align: center; }
+  .flow3 .fstep.done { border-color: var(--gold); box-shadow: inset 0 0 0 1px rgba(212,162,78,0.18); }
+  .flow3 .fi { font-size: 34px; margin-bottom: 12px; }
+  .flow3 .ft { font-family: var(--serif); font-weight: 600; font-size: 19px; color: var(--gold-hi); margin-bottom: 6px; }
+  .flow3 .fd { font-size: 13px; color: var(--muted); }
+  .flow3 .far { align-self: center; color: var(--gold); font-size: 26px; }
+
+  .statchips { display: flex; flex-direction: column; gap: 12px; }
+  .statchips .stat { font-size: 17px; color: var(--text); border-left: 3px solid var(--gold); padding: 6px 0 6px 16px; }
+  .statchips .stat b { font-family: var(--serif); font-size: 30px; color: var(--gold-hi); margin-right: 8px; }
+
+  /* revision-bounce diagram */
+  #rec-badge { margin-left: auto; color: var(--break); font-size: 11px; letter-spacing: 0.14em; display: inline-flex; align-items: center; }
+  #rec-badge::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--break); margin-right: 7px; animation: rec 1.4s infinite; }
+  @keyframes rec { 0%,100% { opacity: 1; } 50% { opacity: .25; } }
+  .bounce { display: grid; grid-template-columns: 1fr 0.7fr 1fr; gap: 18px; align-items: center; }
+  .rev { border: 1px solid var(--line-2); border-radius: 12px; background: linear-gradient(180deg,var(--panel-2),var(--panel)); padding: 26px 24px; }
+  .rev.fail { border-color: #5a2b26; box-shadow: inset 0 0 0 1px rgba(229,86,75,0.12); }
+  .rev.ok { border-color: #2d5a3f; box-shadow: inset 0 0 0 1px rgba(95,185,126,0.16); }
+  .rev-h { font-family: var(--serif); font-weight: 600; font-size: 24px; color: var(--text); margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
+  .tag-fail { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; color: var(--break); border: 1px solid #5a2b26; border-radius: 4px; padding: 3px 8px; }
+  .tag-ok { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; color: var(--pass); border: 1px solid #2d5a3f; border-radius: 4px; padding: 3px 8px; }
+  .checks { display: flex; flex-direction: column; gap: 9px; margin-bottom: 16px; }
+  .bc { font-family: var(--mono); font-size: 16px; padding: 9px 14px; border-radius: 6px; background: var(--ground); border: 1px solid var(--line); }
+  .bc.pass { color: var(--pass); } .bc.fail { color: var(--break); }
+  .rev-note { font-size: 13px; color: var(--muted); line-height: 1.45; }
+  .bounce-arrow { text-align: center; color: var(--gold); }
+  .bounce-arrow .ba-top, .bounce-arrow .ba-bot { font-size: 12px; color: var(--muted); line-height: 1.4; }
+  .bounce-arrow .ba-top { color: var(--break); }
+  .bounce-arrow .ba-bot { color: var(--pass); }
+  .bounce-arrow .ba-big { font-size: 56px; color: var(--gold-hi); margin: 6px 0; line-height: 1; }
 
   /* close */
   #s-close { text-align: center; align-items: center; }
@@ -218,7 +264,8 @@
     #stage { transform: none !important; width: 1280px; height: auto; box-shadow: none; background: var(--ground); overflow: visible; }
     #progress, #dots, #hud, #counter { display: none !important; }
     .slide {
-      position: relative; inset: auto; width: 1280px; height: 720px; margin: 0;
+      position: relative; inset: auto; width: 1280px; height: 720px; max-height: 720px; margin: 0;
+      overflow: hidden;
       opacity: 1 !important; visibility: visible !important; transform: none !important;
       page-break-after: always; break-after: page; page-break-inside: avoid; break-inside: avoid;
       -webkit-print-color-adjust: exact; print-color-adjust: exact;
@@ -267,11 +314,15 @@
   <section class="slide content" data-name="The shift">
     <canvas class="ringmark" width="460" height="460" data-ring="static"></canvas>
     <div class="slide-inner">
-      <p class="eyebrow reveal"><span class="num">i.</span> the shift everyone's standing on <span class="rule"></span></p>
-      <h2 class="reveal" style="--d:.1s; max-width:18ch">Stop prompting agents.<br />Start designing the <em>loop</em> they run inside.</h2>
-      <p class="lede reveal" style="--d:.25s; max-width:60ch">June 2026 named it — <b>loop engineering</b> (Osmani, Cherny). The craft is no longer the perfect prompt; it's the <span class="gold">generate → check → revise</span> loop with a real exit condition.</p>
-      <p class="lede reveal" style="--d:.4s; max-width:60ch; border-left:2px solid var(--gold); padding-left:20px; font-family:var(--serif); font-style:italic; font-size:24px; color:var(--gold-hi)">"You shouldn't be prompting coding agents anymore. You should be designing loops that prompt your agents."</p>
-      <p class="lede sm dim reveal" style="--d:.5s; margin-top:6px">— a post that hit <b style="color:var(--text)">6.5M views</b>, eleven days before this deadline.</p>
+      <p class="eyebrow reveal"><span class="num">i.</span> the shift · <b style="color:var(--text)">loop engineering</b>, June 2026 <span class="rule"></span></p>
+      <p class="bigquote reveal" style="--d:.15s">"Stop <s style="text-decoration-color:var(--break)">prompting</s> agents.<br />Start <span class="gold">designing the loop</span> they run inside."</p>
+      <div class="loopflow reveal" style="--d:.4s">
+        <span class="step">generate</span><span class="ar">→</span>
+        <span class="step">check</span><span class="ar">→</span>
+        <span class="step">revise</span><span class="ar" style="transform:scaleX(-1);display:inline-block">↺</span>
+        <span class="step done">exit ✓</span>
+      </div>
+      <p class="attrib reveal" style="--d:.55s">Osmani · Cherny &nbsp;·&nbsp; <b style="color:var(--gold-hi)">6.5M views</b>, 11 days before this deadline</p>
     </div>
   </section>
 
@@ -279,12 +330,12 @@
   <section class="slide content" data-name="The gap">
     <div class="slide-inner">
       <p class="eyebrow reveal"><span class="num">ii.</span> the gap nobody's closed <span class="rule"></span></p>
-      <h2 class="reveal" style="--d:.1s">Every tool ships <span class="break">one</span> loop —<br />and runs it for <em style="color:var(--break);font-style:italic">everything</em>.</h2>
-      <div class="cols cols-2 grow" style="--d:.3s; margin-top:8px">
-        <div class="card glow"><span class="idx">01</span><div class="big">CSS tweak</div><p>Planner → Coder → Reviewer.</p></div>
-        <div class="card glow"><span class="idx">02</span><div class="big">DB migration</div><p>Planner → Coder → Reviewer. <b style="color:var(--break)">The identical pipeline.</b></p></div>
+      <h2 class="reveal" style="--d:.1s">One loop. <em style="color:var(--break);font-style:italic">Everything.</em></h2>
+      <div class="cols cols-2 grow" style="--d:.3s; margin-top:4px">
+        <div class="card glow"><div class="big" style="font-size:34px">🎨 CSS tweak</div><p style="font-size:15px">trivial · zero risk</p><div class="pipe">Planner → Coder → Reviewer</div></div>
+        <div class="card glow"><div class="big" style="font-size:34px">🔐 auth migration</div><p style="font-size:15px">can leak every session</p><div class="pipe">Planner → Coder → Reviewer</div></div>
       </div>
-      <p class="lede reveal" style="--d:.5s; margin-top:26px; max-width:64ch">A one-line bugfix and an auth change that can leak sessions get the <b>same</b> gates, reviewers, and stopping rule. That's vibe coding with extra steps — and building the loop by hand is still expert work nobody's automated.</p>
+      <p class="verdict reveal" style="--d:.55s"><b class="break">Same gates. Same reviewers. Same stopping rule.</b><br /><span class="dim">vibe coding with extra steps</span></p>
     </div>
   </section>
 
@@ -293,9 +344,16 @@
     <canvas class="ringmark" width="460" height="460" data-ring="static"></canvas>
     <div class="slide-inner">
       <p class="eyebrow reveal"><span class="num">iii.</span> what ouroboros is <span class="rule"></span></p>
-      <h2 class="reveal" style="--d:.1s; max-width:20ch">A band of agents that <em>engineers the loop</em> a task needs — then runs it.</h2>
-      <p class="lede reveal" style="--d:.28s; max-width:62ch">Point it at a task. The room <b>designs</b> the verification loop for <em>that</em> task — which checks gate it, which critics vote, whether a human must sign — then <b>runs</b> it: generate, let the critics attack, run the real checks, revise until a real exit condition holds.</p>
-      <p class="lede dim reveal" style="--d:.42s; max-width:62ch">The snake that eats its own tail — the oldest symbol for a loop that feeds itself until it's whole. What it produces is an artifact you can read, the <span class="gold">LoopSpec</span>, not a diff you have to trust.</p>
+      <h2 class="reveal" style="--d:.1s; max-width:22ch">It <em>engineers the loop</em>, then runs it.</h2>
+      <div class="flow3 grow" style="--d:.3s">
+        <div class="fstep"><div class="fi">📥</div><div class="ft">any task</div><div class="fd">"rotate SSO tokens"</div></div>
+        <div class="far">→</div>
+        <div class="fstep"><div class="fi">🧭</div><div class="ft">design the loop</div><div class="fd">checks · critics · gate</div></div>
+        <div class="far">→</div>
+        <div class="fstep"><div class="fi">🔁</div><div class="ft">run the loop</div><div class="fd">generate · check · revise</div></div>
+        <div class="far">→</div>
+        <div class="fstep done"><div class="fi">📜</div><div class="ft">LoopSpec + code</div><div class="fd">an artifact you can read</div></div>
+      </div>
     </div>
   </section>
 
@@ -360,11 +418,11 @@
   <!-- 08 — BAND IS LOAD-BEARING -->
   <section class="slide content" data-name="Band">
     <div class="slide-inner">
-      <p class="eyebrow reveal"><span class="num">vi.</span> why band is the coordination layer — not a wrapper <span class="rule"></span></p>
-      <h2 class="sm reveal" style="--d:.1s">Take Band out and this is <span class="break" style="font-style:italic;font-family:var(--serif)">impossible</span>.</h2>
-      <div class="cols cols-2" style="margin-bottom:20px">
-        <div class="card glow grow" style="--d:.24s"><h3>① Dynamic recruitment</h3><p>The room decides <em>at runtime</em> it needs a voice nobody added up front, and adds it — <code>band_add_participant</code>. Membership grows to fit the task. The most Band-native moment in the system.</p></div>
-        <div class="card glow grow" style="--d:.36s"><h3>② Design + execution, one trail</h3><p>The loop's <em>design</em> and its <em>execution</em> live on the <b>same audit trail</b> — every handoff an <span class="mention">@mention</span>. You read the loop a room built <em>before</em> you trust the code. The transcript <em>is</em> the record.</p></div>
+      <p class="eyebrow reveal"><span class="num">vi.</span> band is the coordination layer — not a wrapper <span class="rule"></span></p>
+      <h2 class="sm reveal" style="--d:.1s">Take Band out → <span class="break" style="font-style:italic;font-family:var(--serif)">impossible</span>.</h2>
+      <div class="cols cols-2" style="margin-bottom:18px">
+        <div class="card glow grow" style="--d:.24s"><h3>① Dynamic recruitment</h3><p style="font-size:15px">The room adds an agent <b>mid-flight</b> via <code>band_add_participant</code>.</p></div>
+        <div class="card glow grow" style="--d:.36s"><h3>② One audit trail</h3><p style="font-size:15px">Design <b>and</b> execution on the same transcript. Every step an <span class="mention">@mention</span>.</p></div>
       </div>
       <div class="term reveal" style="--d:.48s">
         <div class="term-bar"><span class="tb"></span><span class="tb"></span><span class="tb"></span>&nbsp;&nbsp;band room · handoff chain</div>
@@ -382,30 +440,57 @@
   <!-- 09 — PROOF (real Band conversation screenshot) -->
   <section class="slide content" data-name="Proof">
     <div class="slide-inner">
-      <p class="eyebrow reveal"><span class="num">vii.</span> this happened in a real band room <span class="rule"></span></p>
-      <div class="cols" style="grid-template-columns: 1fr 1.18fr; gap:34px; align-items:center">
+      <p class="eyebrow reveal"><span class="num">vii.</span> not a diagram — a real band room <span class="rule"></span></p>
+      <div class="cols" style="grid-template-columns: 0.62fr 1.38fr; gap:34px; align-items:center">
         <div class="reveal" style="--d:.12s">
-          <h2 class="sm" style="font-size:38px; margin-bottom:18px">Not a diagram.<br />A <em>transcript.</em></h2>
-          <p class="lede sm">The six agents register on Band, connect over WebSocket, and drive the off-by-one loop end-to-end — each handoff a real <span class="mention">@mention</span>. @LoopArchitect proposes the loop; @QAEngineer runs the checks; @RivalReviewer bounces failing revisions.</p>
-          <p class="lede sm dim" style="margin-top:10px">Two of them carry real tools — they patch the file and run the tests. Nothing here is staged.</p>
+          <h2 style="font-size:46px; margin-bottom:22px">Not a<br />diagram.<br /><em>A transcript.</em></h2>
+          <div class="statchips">
+            <div class="stat"><b>6</b> agents on Band</div>
+            <div class="stat"><b>2</b> carry real tools</div>
+            <div class="stat"><b>0</b> staged steps</div>
+          </div>
         </div>
         <div class="shot grow" style="--d:.3s">
           <img src="band-convo.jpeg" alt="Live Band room conversation between the agents" />
-          <div class="cap">Live Band room · LoopArchitect designing the verification loop · 7 participants</div>
+          <div class="cap">Live Band room · agents handing off via @mention · 7 participants</div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 10 — REAL RUN -->
+  <!-- 10 — REAL RUN (visual bounce) -->
   <section class="slide content" data-name="Real run">
     <div class="slide-inner">
-      <p class="eyebrow reveal"><span class="num">viii.</span> the loop, bouncing — real subprocess QA <span class="rule"></span></p>
-      <h2 class="sm reveal" style="--d:.08s; font-size:38px">The checks <span class="break">really run</span>. Red is real. Green is <em class="pass" style="color:var(--pass)">earned</em>.</h2>
-      <div class="term reveal" style="--d:.2s">
-        <div class="term-bar"><span class="tb"></span><span class="tb"></span><span class="tb"></span>&nbsp;&nbsp;transcript · "Fix off-by-one in pagination offset" · sandboxed subprocess</div>
-        <div class="term-body" id="transcript"></div>
+      <p class="eyebrow reveal"><span class="num">viii.</span> the loop bounced — captured live, no edits <span class="rule"></span>
+        <span id="rec-badge">● REC</span>
+      </p>
+      <h2 class="reveal" style="--d:.08s; margin-bottom:24px">Red is real. Green is <em class="pass" style="color:var(--pass)">earned</em>.</h2>
+      <div class="bounce grow" style="--d:.2s">
+        <div class="rev fail">
+          <div class="rev-h">revision 0 <span class="tag-fail">FAILED</span></div>
+          <div class="checks">
+            <span class="bc pass">✅ compiles</span>
+            <span class="bc fail">❌ unit-tests</span>
+            <span class="bc fail">❌ repro-test</span>
+          </div>
+          <div class="rev-note">real <code style="color:var(--break)">AssertionError</code> from a real subprocess</div>
+        </div>
+        <div class="bounce-arrow">
+          <div class="ba-top">↩ @RivalReviewer bounces it</div>
+          <div class="ba-big">↺</div>
+          <div class="ba-bot">@CodeAuthor patches · QA re-runs</div>
+        </div>
+        <div class="rev ok">
+          <div class="rev-h">revision 1 <span class="tag-ok">SHIPPED</span></div>
+          <div class="checks">
+            <span class="bc pass">✅ compiles</span>
+            <span class="bc pass">✅ unit-tests</span>
+            <span class="bc pass">✅ repro-test</span>
+          </div>
+          <div class="rev-note">every required check green — exit condition met</div>
+        </div>
       </div>
+      <p class="verdict reveal" style="--d:.5s; margin-top:26px; font-size:22px">Ships only when tests pass — else a <b class="gold">verified failure</b>, not a confident wrong answer.</p>
     </div>
   </section>
 
@@ -434,10 +519,10 @@
     <div class="slide-inner">
       <p class="eyebrow reveal"><span class="num">x.</span> all four pillars <span class="rule"></span></p>
       <div class="rubric grow" style="--d:.14s">
-        <div><div class="pillar">Application of Technology</div><h3>Band is load-bearing twice.</h3><p>Dynamic recruitment + a visible design-then-execute handoff chain, all as <span class="mention">@mention</span> routing on one trail.</p></div>
-        <div><div class="pillar">Originality</div><h3>The pipeline <em>is</em> the product.</h3><p>Every other entry runs a fixed loop. Ouroboros synthesizes the loop per task — the artifact it ships is a <span class="gold">LoopSpec</span>.</p></div>
-        <div><div class="pillar">Business Value</div><h3>Confident-wrong code, stopped.</h3><p>Loops made inspectable and task-appropriate, with a human gate exactly where the stakes demand one. Auditable by design.</p></div>
-        <div><div class="pillar">Presentation</div><h3>The thesis fits one screen.</h3><p>Two tasks, two loops, side by side, difference highlighted — then open the transcript and watch it happen live.</p></div>
+        <div><div class="pillar">Application of Technology</div><h3>Band, load-bearing twice.</h3><p>Recruitment + handoffs, one trail.</p></div>
+        <div><div class="pillar">Originality</div><h3>The pipeline <em>is</em> the product.</h3><p>A loop per task, not a fixed one.</p></div>
+        <div><div class="pillar">Business Value</div><h3>Confident-wrong code, stopped.</h3><p>Human gate where stakes demand.</p></div>
+        <div><div class="pillar">Presentation</div><h3>Thesis fits one screen.</h3><p>Two loops, side by side, live.</p></div>
       </div>
     </div>
   </section>
@@ -450,9 +535,9 @@
       <p class="tagline reveal" style="--d:.12s; margin-bottom:6px; font-size:24px">any task <span class="arrow">→</span> the loop it needs</p>
       <div class="code reveal" style="--d:.24s; text-align:left; max-width:740px; margin:24px auto 0; white-space:pre-wrap; background:#0A0805"><span class="add">$</span> pipx run ouroboros-loop try        <span class="dim"># the real loop, zero keys, zero clone</span>
 <span class="add">$</span> pipx run ouroboros-loop run --repo ../you --test "pytest -q" --file src/x.py</div>
-      <p class="lede dim sm reveal" style="--d:.36s; margin:16px auto 0; text-align:center; max-width:76ch">Published on PyPI — judges run the real loop in one line. Or as a live Band room: six cross-framework agents coordinate through <span class="mention">@mention</span> handoffs, patch your real file, and only finalize once <b>your</b> real tests go green. Verified live.</p>
+      <p class="lede sm reveal" style="--d:.36s; margin:14px auto 0; text-align:center; max-width:60ch"><span class="gold">One line on PyPI.</span> Or a live 6-agent Band room — patches your file, ships only when <b>your</b> tests go green.</p>
       <div class="cta-row reveal" style="--d:.48s">
-        <a class="cta" href="https://nataliamw.github.io/ouroboros/">Try the live composer →</a>
+        <a class="cta" href="https://ouroboros-rust.vercel.app/">Try the live composer →</a>
         <a class="cta ghost" href="https://github.com/NataliaMw/ouroboros">Source · MIT</a>
       </div>
       <p class="signature reveal" style="--d:.6s"><span class="snake">🐍</span> built by the Neon Code team — because the loop deserves to be engineered, not copy-pasted.</p>
@@ -1397,11 +1482,11 @@ document.addEventListener("DOMContentLoaded", function () {
   var phaseEl = document.getElementById("ring-phase");
   var phases = ["generate", "check", "revise", "check", "ship ✓"];
   var lastPhase = -1, start = null, raf = null;
-  function phaseFor(t) { var cyc = 5200; return Math.floor((t % cyc) / (cyc / phases.length)); }
+  function phaseFor(t) { var cyc = 10000; return Math.floor((t % cyc) / (cyc / phases.length)); }
   function tick(ts) {
     if (start === null) start = ts;
     var t = ts - start;
-    drawRing(ctx, 720, (t * 0.00044) % (Math.PI * 2), { fill: "#0B0A06" });
+    drawRing(ctx, 720, (t * 0.00026) % (Math.PI * 2), { fill: "#0B0A06" });
     var p = phaseFor(t);
     if (p !== lastPhase) { lastPhase = p; phaseEl.textContent = phases[p]; phaseEl.style.color = (phases[p] === "revise") ? BREAK : GOLD; }
     raf = requestAnimationFrame(tick);
@@ -1414,40 +1499,9 @@ document.addEventListener("DOMContentLoaded", function () {
     drawRing(cv.getContext("2d"), cv.width, 2.1, null);
   });
 
-  /* ---- transcript ---- */
-  var DATA = JSON.parse(document.getElementById("loom-data").textContent);
-  var transcript = DATA.tasks[0].transcript;
-  var box = document.getElementById("transcript");
-  var transcriptPlayed = false;
-  function escapeHtml(s) { return s.replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
-  function chkEl(name, ok) { var c = document.createElement("span"); c.className = "chk " + (ok ? "pass" : "fail"); c.textContent = (ok ? "✅ " : "❌ ") + name; return c; }
-  function renderMsg(m) {
-    var d = document.createElement("div"); d.className = "msg";
-    var sc = (m.sender === "system") ? "system" : (m.sender === "user" ? "user" : "");
-    var mentions = (m.mentions || []).map(function (x) { return '<span class="mention">@' + x + "</span>"; }).join(" ");
-    var arrow = mentions ? ' <span class="arrow-to">→</span> ' : " ";
-    var text = (m.text || "").split("\n")[0];
-    d.innerHTML = '<span class="sender ' + sc + '">' + m.sender + "</span>" + arrow + mentions +
-      ' <span class="msg-text">' + escapeHtml(text.replace(/@\w+/g, "").trim()) + "</span>";
-    if (m.qa) { var qa = document.createElement("div"); qa.className = "qa"; m.qa.forEach(function (r) { qa.appendChild(chkEl(r[0], r[1])); }); d.appendChild(qa); }
-    return d;
-  }
-  function playTranscript() {
-    if (transcriptPlayed) return; transcriptPlayed = true;
-    box.innerHTML = "";
-    var els = transcript.map(renderMsg);
-    if (reduce) { els.forEach(function (e) { box.appendChild(e); }); return; }
-    els.forEach(function (el, i) {
-      el.style.opacity = "0"; el.style.transform = "translateY(6px)"; el.style.transition = "opacity .3s, transform .3s";
-      box.appendChild(el);
-      setTimeout(function () { el.style.opacity = "1"; el.style.transform = "none"; box.scrollTop = box.scrollHeight; }, 300 * i + 100);
-    });
-  }
-
   function onEnter(n) {
     var name = slides[n].dataset.name;
     if (name === "The loop") startRing(); else stopRing();
-    if (name === "Real run") playTranscript();
   }
 
   /* ---- print ---- */
@@ -1456,7 +1510,6 @@ document.addEventListener("DOMContentLoaded", function () {
     stage.style.transform = "none";
     slides.forEach(function (sl) { sl.classList.add("active"); });
     drawRing(ctx, 720, 2.2, { fill: "#0B0A06" }); phaseEl.textContent = "the loop";
-    if (!transcriptPlayed) { transcriptPlayed = true; box.innerHTML = ""; transcript.map(renderMsg).forEach(function (e) { box.appendChild(e); }); }
   }
   function unprep() { printing = false; slides.forEach(function (sl, i) { sl.classList.toggle("active", i === idx); }); fit(); }
   window.addEventListener("beforeprint", prepPrint);

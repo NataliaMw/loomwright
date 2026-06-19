@@ -87,7 +87,7 @@ critic on a sensitive surface"* and **recruits `@SecurityCritic` into the room a
 runtime** (`band_add_participant`), followed by the `@TechLead` gate you approve
 inline. Same room, same agents, **two different loops** — the loop was engineered for
 the task, live, through Band. (The live demo page shows the same two loops side by
-side: https://nataliamw.github.io/ouroboros/)
+side: https://ouroboros-rust.vercel.app/)
 
 ## Troubleshooting
 

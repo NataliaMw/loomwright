@@ -873,9 +873,10 @@ function buildRealRun(){
       </div>
       <pre id="rr-term"></pre>
       <div class="term-foot">
-        <button id="rr-play" class="go" style="padding:7px 15px;font-size:12.5px">↻ replay recording</button>
-        <span class="term-cap">${esc(rr.caption||'')}</span>
-        <span class="term-live">run it live on your repo → <code>pipx run ouroboros try</code></span>
+        <button id="rr-live" class="go" style="padding:7px 15px;font-size:12.5px">▶ Run it live</button>
+        <button id="rr-play" class="go" style="padding:7px 15px;font-size:12.5px;background:var(--panel2);color:var(--ink);border:1px solid var(--line2)">↻ replay recording</button>
+        <span class="term-cap" id="rr-cap">${esc(rr.caption||'')}</span>
+        <span class="term-live">or on your repo → <code>pipx run ouroboros-loop try</code></span>
       </div>
     </div>`;
   const term = host.querySelector('#rr-term');
@@ -891,6 +892,46 @@ function buildRealRun(){
     }, 75);
   }
   host.querySelector('#rr-play').onclick = play;
+
+  // ▶ Run it live — calls the hosted API; a REAL loop runs server-side (keys held
+  // server-side), and we stream the real events. Falls back to the recording if the
+  // API isn't reachable (e.g. on GitHub Pages, which has no backend).
+  const liveBtn = host.querySelector('#rr-live');
+  liveBtn.onclick = async () => {
+    if (_rrTimer) clearInterval(_rrTimer);
+    liveBtn.disabled = true; liveBtn.textContent = '● running on the server…';
+    term.textContent = '┃ contacting the loop server…\n';
+    try {
+      const res = await fetch('/api/run', { method: 'POST' });
+      if (!res.ok) throw new Error('api ' + res.status);
+      const data = await res.json();
+      term.textContent = '';
+      const label = { architect:'LoopArchitect', qa:'QAEngineer', reviewer:'RivalReviewer', author:'CodeAuthor' };
+      let i = 0;
+      const ev = data.events || [];
+      const step = () => {
+        if (i >= ev.length){
+          term.textContent += `\n────────────────────────────────────────\n  ${data.status==='shipped'?'LOOP COMPLETE — tests pass ✅':'verified failure'} · ${data.revisions} revision(s)`
+            + (data.used_model ? '  ·  fix written live by AI/ML API' : '')
+            + `\n  final code:\n${(data.final_code||'').split('\n').map(l=>'    '+l).join('\n')}`;
+          term.scrollTop = term.scrollHeight;
+          liveBtn.disabled = false; liveBtn.textContent = '▶ Run it live'; return;
+        }
+        const [who, txt] = ev[i++];
+        term.textContent += `┃ ${label[who]||who} ▸ ${txt}\n`;
+        term.scrollTop = term.scrollHeight;
+        setTimeout(step, reduce?0:500);
+      };
+      const cap = host.querySelector('#rr-cap');
+      if (cap) cap.textContent = data.used_model ? 'a real loop, just now — fix written live by AI/ML API, gated by the repo’s real test'
+                                                 : 'a real loop, just now — gated by the repo’s real test';
+      step();
+    } catch (e) {
+      term.textContent = '(live server not reachable here — playing the recorded run instead)\n\n';
+      liveBtn.disabled = false; liveBtn.textContent = '▶ Run it live';
+      setTimeout(play, 600);
+    }
+  };
   return play;
 }
 function startRealRun(){
