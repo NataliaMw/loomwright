@@ -192,11 +192,16 @@ RivalReviewer, all on the Band transcript.
 
 ## Tech
 
-- **Band** (`thenvoi`) — the coordination layer: rooms, `@mention` routing, on-demand
-  recruitment.
-- **Cross-framework agents** — Pydantic AI (Architect, Runner) + LangGraph (Critic).
-- **AI/ML API** — orchestration/reasoning roles. **Featherless** — the rival OSS model
-  behind the critics, deliberately a different provider so critique isn't theater.
+- **Band** (`band` SDK, v1.0.0) — the coordination layer: rooms, `@mention` routing,
+  on-demand recruitment.
+- **Cross-framework agents** — Pydantic AI (Architect, Runner, Author, QA) + LangGraph
+  (Critic). Six agents, three frameworks, one room.
+- **Two LLM providers, used for a reason — not bolted on.** The author/architect/runner
+  reason on **AI/ML API** (frontier). The **@RivalReviewer runs a Featherless OSS model
+  (Qwen2.5-72B)** — a *different vendor and model*. That split is load-bearing: an
+  adversarial review only counts if a genuinely different brain does it, never the same
+  model grading its own work. Take Featherless out and the "rival" reviewer is just the
+  author talking to itself. (Verified live against `api.featherless.ai`.)
 - **No build step for the demo** — the loop's control flow is deterministic, so the
   recording is byte-for-byte reproducible and doesn't depend on a live model.
 
