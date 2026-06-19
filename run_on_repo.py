@@ -73,6 +73,9 @@ def main() -> int:
     p.add_argument("--file", help="the source file the loop may patch")
     p.add_argument("--goal", default="make the failing tests pass")
     p.add_argument("--max-revisions", type=int, default=3)
+    p.add_argument("--fallback-fix", help=argparse.SUPPRESS)  # known-good file for the
+    # keyless bundled demo: when no model is available, apply this so the loop can close
+    # end-to-end without a key. Not for real repos — there the loop needs a model.
     args = p.parse_args()
 
     repo = os.path.abspath(os.path.expanduser(args.repo))
@@ -109,14 +112,23 @@ def main() -> int:
 
             if rev == args.max_revisions:
                 break
-            if not (client and target and os.path.isfile(target)):
-                print("\n  (no model key or no --file to patch — stopping at a verified "
-                      "failure.\n   set AIMLAPI_API_KEY and --file to let the loop fix it.)")
+            if not (target and os.path.isfile(target)):
+                print("\n  (no --file to patch — stopping at a verified failure.)")
                 break
 
-            print(f"  ┃ CodeAuthor ▸ patching {args.file} against the real failure…")
-            source = open(target, encoding="utf-8", errors="ignore").read()
-            fixed = _propose_fix(client, args.goal, args.file, source, res.detail)
+            if client:
+                print(f"  ┃ CodeAuthor ▸ patching {args.file} via AI/ML API "
+                      f"against the real failure…")
+                source = open(target, encoding="utf-8", errors="ignore").read()
+                fixed = _propose_fix(client, args.goal, args.file, source, res.detail)
+            elif args.fallback_fix and os.path.isfile(args.fallback_fix):
+                print(f"  ┃ CodeAuthor ▸ patching {args.file} (no model key → "
+                      f"deterministic reference fix)…")
+                fixed = open(args.fallback_fix, encoding="utf-8", errors="ignore").read()
+            else:
+                print("\n  (no model key and no --file to patch — stopping at a verified "
+                      "failure.\n   set AIMLAPI_API_KEY to let a model write the fix.)")
+                break
             if not fixed:
                 print("  CodeAuthor: no patch produced; stopping.")
                 break

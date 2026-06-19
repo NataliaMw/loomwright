@@ -1,22 +1,43 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "ouroboros"
 version = "0.1.0"
-description = "A Band room that engineers a verification loop per task, then runs it. Loop engineering, run by a band of agents — Track 2, Band of Agents Hackathon."
+description = "Any task → the loop it needs. A band of agents on Band that engineers a verification loop per task, then runs it on your real code until your real tests pass."
+readme = "README.md"
 requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "the Neon Code team" }]
+keywords = ["agents", "band", "loop-engineering", "agentic-coding", "multi-agent", "verification"]
 dependencies = [
     "openai>=1.0",
     "python-dotenv>=1.0",
     "pyyaml>=6.0",
 ]
 
+[project.urls]
+Homepage = "https://nataliamw.github.io/ouroboros/"
+Source = "https://github.com/NataliaMw/ouroboros"
+
 [project.optional-dependencies]
 live = [
-    "band-sdk[pydantic-ai,langgraph,codex]",
+    "band-sdk[pydantic-ai,langgraph]",
     "pydantic-ai>=0.0.14",
     "langgraph>=0.2",
     "langchain-openai>=0.2",
 ]
 
-[tool.ouroboros]
-offline-demo = "python demo.py"
-live-room = "python band_agents.py"
+[project.scripts]
+ouroboros = "cli:main"
+
+[tool.setuptools]
+py-modules = ["cli", "demo", "run_on_repo", "qa", "tasks", "loopspec", "models",
+              "repo_tools", "band_agents", "band_repo"]
+
+[tool.setuptools.packages.find]
+include = ["specialists*", "shared*"]
+
+[tool.setuptools.package-data]
+shared = ["examples/cart_demo/src/*.py", "examples/cart_demo/tests/*.py", "examples/cart_demo/.fix/*.py"]

@@ -11,3 +11,7 @@ test-credentials.txt
 *credentials*
 *.secret
 .band_agents.json
+dist/
+build/
+*.egg-info/
+VIDEO_SCRIPT.md

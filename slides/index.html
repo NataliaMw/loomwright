@@ -13,327 +13,251 @@
     --accent: #4DE0B0;
     --break: #FF6B5C;
     --gate: #E8B84B;
+    --blue: #79C8FF;
     --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
     --disp: "Helvetica Neue", "Arial Narrow", system-ui, sans-serif;
+    --W: 1280px;
+    --H: 720px;
   }
 
   * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; background: var(--ground); }
-  body {
-    color: var(--text);
-    font-family: var(--mono);
-    -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
+  html, body { margin: 0; padding: 0; height: 100%; background: #05100E; overflow: hidden; }
+  body { color: var(--text); font-family: var(--mono); -webkit-font-smoothing: antialiased; }
+
+  /* ---------- stage / scaling ---------- */
+  #stage-wrap { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; }
+  #stage {
+    width: var(--W); height: var(--H);
+    position: relative; transform-origin: center center;
+    background: var(--ground); box-shadow: 0 40px 120px rgba(0,0,0,0.6); overflow: hidden;
   }
 
-  /* ---- deck mechanics ---- */
-  .deck { scroll-snap-type: y mandatory; }
   .slide {
-    min-height: 100svh;
-    scroll-snap-align: start;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: clamp(28px, 6vw, 96px);
-    border-bottom: 1px solid var(--line);
-    overflow: hidden;
+    position: absolute; inset: 0; padding: 64px 76px;
+    display: flex; flex-direction: column; justify-content: center;
+    opacity: 0; visibility: hidden;
+    transition: opacity .5s ease, transform .5s ease;
+    transform: translateX(40px);
   }
-  .slide-inner { width: 100%; max-width: 1120px; margin: 0 auto; }
+  .slide.active { opacity: 1; visibility: visible; transform: none; z-index: 2; }
+  .slide.prev { transform: translateX(-40px); }
+  .slide-inner { width: 100%; }
 
-  /* eyebrow / structural markers */
-  .eyebrow {
-    font-size: 12px;
-    letter-spacing: 0.34em;
-    text-transform: uppercase;
-    color: var(--muted);
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin: 0 0 28px;
+  .slide::before {
+    content: ""; position: absolute; right: -180px; top: 50%;
+    width: 520px; height: 520px; transform: translateY(-50%);
+    background: radial-gradient(circle, rgba(77,224,176,0.07), transparent 65%); pointer-events: none;
   }
-  .eyebrow .num {
-    color: var(--accent);
-    font-variant-numeric: tabular-nums;
-  }
+  #s-cover::before, #s-close::before { display: none; }
+
+  /* ---------- entrance animations ---------- */
+  .reveal { opacity: 0; transform: translateY(16px); }
+  .slide.active .reveal { animation: rise .6s cubic-bezier(.2,.7,.2,1) forwards; animation-delay: var(--d, 0s); }
+  @keyframes rise { to { opacity: 1; transform: none; } }
+
+  /* ---------- typography ---------- */
+  .eyebrow { font-size: 12px; letter-spacing: 0.34em; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; gap: 14px; margin: 0 0 22px; }
+  .eyebrow .num { color: var(--accent); font-variant-numeric: tabular-nums; }
   .eyebrow .rule { flex: 1; height: 1px; background: var(--line); }
 
-  h1, h2, h3 { font-family: var(--disp); font-weight: 800; line-height: 0.98; }
-  h1 {
-    font-size: clamp(48px, 9.5vw, 132px);
-    letter-spacing: -0.03em;
-    margin: 0;
-  }
-  h2 {
-    font-size: clamp(30px, 5.2vw, 62px);
-    letter-spacing: -0.02em;
-    margin: 0 0 24px;
-  }
+  h1, h2, h3 { font-family: var(--disp); font-weight: 800; line-height: 0.98; margin: 0; }
+  h2 { font-size: 50px; letter-spacing: -0.02em; margin: 0 0 22px; }
+  h2.sm { font-size: 40px; }
   .stretch { font-stretch: 75%; }
-  p.lede {
-    font-family: var(--mono);
-    font-size: clamp(15px, 2vw, 21px);
-    line-height: 1.55;
-    color: var(--text);
-    max-width: 66ch;
-    margin: 0 0 18px;
-  }
-  .dim { color: var(--muted); }
-  .mint { color: var(--accent); }
-  .break { color: var(--break); }
-  .gate { color: var(--gate); }
+  p.lede { font-size: 19px; line-height: 1.5; color: var(--text); max-width: 70ch; margin: 0 0 16px; }
+  p.lede.sm { font-size: 16px; }
+  .dim { color: var(--muted); } .mint { color: var(--accent); } .break { color: var(--break); }
+  .gate { color: var(--gate); } .blue { color: var(--blue); }
   b, strong { color: #fff; font-weight: 700; }
+  code { color: var(--accent); }
 
-  /* ---- slide 1: hero ---- */
-  #hero { align-items: center; text-align: center; }
-  #ring-wrap {
-    position: relative;
-    width: min(46vh, 78vw);
-    height: min(46vh, 78vw);
-    margin: 0 auto 6px;
-  }
-  #ring { width: 100%; height: 100%; display: block; }
-  #ring-label {
-    position: absolute; inset: 0;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    pointer-events: none;
-  }
-  #ring-phase {
-    font-family: var(--mono);
-    font-size: clamp(11px, 1.5vw, 14px);
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--accent);
-    min-height: 1.4em;
-    transition: color .3s;
-  }
-  .wordmark {
-    font-family: var(--disp);
-    font-weight: 800;
-    font-size: clamp(40px, 8vw, 96px);
-    letter-spacing: -0.04em;
-    line-height: 0.9;
-  }
-  .tagline {
-    font-size: clamp(15px, 2.4vw, 24px);
-    letter-spacing: 0.02em;
-    margin-top: 14px;
-    color: var(--text);
-  }
+  /* ---------- cover ---------- */
+  #s-cover { padding: 0; }
+  #s-cover img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  #cover-veil { position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 40%, rgba(5,16,14,0.35) 100%); }
+  #cover-foot { position: absolute; left: 0; right: 0; bottom: 28px; text-align: center; font-size: 13px; letter-spacing: 0.28em; text-transform: uppercase; color: rgba(214,228,225,0.82); }
+  #cover-foot b { color: var(--accent); }
+
+  /* ---------- hero ---------- */
+  #s-hero { align-items: center; text-align: center; padding-top: 40px; }
+  #ring-wrap { position: relative; width: 340px; height: 340px; margin: 0 auto 4px; }
+  #ring { width: 100%; height: 100%; display: block; background: var(--ground); }
+  #ring-label { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; }
+  #ring-phase { font-size: 13px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); min-height: 1.4em; transition: color .3s; }
+  .wordmark { font-family: var(--disp); font-weight: 800; font-size: 64px; letter-spacing: -0.04em; line-height: 0.9; }
+  .tagline { font-size: 24px; letter-spacing: 0.02em; margin-top: 12px; }
   .tagline .arrow { color: var(--accent); }
-  .meta-row {
-    margin-top: 30px;
-    display: flex; gap: 10px 22px; flex-wrap: wrap; justify-content: center;
-    font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted);
-  }
-  .meta-row span b { color: var(--accent); font-weight: 700; }
+  .meta-row { margin-top: 26px; display: flex; gap: 10px 24px; flex-wrap: wrap; justify-content: center; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+  .meta-row b { color: var(--accent); font-weight: 700; }
 
-  /* ---- generic content blocks ---- */
-  .cols { display: grid; gap: clamp(18px, 3vw, 40px); }
+  /* ---------- cards ---------- */
+  .cols { display: grid; gap: 24px; }
   .cols-2 { grid-template-columns: 1fr 1fr; }
-  .cols-3 { grid-template-columns: repeat(3, 1fr); }
-  @media (max-width: 820px) {
-    .cols-2, .cols-3 { grid-template-columns: 1fr; }
-  }
-
-  .card {
-    border: 1px solid var(--line);
-    border-radius: 4px;
-    background: var(--panel);
-    padding: clamp(18px, 2.4vw, 28px);
-  }
+  .card { border: 1px solid var(--line); border-radius: 6px; background: var(--panel); padding: 24px; }
   .card h3 { font-size: 19px; margin: 0 0 10px; letter-spacing: -0.01em; }
   .card p { margin: 0; font-size: 14px; line-height: 1.5; color: var(--muted); }
-  .card .big {
-    font-family: var(--disp); font-weight: 800;
-    font-size: clamp(34px, 5vw, 56px); letter-spacing: -0.02em; line-height: 1;
-    color: var(--accent); margin-bottom: 8px;
-  }
-  .card.break-card .big { color: var(--break); }
-  .card.gate-card .big { color: var(--gate); }
+  .card .big { font-family: var(--disp); font-weight: 800; font-size: 46px; letter-spacing: -0.02em; line-height: 1; color: var(--break); margin-bottom: 6px; }
 
-  .pill {
-    display: inline-flex; align-items: center; gap: 7px;
-    border: 1px solid var(--line); border-radius: 999px;
-    padding: 5px 12px; font-size: 12px; letter-spacing: 0.04em;
-    background: var(--ground-2); color: var(--text);
-  }
+  .pill { display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; font-size: 12px; background: var(--ground-2); color: var(--text); }
   .pill .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); }
   .pill.req .dot { background: var(--accent); }
   .pill.recruit { border-color: var(--accent); color: var(--accent); }
-  .pill.recruit .dot { background: var(--accent); }
+  .pill.recruit .dot { background: var(--accent); animation: blip 1.4s infinite; }
+  @keyframes blip { 0%,100% { box-shadow: 0 0 0 0 rgba(77,224,176,.5);} 50%{ box-shadow: 0 0 0 5px rgba(77,224,176,0);} }
   .pillset { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
 
-  /* ---- the comparison (two loops) ---- */
-  .loop-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 14px; }
-  .loop-kind {
-    font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
-    padding: 3px 8px; border-radius: 3px; background: var(--ground-2);
-    border: 1px solid var(--line); color: var(--muted);
-  }
-  .loop-title { font-family: var(--disp); font-weight: 700; font-size: 20px; letter-spacing: -0.01em; }
-  .spec-row { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-top: 1px dashed var(--line); font-size: 13px; }
-  .spec-row .k { color: var(--muted); letter-spacing: 0.04em; }
-  .spec-row .v { text-align: right; color: var(--text); }
-  .fingerprint {
-    margin-top: 14px; font-size: 11.5px; color: var(--accent);
-    word-break: break-word; line-height: 1.5; opacity: .85;
-  }
+  .loop-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 12px; }
+  .loop-kind { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; padding: 3px 8px; border-radius: 3px; background: var(--ground-2); border: 1px solid var(--line); color: var(--muted); }
+  .loop-title { font-family: var(--disp); font-weight: 700; font-size: 19px; letter-spacing: -0.01em; }
+  .spec-row { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-top: 1px dashed var(--line); font-size: 13px; }
+  .spec-row .k { color: var(--muted); }
+  .spec-row .v { text-align: right; }
+  .fingerprint { margin-top: 12px; font-size: 11px; color: var(--accent); word-break: break-word; line-height: 1.5; opacity: .85; }
 
-  /* ---- transcript / terminal ---- */
-  .term {
-    background: #07100F; border: 1px solid var(--line); border-radius: 6px;
-    font-size: clamp(11.5px, 1.5vw, 14px); line-height: 1.55; overflow: hidden;
-  }
-  .term-bar {
-    display: flex; align-items: center; gap: 7px; padding: 10px 14px;
-    border-bottom: 1px solid var(--line); color: var(--muted); font-size: 11px; letter-spacing: 0.12em;
-  }
+  .term { background: #07100F; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; line-height: 1.5; overflow: hidden; }
+  .term-bar { display: flex; align-items: center; gap: 7px; padding: 9px 14px; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 11px; letter-spacing: 0.1em; }
   .term-bar .tb { width: 9px; height: 9px; border-radius: 50%; background: #243a36; }
-  .term-body { padding: 14px 16px; max-height: 52svh; overflow-y: auto; }
-  .msg { padding: 7px 0; border-bottom: 1px solid #0c1716; }
+  .term-body { padding: 12px 16px; overflow: hidden; }
+  .msg { padding: 6px 0; border-bottom: 1px solid #0c1716; }
   .msg:last-child { border-bottom: none; }
-  .sender { color: var(--accent); }
-  .sender.system { color: var(--gate); }
-  .sender.user { color: var(--text); }
-  .arrow-to { color: var(--muted); }
-  .mention { color: #79c8ff; }
-  .msg-text { color: var(--text); opacity: .92; }
+  .sender { color: var(--accent); } .sender.system { color: var(--gate); } .sender.user { color: var(--text); }
+  .arrow-to { color: var(--muted); } .mention { color: var(--blue); } .msg-text { color: var(--text); opacity: .92; }
   .qa { margin-top: 5px; display: flex; flex-wrap: wrap; gap: 8px; }
   .qa .chk { font-size: 11px; padding: 2px 8px; border-radius: 3px; border: 1px solid var(--line); }
-  .qa .chk.pass { color: var(--accent); border-color: #1f4f43; }
-  .qa .chk.fail { color: var(--break); border-color: #4f2723; }
+  .qa .chk.pass { color: var(--accent); border-color: #1f4f43; } .qa .chk.fail { color: var(--break); border-color: #4f2723; }
 
-  /* code diff */
   .diff { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  @media (max-width: 820px) { .diff { grid-template-columns: 1fr; } }
-  .code {
-    background: #07100F; border: 1px solid var(--line); border-radius: 6px;
-    padding: 14px 16px; font-size: 12.5px; line-height: 1.5; white-space: pre; overflow-x: auto;
-  }
+  .code { background: #07100F; border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px; font-size: 13px; line-height: 1.5; white-space: pre; overflow-x: auto; }
   .code .label { display: block; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; }
-  .code.buggy .label { color: var(--break); }
-  .code.fixed .label { color: var(--accent); }
-  .code .del { color: var(--break); }
-  .code .add { color: var(--accent); }
-  .trace {
-    margin-top: 14px; background: #120b0a; border: 1px solid #3a1e1b; border-radius: 6px;
-    padding: 12px 14px; font-size: 12px; color: var(--break); white-space: pre-wrap; line-height: 1.45;
-  }
+  .code.buggy .label { color: var(--break); } .code.fixed .label { color: var(--accent); }
+  .code .del { color: var(--break); } .code .add { color: var(--accent); }
+  .trace { margin-top: 14px; background: #120b0a; border: 1px solid #3a1e1b; border-radius: 6px; padding: 12px 14px; font-size: 12.5px; color: var(--break); white-space: pre-wrap; line-height: 1.45; }
 
-  /* rubric grid */
   .rubric { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
-  @media (max-width: 820px) { .rubric { grid-template-columns: 1fr; } }
-  .rubric > div { background: var(--panel); padding: clamp(18px, 2.5vw, 30px); }
-  .rubric .pillar { color: var(--accent); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 10px; }
-  .rubric h3 { font-size: 18px; margin: 0 0 8px; }
-  .rubric p { margin: 0; font-size: 13.5px; line-height: 1.5; color: var(--muted); }
+  .rubric > div { background: var(--panel); padding: 22px 26px; }
+  .rubric .pillar { color: var(--accent); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 8px; }
+  .rubric h3 { font-size: 18px; margin: 0 0 6px; }
+  .rubric p { margin: 0; font-size: 13px; line-height: 1.45; color: var(--muted); }
 
-  /* closing CTA */
-  #close { text-align: center; align-items: center; }
-  .cta {
-    display: inline-block; margin-top: 18px;
-    font-family: var(--mono); font-size: clamp(13px, 1.8vw, 16px);
-    color: var(--ground); background: var(--accent);
-    padding: 14px 26px; border-radius: 4px; text-decoration: none; font-weight: 700;
-    letter-spacing: 0.02em;
-  }
+  #s-close { text-align: center; align-items: center; }
+  .cta { display: inline-block; font-size: 15px; color: var(--ground); background: var(--accent); padding: 13px 24px; border-radius: 4px; text-decoration: none; font-weight: 700; }
   .cta.ghost { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
-  .cta-row { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; margin-top: 26px; }
-  .signature { margin-top: 40px; font-size: 12px; letter-spacing: 0.1em; color: var(--muted); }
+  .cta-row { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; margin-top: 24px; }
+  .signature { margin-top: 34px; font-size: 12px; letter-spacing: 0.1em; color: var(--muted); }
   .signature .snake { color: var(--accent); }
 
-  /* progress + nav */
-  #progress { position: fixed; top: 0; left: 0; height: 2px; background: var(--accent); width: 0; z-index: 50; transition: width .2s; }
+  /* ---------- chrome ---------- */
+  #progress { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); width: 0; z-index: 50; transition: width .4s; }
   #dots { position: fixed; right: 18px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 11px; z-index: 50; }
-  #dots a { width: 8px; height: 8px; border-radius: 50%; border: 1px solid var(--muted); background: transparent; transition: all .2s; }
-  #dots a.on { background: var(--accent); border-color: var(--accent); transform: scale(1.3); }
-  #dots a:hover { border-color: var(--accent); }
-  .hint { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); z-index: 50; opacity: .7; }
-  @media (max-width: 820px) { #dots, .hint { display: none; } }
-
+  #dots button { width: 9px; height: 9px; padding: 0; border-radius: 50%; border: 1px solid var(--muted); background: transparent; cursor: pointer; transition: all .2s; }
+  #dots button.on { background: var(--accent); border-color: var(--accent); transform: scale(1.35); }
+  #dots button:hover { border-color: var(--accent); }
+  #hud { position: fixed; left: 18px; bottom: 16px; z-index: 50; display: flex; gap: 10px; align-items: center; }
+  #hud button { background: none; border: 1px solid var(--line); color: var(--muted); border-radius: 4px; padding: 6px 10px; cursor: pointer; font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; }
+  #hud button:hover { color: var(--accent); border-color: var(--accent); }
+  #counter { position: fixed; right: 22px; bottom: 16px; z-index: 50; font-size: 12px; letter-spacing: 0.18em; color: var(--muted); font-variant-numeric: tabular-nums; }
+  #counter b { color: var(--accent); }
   :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
   @media (prefers-reduced-motion: reduce) {
-    .deck { scroll-snap-type: none; }
-    * { animation: none !important; transition: none !important; }
+    .slide, .reveal { transition: none !important; animation: none !important; opacity: 1; transform: none; }
+    .pill.recruit .dot { animation: none; }
+  }
+
+  /* ---------- PRINT → one 16:9 page per slide ---------- */
+  @page { size: 1280px 720px; margin: 0; }
+  @media print {
+    html, body { overflow: visible; height: auto; width: 1280px; margin: 0; padding: 0; background: var(--ground); }
+    #stage-wrap { position: static; display: block; width: 1280px; margin: 0; padding: 0; }
+    #stage { transform: none !important; width: 1280px; height: auto; box-shadow: none; background: var(--ground); overflow: visible; }
+    #progress, #dots, #hud, #counter { display: none !important; }
+    .slide {
+      position: relative; inset: auto; width: 1280px; height: 720px; margin: 0;
+      opacity: 1 !important; visibility: visible !important; transform: none !important;
+      page-break-after: always; break-after: page; page-break-inside: avoid; break-inside: avoid;
+      background: var(--ground); -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+    .slide:last-child { page-break-after: auto; break-after: auto; }
+    .slide::before { display: block; }
+    .reveal { opacity: 1 !important; transform: none !important; animation: none !important; }
   }
 </style>
 
 <div id="progress"></div>
-<nav id="dots" aria-label="slides"></nav>
-<div class="hint">scroll · ↓ · space</div>
+<nav id="dots" aria-label="go to slide"></nav>
+<div id="hud">
+  <button id="btn-prev" aria-label="previous slide">← prev</button>
+  <button id="btn-next" aria-label="next slide">next →</button>
+  <button id="btn-full" aria-label="fullscreen">⛶ present</button>
+</div>
+<div id="counter"><b id="cur">01</b> / <span id="tot">11</span></div>
 
-<main class="deck">
+<div id="stage-wrap">
+<div id="stage">
 
-  <!-- 01 — HERO -->
-  <section class="slide" id="hero" data-name="Ouroboros">
+  <!-- 01 — COVER -->
+  <section class="slide active" id="s-cover" data-name="Cover">
+    <img src="cover.png" alt="Ouroboros — any task, the loop it needs" />
+    <div id="cover-veil"></div>
+    <div id="cover-foot">Band of Agents Hackathon · <b>Track 2</b> — Multi-Agent Software Development</div>
+  </section>
+
+  <!-- 02 — HERO -->
+  <section class="slide" id="s-hero" data-name="The loop">
     <div class="slide-inner">
-      <div id="ring-wrap">
-        <canvas id="ring" width="640" height="640" aria-label="The loop, running"></canvas>
-        <div id="ring-label">
-          <div class="wordmark">Ouroboros</div>
-          <div id="ring-phase">generate</div>
-        </div>
+      <div id="ring-wrap" class="reveal">
+        <canvas id="ring" width="680" height="680" aria-label="The loop, running"></canvas>
+        <div id="ring-label"><div class="wordmark">Ouroboros</div><div id="ring-phase">generate</div></div>
       </div>
-      <p class="tagline">any task <span class="arrow">→</span> the loop it needs</p>
-      <div class="meta-row">
-        <span>Band of Agents · <b>Track 2</b></span>
+      <p class="tagline reveal" style="--d:.15s">any task <span class="arrow">→</span> the loop it needs</p>
+      <div class="meta-row reveal" style="--d:.3s">
         <span><b>6</b> agents · one room</span>
         <span>cross-framework · <b>Band</b>-native</span>
+        <span>the loop, <b>engineered</b> per task</span>
       </div>
     </div>
   </section>
 
-  <!-- 02 — THE SHIFT -->
+  <!-- 03 — THE SHIFT -->
   <section class="slide" data-name="The shift">
     <div class="slide-inner">
-      <p class="eyebrow"><span class="num">01</span> the shift everyone's standing on <span class="rule"></span></p>
-      <h2 class="stretch">Stop prompting agents.<br />Start designing the <span class="mint">loop</span> they run inside.</h2>
-      <p class="lede">June 2026 gave it a name — <b>loop engineering</b> (Osmani, Cherny). The skill is no longer the perfect prompt; it's the <span class="mint">generate → check → revise</span> loop with a real exit condition. As one post that hit <b>6.5M views</b> put it, eleven days before this deadline:</p>
-      <p class="lede" style="border-left:2px solid var(--accent);padding-left:18px;font-style:italic;color:var(--text)">"You shouldn't be prompting coding agents anymore. You should be designing loops that prompt your agents."</p>
+      <p class="eyebrow reveal"><span class="num">01</span> the shift everyone's standing on <span class="rule"></span></p>
+      <h2 class="stretch reveal" style="--d:.1s">Stop prompting agents.<br />Start designing the <span class="mint">loop</span> they run inside.</h2>
+      <p class="lede reveal" style="--d:.25s">June 2026 gave it a name — <b>loop engineering</b> (Osmani, Cherny). The skill is no longer the perfect prompt; it's the <span class="mint">generate → check → revise</span> loop with a real exit condition. As one post that hit <b>6.5M views</b> put it, eleven days before this deadline:</p>
+      <p class="lede reveal" style="--d:.4s; border-left:2px solid var(--accent); padding-left:18px; font-style:italic">"You shouldn't be prompting coding agents anymore. You should be designing loops that prompt your agents."</p>
     </div>
   </section>
 
-  <!-- 03 — THE GAP -->
+  <!-- 04 — THE GAP -->
   <section class="slide" data-name="The gap">
     <div class="slide-inner">
-      <p class="eyebrow"><span class="num">02</span> the gap nobody's closed <span class="rule"></span></p>
-      <h2>Every coding tool ships <span class="break">one</span> loop —<br />and runs it for <span class="break">everything</span>.</h2>
-      <div class="cols cols-2" style="margin-top:8px">
-        <div class="card break-card">
-          <div class="big">CSS tweak</div>
-          <p>Planner → Coder → Reviewer.</p>
-        </div>
-        <div class="card break-card">
-          <div class="big">DB migration</div>
-          <p>Planner → Coder → Reviewer. <b style="color:var(--break)">The identical pipeline.</b></p>
-        </div>
+      <p class="eyebrow reveal"><span class="num">02</span> the gap nobody's closed <span class="rule"></span></p>
+      <h2 class="reveal" style="--d:.1s">Every coding tool ships <span class="break">one</span> loop —<br />and runs it for <span class="break">everything</span>.</h2>
+      <div class="cols cols-2 reveal" style="--d:.28s; margin-top:6px">
+        <div class="card"><div class="big">CSS tweak</div><p>Planner → Coder → Reviewer.</p></div>
+        <div class="card"><div class="big">DB migration</div><p>Planner → Coder → Reviewer. <b style="color:var(--break)">The identical pipeline.</b></p></div>
       </div>
-      <p class="lede" style="margin-top:26px">A one-line bugfix and an auth change that can leak sessions get the <b>same</b> gates, the <b>same</b> reviewers, the <b>same</b> stopping rule. That's vibe coding with extra steps — and building the loop by hand is still expert work nobody's automated.</p>
+      <p class="lede reveal" style="--d:.45s; margin-top:24px">A one-line bugfix and an auth change that can leak sessions get the <b>same</b> gates, reviewers, and stopping rule. That's vibe coding with extra steps — and building the loop by hand is still expert work nobody's automated.</p>
     </div>
   </section>
 
-  <!-- 04 — THE IDEA -->
+  <!-- 05 — WHAT IT IS -->
   <section class="slide" data-name="What it is">
     <div class="slide-inner">
-      <p class="eyebrow"><span class="num">03</span> what ouroboros is <span class="rule"></span></p>
-      <h2>A band of agents that <span class="mint">engineers the loop</span> a task needs — then runs it.</h2>
-      <p class="lede">Point it at a task. The room <b>designs</b> the verification loop for <em>that</em> task — which checks gate it, which critics vote, whether a human must sign — then <b>runs</b> it: generate a revision, let the critics attack, run the real checks, revise until a real exit condition holds.</p>
-      <p class="lede dim">The snake that eats its own tail: the oldest symbol for a loop that feeds itself until the code is whole. The thing it produces is an artifact you can read — the <span class="mint">LoopSpec</span> — not just a diff you have to trust.</p>
+      <p class="eyebrow reveal"><span class="num">03</span> what ouroboros is <span class="rule"></span></p>
+      <h2 class="reveal" style="--d:.1s">A band of agents that <span class="mint">engineers the loop</span> a task needs — then runs it.</h2>
+      <p class="lede reveal" style="--d:.25s">Point it at a task. The room <b>designs</b> the verification loop for <em>that</em> task — which checks gate it, which critics vote, whether a human must sign — then <b>runs</b> it: generate, let the critics attack, run the real checks, revise until a real exit condition holds.</p>
+      <p class="lede dim reveal" style="--d:.4s">The snake that eats its own tail: the oldest symbol for a loop that feeds itself until the code is whole. What it produces is an artifact you can read — the <span class="mint">LoopSpec</span> — not just a diff you have to trust.</p>
     </div>
   </section>
 
-  <!-- 05 — THE PROOF: two tasks, two loops -->
+  <!-- 06 — TWO LOOPS -->
   <section class="slide" data-name="Two loops">
     <div class="slide-inner">
-      <p class="eyebrow"><span class="num">04</span> same room, same agents, different loop <span class="rule"></span></p>
+      <p class="eyebrow reveal"><span class="num">04</span> same room, same agents, different loop <span class="rule"></span></p>
       <div class="cols cols-2">
-        <div class="card">
-          <div class="loop-head">
-            <span class="loop-kind">bugfix</span>
-            <span class="loop-title">Off-by-one in pagination</span>
-          </div>
+        <div class="card reveal" style="--d:.12s">
+          <div class="loop-head"><span class="loop-kind">bugfix</span><span class="loop-title">Off-by-one in pagination</span></div>
           <div class="pillset">
             <span class="pill req"><span class="dot"></span>compiles</span>
             <span class="pill req"><span class="dot"></span>unit-tests</span>
@@ -344,12 +268,8 @@
           <div class="spec-row"><span class="k">human gate</span><span class="v dim">none</span></div>
           <div class="fingerprint">checks=[compiles,unit-tests,repro-test] critics=[RivalReviewer] max_rev=2 gate=none</div>
         </div>
-
-        <div class="card" style="border-color:#3a3320">
-          <div class="loop-head">
-            <span class="loop-kind" style="border-color:var(--gate);color:var(--gate)">feature · high-stakes</span>
-            <span class="loop-title">SSO token refresh</span>
-          </div>
+        <div class="card reveal" style="--d:.3s; border-color:#3a3320">
+          <div class="loop-head"><span class="loop-kind" style="border-color:var(--gate);color:var(--gate)">feature · high-stakes</span><span class="loop-title">SSO token refresh</span></div>
           <div class="pillset">
             <span class="pill req"><span class="dot"></span>compiles</span>
             <span class="pill req"><span class="dot"></span>unit-tests</span>
@@ -364,56 +284,49 @@
           <div class="fingerprint" style="color:var(--gate)">checks=[…,acceptance-test] critics=[RivalReviewer,SecurityCritic] max_rev=3 gate=TechLead</div>
         </div>
       </div>
-      <p class="lede" style="margin-top:24px;text-align:center">Touch <span class="gate">auth</span>, and the room <b>recruits a SecurityCritic mid-flight</b> and demands a human signature. The bugfix gets neither. <b class="mint">The loop is engineered for the task — not copy-pasted.</b></p>
+      <p class="lede reveal" style="--d:.5s; margin-top:20px; text-align:center; font-size:17px">Touch <span class="gate">auth</span>, and the room <b>recruits a SecurityCritic mid-flight</b> and demands a human signature. The bugfix gets neither. <b class="mint">Engineered for the task — not copy-pasted.</b></p>
     </div>
   </section>
 
-  <!-- 06 — BAND IS LOAD-BEARING -->
+  <!-- 07 — BAND -->
   <section class="slide" data-name="Band">
     <div class="slide-inner">
-      <p class="eyebrow"><span class="num">05</span> why band is the coordination layer — not a wrapper <span class="rule"></span></p>
-      <h2>Take Band out and this is <span class="break">impossible</span>.</h2>
-      <div class="cols cols-2" style="margin-top:8px">
-        <div class="card">
-          <h3 class="mint">① Dynamic recruitment</h3>
-          <p>The room decides <em>at runtime</em> it needs a voice nobody added up front, and adds it — <code style="color:var(--accent)">band_add_participant</code>. The membership of the room grows to fit the task. This is the most Band-native moment in the system.</p>
-        </div>
-        <div class="card">
-          <h3 class="mint">② Design + execution, one trail</h3>
-          <p>The loop's <em>design</em> and its <em>execution</em> live on the <b>same audit trail</b> — every handoff is an <span class="mention">@mention</span>. You can read the loop a room built <em>before</em> you trust the code it produced. The transcript <em>is</em> the record.</p>
-        </div>
+      <p class="eyebrow reveal"><span class="num">05</span> why band is the coordination layer — not a wrapper <span class="rule"></span></p>
+      <h2 class="sm reveal" style="--d:.1s">Take Band out and this is <span class="break">impossible</span>.</h2>
+      <div class="cols cols-2" style="margin-bottom:18px">
+        <div class="card reveal" style="--d:.22s"><h3 class="mint">① Dynamic recruitment</h3><p>The room decides <em>at runtime</em> it needs a voice nobody added up front, and adds it — <code>band_add_participant</code>. Membership grows to fit the task. The most Band-native moment in the system.</p></div>
+        <div class="card reveal" style="--d:.34s"><h3 class="mint">② Design + execution, one trail</h3><p>The loop's <em>design</em> and its <em>execution</em> live on the <b>same audit trail</b> — every handoff an <span class="mention">@mention</span>. You read the loop a room built <em>before</em> you trust the code. The transcript <em>is</em> the record.</p></div>
       </div>
-      <div class="term" style="margin-top:24px">
+      <div class="term reveal" style="--d:.46s">
         <div class="term-bar"><span class="tb"></span><span class="tb"></span><span class="tb"></span>&nbsp;&nbsp;band room · handoff chain</div>
-        <div class="term-body" style="max-height:none">
+        <div class="term-body">
           <div class="msg"><span class="sender user">user</span> <span class="arrow-to">→</span> <span class="mention">@LoopArchitect</span> <span class="msg-text">— proposes a loop for the task</span></div>
           <div class="msg"><span class="sender">LoopArchitect</span> <span class="arrow-to">→</span> <span class="mention">@LoopCritic</span> <span class="msg-text">— attacks the exit condition before any code exists</span></div>
           <div class="msg"><span class="sender system">system</span> <span class="arrow-to">→</span> <span class="mention">@SecurityCritic</span> <span class="msg-text">⌁ recruited into the room on demand</span></div>
-          <div class="msg"><span class="sender">LoopRunner</span> <span class="arrow-to">→</span> <span class="mention">@CodeAuthor</span> <span class="arrow-to">→</span> <span class="mention">@QAEngineer</span> <span class="arrow-to">→</span> <span class="mention">@RivalReviewer</span> <span class="msg-text">— generate · check · judge, each turn a real bounce</span></div>
+          <div class="msg"><span class="sender">LoopRunner</span> <span class="arrow-to">→</span> <span class="mention">@CodeAuthor</span> <span class="arrow-to">→</span> <span class="mention">@QAEngineer</span> <span class="arrow-to">→</span> <span class="mention">@RivalReviewer</span> <span class="msg-text">— generate · check · judge</span></div>
           <div class="msg"><span class="sender system">system</span> <span class="arrow-to">→</span> <span class="mention">@TechLead</span> <span class="msg-text gate">⛔ escalation — human signs before it ships</span></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 07 — THE REAL LOOP RUNNING (transcript) -->
+  <!-- 08 — REAL RUN -->
   <section class="slide" data-name="Real run">
     <div class="slide-inner">
-      <p class="eyebrow"><span class="num">06</span> not a mock — the real loop, bouncing <span class="rule"></span></p>
-      <h2>The checks <span class="break">really run</span>. Red is real. Green is earned.</h2>
-      <div class="term">
+      <p class="eyebrow reveal"><span class="num">06</span> not a mock — the real loop, bouncing <span class="rule"></span></p>
+      <h2 class="sm reveal" style="--d:.1s">The checks <span class="break">really run</span>. Red is real. Green is earned.</h2>
+      <div class="term reveal" style="--d:.22s">
         <div class="term-bar"><span class="tb"></span><span class="tb"></span><span class="tb"></span>&nbsp;&nbsp;transcript · "Fix off-by-one in pagination offset" · real subprocess QA</div>
         <div class="term-body" id="transcript"></div>
       </div>
-      <p class="lede dim" style="margin-top:16px">QA executes generated code in a sandboxed subprocess. Revision 0 fails on a genuine <span class="break">AssertionError</span>; the room bounces it back; revision 1 goes green and ships. No fixture fakes the result.</p>
     </div>
   </section>
 
-  <!-- 08 — THE REAL CODE + TRACE -->
+  <!-- 09 — THE BUG -->
   <section class="slide" data-name="The bug">
     <div class="slide-inner">
-      <p class="eyebrow"><span class="num">07</span> the real bug, the real fix, the real failure <span class="rule"></span></p>
-      <div class="diff">
+      <p class="eyebrow reveal"><span class="num">07</span> the real bug, the real fix, the real failure <span class="rule"></span></p>
+      <div class="diff reveal" style="--d:.12s">
         <div class="code buggy"><span class="label">revision 0 — buggy</span>def page(items, page_num, size):
     start = page_num * size
 <span class="del">    end = start + size - 1   # drops last row</span>
@@ -423,228 +336,43 @@
 <span class="add">    end = start + size       # slice end is exclusive</span>
     return items[start:end]</div>
       </div>
-      <div class="trace">repro-test ❌  AssertionError: page returned a short page
+      <div class="trace reveal" style="--d:.3s">repro-test ❌  AssertionError: page returned a short page
     assert len(page(list(range(10)), 0, 3)) == 3</div>
-      <p class="lede dim" style="margin-top:16px">If the loop can't make your tests pass in budget, it stops and hands you a <b>verified failure</b> — not a confident wrong answer. That's the failure mode of agentic coding, closed.</p>
+      <p class="lede dim sm reveal" style="--d:.45s; margin-top:14px">If the loop can't make your tests pass in budget, it stops and hands you a <b>verified failure</b> — not a confident wrong answer. The failure mode of agentic coding, closed.</p>
     </div>
   </section>
 
-  <!-- 09 — RUBRIC FIT -->
+  <!-- 10 — RUBRIC -->
   <section class="slide" data-name="Why it wins">
     <div class="slide-inner">
-      <p class="eyebrow"><span class="num">08</span> all four pillars <span class="rule"></span></p>
-      <div class="rubric">
-        <div>
-          <div class="pillar">Application of Technology</div>
-          <h3>Band is load-bearing twice.</h3>
-          <p>Dynamic recruitment + a visible design-then-execute handoff chain, all as <span class="mention">@mention</span> routing on one trail.</p>
-        </div>
-        <div>
-          <div class="pillar">Originality</div>
-          <h3>The pipeline <em>is</em> the product.</h3>
-          <p>Every other Track-2 entry runs a fixed loop. Ouroboros synthesizes the loop per task — the artifact it ships is a <span class="mint">LoopSpec</span>.</p>
-        </div>
-        <div>
-          <div class="pillar">Business Value</div>
-          <h3>Confident-wrong code, stopped.</h3>
-          <p>Loops made inspectable and task-appropriate, with a human gate exactly where the stakes demand one. Auditable by design.</p>
-        </div>
-        <div>
-          <div class="pillar">Presentation</div>
-          <h3>The thesis fits one screen.</h3>
-          <p>Two tasks, two loops, side by side, difference highlighted — then open the transcript and watch it happen live.</p>
-        </div>
+      <p class="eyebrow reveal"><span class="num">08</span> all four pillars <span class="rule"></span></p>
+      <div class="rubric reveal" style="--d:.14s">
+        <div><div class="pillar">Application of Technology</div><h3>Band is load-bearing twice.</h3><p>Dynamic recruitment + a visible design-then-execute handoff chain, all as <span class="mention">@mention</span> routing on one trail.</p></div>
+        <div><div class="pillar">Originality</div><h3>The pipeline <em>is</em> the product.</h3><p>Every other entry runs a fixed loop. Ouroboros synthesizes the loop per task — the artifact it ships is a <span class="mint">LoopSpec</span>.</p></div>
+        <div><div class="pillar">Business Value</div><h3>Confident-wrong code, stopped.</h3><p>Loops made inspectable and task-appropriate, with a human gate exactly where the stakes demand one. Auditable by design.</p></div>
+        <div><div class="pillar">Presentation</div><h3>The thesis fits one screen.</h3><p>Two tasks, two loops, side by side, difference highlighted — then open the transcript and watch it happen live.</p></div>
       </div>
     </div>
   </section>
 
-  <!-- 10 — CLOSE / CTA -->
-  <section class="slide" id="close" data-name="Try it">
+  <!-- 11 — CLOSE -->
+  <section class="slide" id="s-close" data-name="Try it">
     <div class="slide-inner">
-      <p class="eyebrow" style="justify-content:center"><span class="rule"></span><span class="num">09</span> run it on your repo <span class="rule"></span></p>
-      <div class="wordmark" style="font-size:clamp(36px,7vw,80px)">Ouroboros</div>
-      <p class="tagline" style="margin-bottom:6px">any task <span class="arrow">→</span> the loop it needs</p>
-      <div class="code" style="text-align:left;max-width:680px;margin:24px auto 0;white-space:pre-wrap"><span class="add">$</span> python band_repo.py --repo ../your-project \
+      <div class="wordmark reveal" style="font-size:60px">Ouroboros</div>
+      <p class="tagline reveal" style="--d:.12s; margin-bottom:4px">any task <span class="arrow">→</span> the loop it needs</p>
+      <div class="code reveal" style="--d:.24s; text-align:left; max-width:720px; margin:22px auto 0; white-space:pre-wrap"><span class="add">$</span> python band_repo.py --repo ../your-project \
     --test "pytest -q" --file src/thing.py --goal "fix the bug"</div>
-      <p class="lede dim" style="margin:16px auto 0;text-align:center">Six cross-framework agents register on Band, coordinate the loop through <span class="mention">@mention</span> handoffs, patch your real file, and only finalize once <b>your</b> real tests go green. Verified live.</p>
-      <div class="cta-row">
+      <p class="lede dim sm reveal" style="--d:.36s; margin:14px auto 0; text-align:center">Six cross-framework agents register on Band, coordinate the loop through <span class="mention">@mention</span> handoffs, patch your real file, and only finalize once <b>your</b> real tests go green. Verified live.</p>
+      <div class="cta-row reveal" style="--d:.48s">
         <a class="cta" href="https://nataliamw.github.io/ouroboros/">Try the live composer →</a>
         <a class="cta ghost" href="https://github.com/NataliaMw/ouroboros">Source · MIT</a>
       </div>
-      <p class="signature"><span class="snake">🐍</span> built by the Neon Code team — because the loop deserves to be engineered, not copy-pasted.</p>
+      <p class="signature reveal" style="--d:.6s"><span class="snake">🐍</span> built by Natalia Mawyin — because the loop deserves to be engineered, not copy-pasted.</p>
     </div>
   </section>
 
-</main>
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-  "use strict";
-  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  /* ---------- dots + progress ---------- */
-  var slides = Array.prototype.slice.call(document.querySelectorAll(".slide"));
-  var dots = document.getElementById("dots");
-  slides.forEach(function (s, i) {
-    var a = document.createElement("a");
-    a.href = "#";
-    a.setAttribute("aria-label", s.dataset.name || ("slide " + (i + 1)));
-    a.addEventListener("click", function (e) { e.preventDefault(); s.scrollIntoView({ behavior: reduce ? "auto" : "smooth" }); });
-    dots.appendChild(a);
-  });
-  var dotEls = Array.prototype.slice.call(dots.children);
-  var progress = document.getElementById("progress");
-
-  var io = new IntersectionObserver(function (entries) {
-    entries.forEach(function (en) {
-      if (en.isIntersecting) {
-        var idx = slides.indexOf(en.target);
-        dotEls.forEach(function (d, i) { d.classList.toggle("on", i === idx); });
-        progress.style.width = ((idx + 1) / slides.length * 100) + "%";
-      }
-    });
-  }, { threshold: 0.55 });
-  slides.forEach(function (s) { io.observe(s); });
-
-  /* keyboard nav */
-  document.addEventListener("keydown", function (e) {
-    var cur = dotEls.findIndex(function (d) { return d.classList.contains("on"); });
-    if (cur < 0) cur = 0;
-    if (e.key === "ArrowDown" || e.key === " " || e.key === "PageDown") {
-      e.preventDefault();
-      if (cur < slides.length - 1) slides[cur + 1].scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
-    } else if (e.key === "ArrowUp" || e.key === "PageUp") {
-      e.preventDefault();
-      if (cur > 0) slides[cur - 1].scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
-    }
-  });
-
-  /* ---------- the ouroboros ring (hero) ---------- */
-  var canvas = document.getElementById("ring");
-  var ctx = canvas.getContext("2d");
-  var phaseEl = document.getElementById("ring-phase");
-  var SIZE = 640, R = 230, CX = 320, CY = 320, SEG = 140;
-  var phases = ["generate", "check", "revise", "check", "ship ✓"];
-  var ACCENT = "#4DE0B0", BREAK = "#FF6B5C", MUTED = "#1C322E";
-
-  function draw(t) {
-    ctx.clearRect(0, 0, SIZE, SIZE);
-    var head = (t * 0.00042) % (Math.PI * 2);
-    // segments = body of the snake; the leading ~third is "earned" green, tail dim
-    for (var i = 0; i < SEG; i++) {
-      var frac = i / SEG;
-      var a = head - frac * Math.PI * 2;
-      var x = CX + Math.cos(a) * R;
-      var y = CY + Math.sin(a) * R;
-      var lit = frac < 0.34;
-      var rad = 4.2 - frac * 2.1;
-      ctx.beginPath();
-      ctx.arc(x, y, Math.max(1.6, rad), 0, Math.PI * 2);
-      if (lit) {
-        var g = 1 - frac / 0.34;
-        ctx.fillStyle = "rgba(77,224,176," + (0.35 + g * 0.65) + ")";
-        ctx.shadowColor = ACCENT; ctx.shadowBlur = 14 * g;
-      } else {
-        ctx.fillStyle = "rgba(110,138,133," + (0.5 - frac * 0.4) + ")";
-        ctx.shadowBlur = 0;
-      }
-      ctx.fill();
-    }
-    ctx.shadowBlur = 0;
-    // the head (eating the tail) — a brighter node
-    var hx = CX + Math.cos(head) * R, hy = CY + Math.sin(head) * R;
-    ctx.beginPath(); ctx.arc(hx, hy, 7, 0, Math.PI * 2);
-    ctx.fillStyle = "#EAFBF4"; ctx.shadowColor = ACCENT; ctx.shadowBlur = 22; ctx.fill();
-    ctx.shadowBlur = 0;
-    // faint guide ring
-    ctx.beginPath(); ctx.arc(CX, CY, R, 0, Math.PI * 2);
-    ctx.strokeStyle = "rgba(28,50,46,0.55)"; ctx.lineWidth = 1; ctx.stroke();
-  }
-
-  var lastPhase = -1, start = null;
-  function phaseFor(t) {
-    var cycle = 5200;
-    return Math.floor((t % cycle) / (cycle / phases.length));
-  }
-  function loop(ts) {
-    if (start === null) start = ts;
-    var t = ts - start;
-    draw(t);
-    var p = phaseFor(t);
-    if (p !== lastPhase) {
-      lastPhase = p;
-      phaseEl.textContent = phases[p];
-      phaseEl.style.color = (phases[p] === "revise") ? BREAK : ACCENT;
-    }
-    requestAnimationFrame(loop);
-  }
-  if (reduce) {
-    draw(2600); phaseEl.textContent = "the loop";
-  } else {
-    requestAnimationFrame(loop);
-  }
-
-  /* ---------- transcript playback (slide 07) ---------- */
-  var DATA = JSON.parse(document.getElementById("loom-data").textContent);
-  var transcript = DATA.tasks[0].transcript;
-  var box = document.getElementById("transcript");
-
-  function chkEl(name, ok) {
-    var c = document.createElement("span");
-    c.className = "chk " + (ok ? "pass" : "fail");
-    c.textContent = (ok ? "✅ " : "❌ ") + name;
-    return c;
-  }
-  function renderMsg(m) {
-    var d = document.createElement("div");
-    d.className = "msg";
-    var senderClass = (m.sender === "system") ? "system" : (m.sender === "user" ? "user" : "");
-    var mentions = (m.mentions || []).map(function (x) { return '<span class="mention">@' + x + "</span>"; }).join(" ");
-    var arrow = mentions ? ' <span class="arrow-to">→</span> ' : " ";
-    var text = (m.text || "").split("\n")[0];
-    d.innerHTML = '<span class="sender ' + senderClass + '">' + m.sender + "</span>" + arrow + mentions +
-      ' <span class="msg-text">' + escapeHtml(text.replace(/@\w+/g, "").trim()) + "</span>";
-    if (m.qa) {
-      var qa = document.createElement("div");
-      qa.className = "qa";
-      m.qa.forEach(function (row) { qa.appendChild(chkEl(row[0], row[1])); });
-      d.appendChild(qa);
-    }
-    return d;
-  }
-  function escapeHtml(s) {
-    return s.replace(/[&<>"]/g, function (c) {
-      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
-    });
-  }
-
-  // render all immediately; reveal progressively when the slide is in view
-  var rendered = transcript.map(renderMsg);
-  if (reduce) {
-    rendered.forEach(function (el) { box.appendChild(el); });
-  } else {
-    var played = false;
-    var tio = new IntersectionObserver(function (entries) {
-      entries.forEach(function (en) {
-        if (en.isIntersecting && !played) {
-          played = true;
-          rendered.forEach(function (el, i) {
-            el.style.opacity = "0";
-            el.style.transform = "translateY(6px)";
-            el.style.transition = "opacity .35s, transform .35s";
-            box.appendChild(el);
-            setTimeout(function () {
-              el.style.opacity = "1"; el.style.transform = "none";
-              box.scrollTop = box.scrollHeight;
-            }, 360 * i + 120);
-          });
-        }
-      });
-    }, { threshold: 0.4 });
-    tio.observe(document.querySelector('[data-name="Real run"]'));
-  }
-});
-</script>
+</div>
+</div>
 
 <script id="loom-data" type="application/json">{
   "tagline": "any task \u2192 the loop it needs",
@@ -1465,3 +1193,174 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   ]
 }</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  "use strict";
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var printing = false;
+
+  var slides = Array.prototype.slice.call(document.querySelectorAll(".slide"));
+  var stage = document.getElementById("stage");
+  var W = 1280, H = 720, idx = 0;
+
+  function fit() {
+    if (printing) return;
+    var s = Math.min(window.innerWidth / W, window.innerHeight / H);
+    stage.style.transform = "scale(" + s + ")";
+  }
+  window.addEventListener("resize", fit);
+  fit();
+
+  var dots = document.getElementById("dots");
+  slides.forEach(function (sl, i) {
+    var b = document.createElement("button");
+    b.setAttribute("aria-label", "slide " + (i + 1) + ": " + (sl.dataset.name || ""));
+    b.addEventListener("click", function () { go(i); });
+    dots.appendChild(b);
+  });
+  var dotEls = Array.prototype.slice.call(dots.children);
+  var progress = document.getElementById("progress");
+  document.getElementById("tot").textContent = String(slides.length).padStart(2, "0");
+
+  function go(n) {
+    n = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach(function (sl, i) {
+      sl.classList.toggle("active", i === n);
+      sl.classList.toggle("prev", i < n);
+    });
+    dotEls.forEach(function (d, i) { d.classList.toggle("on", i === n); });
+    progress.style.width = ((n + 1) / slides.length * 100) + "%";
+    document.getElementById("cur").textContent = String(n + 1).padStart(2, "0");
+    idx = n; onEnter(n);
+  }
+
+  document.getElementById("btn-next").addEventListener("click", function () { go(idx + 1); });
+  document.getElementById("btn-prev").addEventListener("click", function () { go(idx - 1); });
+  document.getElementById("btn-full").addEventListener("click", function () {
+    if (!document.fullscreenElement) { document.documentElement.requestFullscreen && document.documentElement.requestFullscreen(); }
+    else { document.exitFullscreen && document.exitFullscreen(); }
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown" || e.key === "ArrowDown") { e.preventDefault(); go(idx + 1); }
+    else if (e.key === "ArrowLeft" || e.key === "PageUp" || e.key === "ArrowUp") { e.preventDefault(); go(idx - 1); }
+    else if (e.key === "Home") { go(0); }
+    else if (e.key === "End") { go(slides.length - 1); }
+    else if (e.key === "f" || e.key === "F") { document.getElementById("btn-full").click(); }
+  });
+  var wlock = false;
+  window.addEventListener("wheel", function (e) {
+    if (wlock || Math.abs(e.deltaY) < 8) return;
+    wlock = true; setTimeout(function () { wlock = false; }, 520);
+    go(idx + (e.deltaY > 0 ? 1 : -1));
+  }, { passive: true });
+  var tY = null, tX = null;
+  window.addEventListener("touchstart", function (e) { tY = e.touches[0].clientY; tX = e.touches[0].clientX; }, { passive: true });
+  window.addEventListener("touchend", function (e) {
+    if (tY === null) return;
+    var dy = e.changedTouches[0].clientY - tY, dx = e.changedTouches[0].clientX - tX;
+    if (Math.abs(dy) > 40 || Math.abs(dx) > 40) {
+      if (Math.abs(dy) > Math.abs(dx)) go(idx + (dy < 0 ? 1 : -1));
+      else go(idx + (dx < 0 ? 1 : -1));
+    }
+    tY = tX = null;
+  }, { passive: true });
+
+  /* ---- ouroboros ring ---- */
+  var canvas = document.getElementById("ring");
+  var ctx = canvas.getContext("2d");
+  var phaseEl = document.getElementById("ring-phase");
+  var R = 250, CX = 340, CY = 340, SEG = 150;
+  var phases = ["generate", "check", "revise", "check", "ship ✓"];
+  var ACCENT = "#4DE0B0", BREAK = "#FF6B5C";
+  function draw(t) {
+    ctx.clearRect(0, 0, 680, 680);
+    ctx.fillStyle = "#0A1413"; ctx.fillRect(0, 0, 680, 680);
+    var head = (t * 0.00044) % (Math.PI * 2);
+    for (var i = 0; i < SEG; i++) {
+      var frac = i / SEG;
+      var a = head - frac * Math.PI * 2;
+      var x = CX + Math.cos(a) * R, y = CY + Math.sin(a) * R;
+      var lit = frac < 0.34;
+      var rad = Math.max(1.7, 4.6 - frac * 2.3);
+      ctx.beginPath(); ctx.arc(x, y, rad, 0, Math.PI * 2);
+      if (lit) {
+        var g = 1 - frac / 0.34;
+        ctx.fillStyle = "rgba(77,224,176," + (0.35 + g * 0.65) + ")";
+        ctx.shadowColor = ACCENT; ctx.shadowBlur = 16 * g;
+      } else {
+        ctx.fillStyle = "rgba(110,138,133," + (0.5 - frac * 0.4) + ")"; ctx.shadowBlur = 0;
+      }
+      ctx.fill();
+    }
+    ctx.shadowBlur = 0;
+    var hx = CX + Math.cos(head) * R, hy = CY + Math.sin(head) * R;
+    ctx.beginPath(); ctx.arc(hx, hy, 8, 0, Math.PI * 2);
+    ctx.fillStyle = "#EAFBF4"; ctx.shadowColor = ACCENT; ctx.shadowBlur = 24; ctx.fill(); ctx.shadowBlur = 0;
+    ctx.beginPath(); ctx.arc(CX, CY, R, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(28,50,46,0.55)"; ctx.lineWidth = 1; ctx.stroke();
+  }
+  var lastPhase = -1, start = null, raf = null;
+  function phaseFor(t) { var cyc = 5200; return Math.floor((t % cyc) / (cyc / phases.length)); }
+  function tick(ts) {
+    if (start === null) start = ts;
+    var t = ts - start; draw(t);
+    var p = phaseFor(t);
+    if (p !== lastPhase) { lastPhase = p; phaseEl.textContent = phases[p]; phaseEl.style.color = (phases[p] === "revise") ? BREAK : ACCENT; }
+    raf = requestAnimationFrame(tick);
+  }
+  function startRing() { if (reduce) { draw(2600); phaseEl.textContent = "the loop"; return; } if (raf) return; start = null; raf = requestAnimationFrame(tick); }
+  function stopRing() { if (raf) { cancelAnimationFrame(raf); raf = null; } }
+
+  /* ---- transcript ---- */
+  var DATA = JSON.parse(document.getElementById("loom-data").textContent);
+  var transcript = DATA.tasks[0].transcript;
+  var box = document.getElementById("transcript");
+  var transcriptPlayed = false;
+  function escapeHtml(s) { return s.replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function chkEl(name, ok) { var c = document.createElement("span"); c.className = "chk " + (ok ? "pass" : "fail"); c.textContent = (ok ? "✅ " : "❌ ") + name; return c; }
+  function renderMsg(m) {
+    var d = document.createElement("div"); d.className = "msg";
+    var sc = (m.sender === "system") ? "system" : (m.sender === "user" ? "user" : "");
+    var mentions = (m.mentions || []).map(function (x) { return '<span class="mention">@' + x + "</span>"; }).join(" ");
+    var arrow = mentions ? ' <span class="arrow-to">→</span> ' : " ";
+    var text = (m.text || "").split("\n")[0];
+    d.innerHTML = '<span class="sender ' + sc + '">' + m.sender + "</span>" + arrow + mentions +
+      ' <span class="msg-text">' + escapeHtml(text.replace(/@\w+/g, "").trim()) + "</span>";
+    if (m.qa) { var qa = document.createElement("div"); qa.className = "qa"; m.qa.forEach(function (r) { qa.appendChild(chkEl(r[0], r[1])); }); d.appendChild(qa); }
+    return d;
+  }
+  function playTranscript() {
+    if (transcriptPlayed) return; transcriptPlayed = true;
+    box.innerHTML = "";
+    var els = transcript.map(renderMsg);
+    if (reduce) { els.forEach(function (e) { box.appendChild(e); }); return; }
+    els.forEach(function (el, i) {
+      el.style.opacity = "0"; el.style.transform = "translateY(6px)"; el.style.transition = "opacity .3s, transform .3s";
+      box.appendChild(el);
+      setTimeout(function () { el.style.opacity = "1"; el.style.transform = "none"; box.scrollTop = box.scrollHeight; }, 300 * i + 100);
+    });
+  }
+
+  function onEnter(n) {
+    var name = slides[n].dataset.name;
+    if (name === "The loop") startRing(); else stopRing();
+    if (name === "Real run") playTranscript();
+  }
+
+  /* ---- print ---- */
+  function prepPrint() {
+    printing = true;
+    stage.style.transform = "none";
+    slides.forEach(function (sl) { sl.classList.add("active"); });
+    draw(2600); phaseEl.textContent = "the loop";
+    if (!transcriptPlayed) { transcriptPlayed = true; box.innerHTML = ""; transcript.map(renderMsg).forEach(function (e) { box.appendChild(e); }); }
+  }
+  function unprep() { printing = false; slides.forEach(function (sl, i) { sl.classList.toggle("active", i === idx); }); fit(); }
+  window.addEventListener("beforeprint", prepPrint);
+  window.addEventListener("afterprint", unprep);
+  if (new URLSearchParams(location.search).get("print") === "1") prepPrint();
+
+  go(0);
+});
+</script>
