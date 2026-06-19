@@ -4,6 +4,8 @@
 
 *The snake that eats its own tail — the oldest symbol for a loop that feeds itself until it's whole.*
 
+**The problem:** every coding-agent tool runs the *same fixed loop* for every task — a CSS tweak and a database migration get the identical Planner→Coder→Reviewer pipeline. When the loop's exit condition is too weak for the task, confident-but-wrong code ships. **Ouroboros builds the loop the specific task needs — and a band of agents builds it, then runs it, on one audit trail.**
+
 > **Try it:** https://nataliamw.github.io/ouroboros/ — describe *your* task; the loop synthesizes live.
 > **Run the loop on YOUR repo:**
 > ```bash
@@ -127,6 +129,27 @@ user ──"new task"──▶ @LoopArchitect ──proposes loop──▶ @Loop
 - **Presentation** — the whole thesis is one screen: two tasks, two loops, side by
   side, with the difference highlighted. Open the transcript to see it happen.
 
+## Market & business value
+
+**Who has the pain:** every team shipping code with AI agents — and in 2026 that's
+most of them. The cost isn't speed, it's trust: a confidently-wrong change that
+passed a too-weak loop and made it to production.
+
+- **TAM** — AI coding tools are a multi-billion-dollar category (Copilot, Cursor,
+  Claude Code, Devin et al.), and *every* one of them runs a fixed loop. Loop quality
+  is the next axis of competition.
+- **SAM** — teams running agents against high-stakes surfaces (auth, payments, PII,
+  migrations) where a wrong merge is expensive and a human gate is non-negotiable.
+  These are exactly the teams that can't use a one-size-fits-all pipeline.
+- **Unique selling proposition** — Ouroboros doesn't run a better loop; it **builds
+  the right loop per task** and makes it *inspectable* — you read the `LoopSpec` a
+  room engineered (its checks, critics, human gate) *before* you trust the code it
+  produced. Competitors ship the pipeline; Ouroboros ships the pipeline *plus the
+  reasoning for its shape*.
+- **Where revenue comes from** — a CI-native control plane: per-seat for the loop
+  composer, usage-based for runs in the sandbox, and an enterprise tier for the audit
+  trail and human-gate policy (the compliance story regulated teams actually pay for).
+
 ## Architecture
 
 | File | Role |
@@ -179,5 +202,5 @@ RivalReviewer, all on the Band transcript.
 
 ---
 
-MIT. Built by [Natalia Mawyin](https://github.com/NataliaMw) — because the loop
+MIT. Built by the [Neon Code team](https://github.com/NataliaMw/ouroboros) — because the loop
 deserves to be engineered, not copy-pasted.
