@@ -114,11 +114,10 @@ def specialist():
     from band_harness import Specialist
 
     def adapter_factory():
-        from pydantic_ai import Agent as PydanticAgent
         from band.adapters.pydantic_ai import PydanticAIAdapter
 
-        agent = PydanticAgent("openai:gpt-4o")
-        return PydanticAIAdapter(agent)
+        # Model string; routed to the AI/ML API via OPENAI_BASE_URL + OPENAI_API_KEY.
+        return PydanticAIAdapter(model="openai-chat:gpt-4o-mini")
 
     return Specialist(
         handle=HANDLE,

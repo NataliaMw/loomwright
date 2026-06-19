@@ -26,6 +26,12 @@ _here = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(_here, "shared"))
 sys.path.insert(0, _here)
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv(os.path.join(_here, ".env"))
+except ImportError:
+    pass
+
 from band_harness import run_band_room
 
 from specialists import architect, critic, runner, author, qaagent, reviewer

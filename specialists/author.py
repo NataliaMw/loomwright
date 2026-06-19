@@ -13,8 +13,8 @@ from loopspec import LoopSpec
 
 
 HANDLE = "CodeAuthor"
-ROLE = "code author — writes each revision and hands it to @QA; never reviews its own work"
-HANDS_OFF_TO = ["QA"]
+ROLE = "code author — writes each revision and hands it to @QAEngineer; never reviews its own work"
+HANDS_OFF_TO = ["QAEngineer"]
 
 
 def _live_fix(task_title: str, buggy: str, defects: list[str], tests: dict) -> str | None:
@@ -71,8 +71,8 @@ async def handle(room, message) -> None:
         text=(f"revision {revision}{note}: "
               + (f"reworked to address {len(defects)} defect(s)." if defects
                  else "first draft.")
-              + " @QA — run the loop's checks on this."),
-        mentions=["QA"],
+              + " @QAEngineer — run the loop's checks on this."),
+        mentions=["QAEngineer"],
         payload={**p, "candidate": rev, "revision_no": revision},
     )
 
@@ -81,10 +81,9 @@ def specialist():
     from band_harness import Specialist
 
     def adapter_factory():
-        from pydantic_ai import Agent as PydanticAgent
         from band.adapters.pydantic_ai import PydanticAIAdapter
 
-        return PydanticAIAdapter(PydanticAgent("openai:gpt-4o"))
+        return PydanticAIAdapter(model="openai-chat:gpt-4o-mini")
 
     return Specialist(
         handle=HANDLE, role=ROLE, adapter_factory=adapter_factory,

@@ -10,3 +10,4 @@ venv/
 test-credentials.txt
 *credentials*
 *.secret
+.band_agents.json

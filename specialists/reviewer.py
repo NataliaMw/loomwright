@@ -65,11 +65,11 @@ def specialist():
     from band_harness import Specialist
 
     def adapter_factory():
-        from pydantic_ai import Agent as PydanticAgent
         from band.adapters.pydantic_ai import PydanticAIAdapter
 
-        # Featherless OSS model — deliberately a different provider from the Author.
-        return PydanticAIAdapter(PydanticAgent("featherless:Qwen/Qwen2.5-72B-Instruct"))
+        # Deliberately a DIFFERENT model from the Author's gpt-4o-mini, so the
+        # reviewer is a genuine second opinion rather than the author grading itself.
+        return PydanticAIAdapter(model="openai-chat:gpt-4o")
 
     return Specialist(
         handle=HANDLE, role=ROLE, adapter_factory=adapter_factory,

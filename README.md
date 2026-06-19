@@ -130,13 +130,18 @@ python demo.py
 python docs/build_data.py   # regenerates docs/data.json + docs/index.html
 ```
 
-**Live, on Band** (cross-framework agents over real rooms):
+**Live, on Band** (cross-framework agents over real rooms — *verified working*):
 ```bash
 cp .env.example .env                      # add AIMLAPI_API_KEY + FEATHERLESS_API_KEY
 cp agent_config.example.yaml agent_config.yaml   # add Band agent_id/api_key per agent
-pip install -e ".[live]"
-python band_agents.py                     # then @mention @LoopArchitect with a task
+pip install "band-sdk[pydantic-ai,langgraph]" python-dotenv pyyaml
+python band_agents.py                     # connects all 6 agents to Band over WebSocket
 ```
+Then in a Band room, add the six agents and `@mention @LoopArchitect` with a task.
+This has been run for real: the six agents register on the Band platform, connect
+over WebSocket, and coordinate a task end-to-end through `@mention` handoffs in a
+live room — LoopArchitect → LoopCritic → LoopRunner → CodeAuthor → QAEngineer →
+RivalReviewer, all on the Band transcript.
 
 ## Tech
 

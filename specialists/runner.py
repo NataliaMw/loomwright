@@ -22,7 +22,7 @@ async def _kickoff(room, p: dict) -> None:
     await room.post(
         sender=HANDLE,
         text=("loop approved — starting it. @CodeAuthor draft revision 0; "
-              "@QA will run the checks and @RivalReviewer will judge each turn."),
+              "@QAEngineer will run the checks and @RivalReviewer will judge each turn."),
         mentions=["CodeAuthor"],
         payload={**p, "revision_no": 0, "defects": []},
     )
@@ -80,10 +80,9 @@ def specialist():
     from band_harness import Specialist
 
     def adapter_factory():
-        from pydantic_ai import Agent as PydanticAgent
         from band.adapters.pydantic_ai import PydanticAIAdapter
 
-        return PydanticAIAdapter(PydanticAgent("openai:gpt-4o"))
+        return PydanticAIAdapter(model="openai-chat:gpt-4o-mini")
 
     return Specialist(
         handle=HANDLE, role=ROLE, adapter_factory=adapter_factory,

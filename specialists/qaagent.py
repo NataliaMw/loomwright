@@ -14,7 +14,7 @@ from loopspec import LoopSpec
 import qa
 
 
-HANDLE = "QA"
+HANDLE = "QAEngineer"
 ROLE = "QA engineer — really executes the loop's checks against the candidate code"
 HANDS_OFF_TO = ["RivalReviewer"]
 
@@ -53,10 +53,9 @@ def specialist():
     from band_harness import Specialist
 
     def adapter_factory():
-        from pydantic_ai import Agent as PydanticAgent
         from band.adapters.pydantic_ai import PydanticAIAdapter
 
-        return PydanticAIAdapter(PydanticAgent("openai:gpt-4o"))
+        return PydanticAIAdapter(model="openai-chat:gpt-4o-mini")
 
     return Specialist(
         handle=HANDLE, role=ROLE, adapter_factory=adapter_factory,

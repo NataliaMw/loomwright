@@ -31,8 +31,10 @@ except ImportError:
     _HAS_BAND = False
 
 
-REST_URL = os.getenv("THENVOI_REST_URL", "https://app.band.ai/")
-WS_URL = os.getenv("THENVOI_WS_URL", "wss://app.band.ai/api/v1/socket/websocket")
+# v1.0.0 reads BAND_*; we still honor the old THENVOI_* names as a fallback.
+REST_URL = os.getenv("BAND_REST_URL") or os.getenv("THENVOI_REST_URL", "https://app.band.ai/")
+WS_URL = (os.getenv("BAND_WS_URL") or os.getenv("THENVOI_WS_URL")
+          or "wss://app.band.ai/api/v1/socket/websocket")
 
 
 @dataclass
@@ -48,19 +50,21 @@ class Specialist:
     def system_prompt(self, mission: str) -> str:
         handoff = ""
         if self.hands_off_to:
-            targets = ", ".join(f"@{h}" for h in self.hands_off_to)
+            primary = self.hands_off_to[0]
+            targets = ", ".join(f"@natalia/{h.lower()}" for h in self.hands_off_to)
             handoff = (
-                f"\n\nWhen your part is done, hand off by @mentioning the next "
-                f"specialist ({targets}) in the room with the structured result "
-                f"they need. Do not do their job — pass them the context and let "
-                f"them own their step. If you need work redone, @mention the "
-                f"agent who produced it and say exactly what to fix."
+                f"\n\nHANDOFF RULE (critical): you are one step in a chain. Do your "
+                f"step in 1–2 short sentences, then on the SAME message END with an "
+                f"@mention of the next agent: {targets}. Default next agent is "
+                f"@natalia/{primary.lower()}. Do NOT reply to the human and do NOT try "
+                f"to do the whole task yourself — your only job is your step plus the "
+                f"@mention handoff. The message is not done until it ends with that "
+                f"@mention."
             )
         return (
             f"You are @{self.handle}, the {self.role}.\n\n{mission}\n\n"
-            f"You collaborate with other agents inside a shared Band room. You only "
-            f"see messages that @mention you. Keep responses tight and structured — "
-            f"the room transcript is the audit trail.{handoff}"
+            f"You collaborate with other agents inside a shared Band room. Keep "
+            f"responses tight — the room transcript is the audit trail.{handoff}"
         )
 
 
@@ -74,7 +78,9 @@ def make_band_agent(spec: Specialist, mission: str):
     config_key = spec.config_key or spec.handle.lower()
     agent_id, api_key = load_agent_config(config_key)
     adapter = spec.adapter_factory()
-    if hasattr(adapter, "custom_section") and not getattr(adapter, "custom_section", None):
+    # Always inject our choreography so the live agent actually hands off, instead
+    # of replying to the human with a generic auto-generated prompt.
+    if hasattr(adapter, "custom_section"):
         adapter.custom_section = spec.system_prompt(mission)
     return Agent.create(
         adapter=adapter,
