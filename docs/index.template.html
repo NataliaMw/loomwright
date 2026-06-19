@@ -92,7 +92,10 @@
   .tab:hover { color:var(--ink); }
   .tab.on { color:var(--scale); border-bottom-color:var(--scale); background:rgba(232,119,46,.06); }
   .panel { display:none; animation:msgIn .28s ease both; }
-  .panel.on { display:block; }
+  .panel.on { display:block; height:calc(100vh - 210px); min-height:480px; overflow-y:auto;
+              padding-right:6px; scrollbar-gutter:stable; }
+  .panel.on::-webkit-scrollbar { width:9px; }
+  .panel.on::-webkit-scrollbar-thumb { background:rgba(240,225,205,.1); border-radius:9px; }
 
   .howcard { border:1px solid var(--line); background:var(--panel); border-radius:16px; padding:26px 28px; }
   .howcard h2 { margin:0 0 14px; font-size:21px; font-weight:700; letter-spacing:-.02em; }
