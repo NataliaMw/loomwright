@@ -15,3 +15,7 @@ dist/
 build/
 *.egg-info/
 VIDEO_SCRIPT.md
+RECORDING_CHECKLIST.md
+ouroboros-demo.mp4
+*.mp4
+.vercel
