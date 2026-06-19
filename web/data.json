@@ -1,0 +1,261 @@
+{
+  "tagline": "the room that engineers the loop, then runs it",
+  "tasks": [
+    {
+      "task": {
+        "title": "Fix off-by-one in pagination offset",
+        "description": "last page drops one row; pure function, no side effects",
+        "kind": "bugfix",
+        "touches": [
+          "pagination"
+        ],
+        "high_stakes": false
+      },
+      "loop": {
+        "task": {
+          "title": "Fix off-by-one in pagination offset",
+          "kind": "bugfix",
+          "touches": [
+            "pagination"
+          ]
+        },
+        "checks": [
+          {
+            "name": "compiles",
+            "why": "the code has to at least build before anything else matters",
+            "required": true
+          },
+          {
+            "name": "unit-tests",
+            "why": "behavior is pinned by tests, not vibes",
+            "required": true
+          },
+          {
+            "name": "repro-test",
+            "why": "a test that fails on the bug and passes on the fix \u2014 otherwise we never proved we fixed it",
+            "required": true
+          }
+        ],
+        "critics": [
+          {
+            "handle": "RivalReviewer",
+            "lens": "adversarial correctness",
+            "recruited_on_demand": false
+          }
+        ],
+        "max_revisions": 2,
+        "exit_condition": "all required checks pass AND no critic still objects",
+        "human_gate": null,
+        "rationale": [
+          "task kind is 'bugfix', so the loop centers on a reproduction test as the real exit gate"
+        ],
+        "fingerprint": "checks=[compiles,unit-tests,repro-test] critics=[RivalReviewer] max_rev=2 gate=none"
+      },
+      "record": {
+        "revisions": 1,
+        "gate": "n/a",
+        "status": "shipped",
+        "fingerprint": "checks=[compiles,unit-tests,repro-test] critics=[RivalReviewer] max_rev=2 gate=none"
+      },
+      "transcript": [
+        {
+          "sender": "user",
+          "mentions": [
+            "LoopArchitect"
+          ],
+          "text": "New task: Fix off-by-one in pagination offset \u2014 last page drops one row; pure function, no side effects"
+        },
+        {
+          "sender": "LoopArchitect",
+          "mentions": [
+            "LoopCritic"
+          ],
+          "text": "Proposed a loop for 'Fix off-by-one in pagination offset'. Required gates: compiles, unit-tests, repro-test. Critics: @RivalReviewer. Human gate: none. @LoopCritic \u2014 try to poke holes in this exit condition before we build."
+        },
+        {
+          "sender": "LoopCritic",
+          "mentions": [
+            "LoopRunner"
+          ],
+          "text": "Loop holds up \u2014 exit condition is not gameable. Approved.\n@LoopRunner \u2014 run this loop. Exit: all required checks pass AND no critic still objects. Human gate: none."
+        },
+        {
+          "sender": "LoopRunner",
+          "mentions": [
+            "RivalReviewer"
+          ],
+          "text": "revision 0: drafted a change"
+        },
+        {
+          "sender": "LoopRunner",
+          "mentions": [
+            "RivalReviewer"
+          ],
+          "text": "exit condition not met \u2014 looping again:\n  \u2022 repro-test failing \u2014 a test that fails on the bug and passes on the fix \u2014 otherwise we never proved we fixed it\n  \u2022 @RivalReviewer (adversarial correctness) wants another pass"
+        },
+        {
+          "sender": "LoopRunner",
+          "mentions": [
+            "RivalReviewer"
+          ],
+          "text": "revision 1: drafted a change addressing 2 defect(s)"
+        },
+        {
+          "sender": "LoopRunner",
+          "mentions": [
+            "TechLead"
+          ],
+          "text": "loop complete: 1 revision(s), gate [n/a], status shipped. shipping code + the loop that produced it."
+        }
+      ],
+      "recruited": []
+    },
+    {
+      "task": {
+        "title": "Add SSO token refresh to the login flow",
+        "description": "rotate refresh tokens; touches auth and sessions",
+        "kind": "feature",
+        "touches": [
+          "auth",
+          "sessions"
+        ],
+        "high_stakes": true
+      },
+      "loop": {
+        "task": {
+          "title": "Add SSO token refresh to the login flow",
+          "kind": "feature",
+          "touches": [
+            "auth",
+            "sessions"
+          ]
+        },
+        "checks": [
+          {
+            "name": "compiles",
+            "why": "the code has to at least build before anything else matters",
+            "required": true
+          },
+          {
+            "name": "unit-tests",
+            "why": "behavior is pinned by tests, not vibes",
+            "required": true
+          },
+          {
+            "name": "acceptance-test",
+            "why": "the new behavior is demonstrated end to end",
+            "required": true
+          }
+        ],
+        "critics": [
+          {
+            "handle": "RivalReviewer",
+            "lens": "adversarial correctness",
+            "recruited_on_demand": false
+          },
+          {
+            "handle": "SecurityCritic",
+            "lens": "security",
+            "recruited_on_demand": true
+          }
+        ],
+        "max_revisions": 3,
+        "exit_condition": "all required checks pass AND no critic still objects",
+        "human_gate": "TechLead",
+        "rationale": [
+          "task kind is 'feature', so the loop centers on an end-to-end acceptance test",
+          "touches a high-stakes surface (auth, sessions), so a human gate is proposed and a security critic should be recruited"
+        ],
+        "fingerprint": "checks=[compiles,unit-tests,acceptance-test] critics=[RivalReviewer,SecurityCritic] max_rev=3 gate=TechLead"
+      },
+      "record": {
+        "revisions": 1,
+        "gate": "TechLead: approved",
+        "status": "shipped",
+        "fingerprint": "checks=[compiles,unit-tests,acceptance-test] critics=[RivalReviewer,SecurityCritic] max_rev=3 gate=TechLead"
+      },
+      "transcript": [
+        {
+          "sender": "user",
+          "mentions": [
+            "LoopArchitect"
+          ],
+          "text": "New task: Add SSO token refresh to the login flow \u2014 rotate refresh tokens; touches auth and sessions"
+        },
+        {
+          "sender": "LoopArchitect",
+          "mentions": [
+            "LoopCritic"
+          ],
+          "text": "Proposed a loop for 'Add SSO token refresh to the login flow'. Required gates: compiles, unit-tests, acceptance-test. Critics: @RivalReviewer. Human gate: TechLead. @LoopCritic \u2014 try to poke holes in this exit condition before we build."
+        },
+        {
+          "sender": "system",
+          "mentions": [
+            "SecurityCritic"
+          ],
+          "text": "\u2795 recruited @SecurityCritic into the room on demand (security) \u2014 band_add_participant"
+        },
+        {
+          "sender": "LoopCritic",
+          "mentions": [
+            "LoopRunner"
+          ],
+          "text": "Pushed back on the loop and hardened it:\n  \u2022 no security critic on a sensitive surface \u2014 recruiting @SecurityCritic on demand\n@LoopRunner \u2014 run this loop. Exit: all required checks pass AND no critic still objects. Human gate: TechLead."
+        },
+        {
+          "sender": "LoopRunner",
+          "mentions": [
+            "RivalReviewer",
+            "SecurityCritic"
+          ],
+          "text": "revision 0: drafted a change"
+        },
+        {
+          "sender": "SecurityCritic",
+          "mentions": [],
+          "text": "joined as the security critic \u2014 voting on every revision from here."
+        },
+        {
+          "sender": "LoopRunner",
+          "mentions": [
+            "RivalReviewer",
+            "SecurityCritic"
+          ],
+          "text": "exit condition not met \u2014 looping again:\n  \u2022 acceptance-test failing \u2014 the new behavior is demonstrated end to end\n  \u2022 @RivalReviewer (adversarial correctness) wants another pass\n  \u2022 @SecurityCritic (security) wants another pass"
+        },
+        {
+          "sender": "LoopRunner",
+          "mentions": [
+            "RivalReviewer",
+            "SecurityCritic"
+          ],
+          "text": "revision 1: drafted a change addressing 3 defect(s)"
+        },
+        {
+          "sender": "system",
+          "mentions": [
+            "TechLead"
+          ],
+          "text": "\u26d4 ESCALATION \u2014 awaiting @TechLead: High-stakes loop for 'Add SSO token refresh to the login flow' converged after 1 revision(s). Reply APPROVE to ship or REJECT to hold."
+        },
+        {
+          "sender": "TechLead",
+          "mentions": [],
+          "text": "APPROVE \u2014 reviewed the diff and the loop, ship it."
+        },
+        {
+          "sender": "LoopRunner",
+          "mentions": [
+            "TechLead"
+          ],
+          "text": "loop complete: 1 revision(s), gate [TechLead: approved], status shipped. shipping code + the loop that produced it."
+        }
+      ],
+      "recruited": [
+        "SecurityCritic"
+      ]
+    }
+  ],
+  "different": true
+}
