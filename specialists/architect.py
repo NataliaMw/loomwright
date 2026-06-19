@@ -101,7 +101,12 @@ async def handle(room, message) -> None:
         sender=HANDLE,
         text=_summary(spec),
         mentions=["LoopCritic"],
-        payload={"loop_spec": spec, "task": task},
+        payload={
+            "loop_spec": spec,
+            "task": task,
+            "code_attempts": message.payload.get("code_attempts", {}),
+            "tests": message.payload.get("tests", {}),
+        },
     )
 
 
@@ -110,7 +115,7 @@ def specialist():
 
     def adapter_factory():
         from pydantic_ai import Agent as PydanticAgent
-        from thenvoi.adapters.pydantic_ai import PydanticAIAdapter
+        from band.adapters.pydantic_ai import PydanticAIAdapter
 
         agent = PydanticAgent("openai:gpt-4o")
         return PydanticAIAdapter(agent)

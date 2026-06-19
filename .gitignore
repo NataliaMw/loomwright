@@ -5,3 +5,8 @@ agent_config.yaml
 .venv/
 venv/
 .DS_Store
+
+# credentials — NEVER commit
+test-credentials.txt
+*credentials*
+*.secret

@@ -82,7 +82,13 @@ async def handle(room, message) -> None:
             f"Human gate: {spec.human_gate or 'none'}."
         ),
         mentions=["LoopRunner"],
-        payload={"loop_spec": spec, "task": task, "objections": objections},
+        payload={
+            "loop_spec": spec,
+            "task": task,
+            "objections": objections,
+            "code_attempts": message.payload.get("code_attempts", {}),
+            "tests": message.payload.get("tests", {}),
+        },
     )
 
 
@@ -92,7 +98,7 @@ def specialist():
     def adapter_factory():
         from langchain_openai import ChatOpenAI
         from langgraph.checkpoint.memory import InMemorySaver
-        from thenvoi.adapters import LangGraphAdapter
+        from band.adapters import LangGraphAdapter
 
         return LangGraphAdapter(
             llm=ChatOpenAI(model="gpt-4o"),

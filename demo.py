@@ -29,8 +29,8 @@ sys.path.insert(0, os.path.join(_here, "shared"))
 sys.path.insert(0, _here)
 
 from band_harness import LocalRoom
-from loopspec import Task
 from specialists import architect, critic, runner
+from tasks import REGISTRY
 
 
 HUMAN = "TechLead"
@@ -77,12 +77,17 @@ def _build_room() -> LocalRoom:
     return room
 
 
-async def _drive(room: LocalRoom, task: Task) -> None:
+async def _drive(room: LocalRoom, entry: dict) -> None:
+    task = entry["task"]
     await room.post(
         sender="user",
         text=f"New task: {task.title} — {task.description}",
         mentions=[architect.HANDLE],
-        payload={"task": task},
+        payload={
+            "task": task,
+            "code_attempts": {"buggy": entry["buggy"], "fixed": entry["fixed"]},
+            "tests": entry["tests"],
+        },
     )
 
 
@@ -103,30 +108,18 @@ def _print_loop(room: LocalRoom, label: str) -> str:
     return spec.fingerprint()
 
 
-async def _run_task(task: Task, label: str) -> str:
+async def _run_task(entry: dict, label: str) -> str:
+    task = entry["task"]
     _banner(f"{label}: {task.title}  "
             f"[{task.kind}, touches: {', '.join(task.touches) or 'nothing risky'}]")
     room = _build_room()
-    await _drive(room, task)
+    await _drive(room, entry)
     return _print_loop(room, label)
 
 
 async def main() -> None:
-    task_a = Task(
-        title="Fix off-by-one in pagination offset",
-        description="last page drops one row; pure function, no side effects",
-        touches=["pagination"],
-        kind="bugfix",
-    )
-    task_b = Task(
-        title="Add SSO token refresh to the login flow",
-        description="rotate refresh tokens; touches auth and sessions",
-        touches=["auth", "sessions"],
-        kind="feature",
-    )
-
-    fp_a = await _run_task(task_a, "TASK A")
-    fp_b = await _run_task(task_b, "TASK B")
+    fp_a = await _run_task(REGISTRY["a"], "TASK A")
+    fp_b = await _run_task(REGISTRY["b"], "TASK B")
 
     _banner("PROOF: two tasks, two DIFFERENT loops")
     print(f"  loop A: {fp_a}")

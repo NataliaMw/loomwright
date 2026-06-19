@@ -15,40 +15,35 @@ from __future__ import annotations
 
 from loopspec import LoopSpec
 
+import qa
+
 
 HANDLE = "LoopRunner"
 ROLE = "loop runner — executes the assembled generate/critique/revise loop to its exit condition"
 HANDS_OFF_TO = ["TechLead"]
 
 
-def _generate(spec: LoopSpec, revision: int, open_defects: list[str]) -> dict:
-    """Produce a revision. Deterministic by default so the demo is reproducible;
-    a live model can fill the body, but the loop's control flow does not depend on it.
-
-    The model is asked to address exactly the defects critics raised last round —
-    one focused call per revision, not a five-call chain."""
+def _generate(spec: LoopSpec, revision: int, open_defects: list[str], code_attempts: dict) -> dict:
+    """Produce a revision's actual code. Revision 0 is the first (buggy) attempt;
+    once critics bounce real test failures back, the next revision is the fix. A
+    live model fills these in; offline we use the task's real buggy/fixed code so
+    the QA below has genuine Python to run."""
     addressed = list(open_defects)
-    body = f"// revision {revision} for {spec.task.title}\n"
-    if addressed:
-        body += "// addresses: " + "; ".join(addressed) + "\n"
-    return {"revision": revision, "code": body, "addressed": addressed}
+    code = code_attempts["buggy"] if revision == 0 else code_attempts["fixed"]
+    return {"revision": revision, "code": code, "addressed": addressed}
 
 
-def _run_checks(spec: LoopSpec, revision: int) -> list[str]:
-    """Evaluate required checks. Model: early revisions fail the task's signature
-    gate, then it passes once the loop has done its job — this is what makes the
-    loop *necessary* instead of one-shot."""
+def _run_checks(spec: LoopSpec, code: str, tests: dict) -> tuple[list[str], list[qa.CheckResult]]:
+    """REALLY run every required check against the candidate code. A failure here
+    is a real interpreter failure, not a fixture — that's what gates the loop."""
     failures: list[str] = []
-    signature = {
-        "bugfix": "repro-test",
-        "refactor": "behavior-unchanged",
-        "feature": "acceptance-test",
-        "migration": "rollback-plan",
-    }.get(spec.task.kind)
+    results: list[qa.CheckResult] = []
     for check in spec.required_checks():
-        if check.name == signature and revision == 0:
-            failures.append(f"{check.name} failing — {check.why}")
-    return failures
+        res = qa.evaluate(check.name, code, tests)
+        results.append(res)
+        if not res.passed:
+            failures.append(f"{check.name} failing — {res.detail.splitlines()[-1] if res.detail else check.why}")
+    return failures, results
 
 
 def _critic_objections(spec: LoopSpec, revision: int) -> list[str]:
@@ -62,8 +57,9 @@ def _critic_objections(spec: LoopSpec, revision: int) -> list[str]:
     return objs
 
 
-async def _step(room, spec: LoopSpec, revision: int, defects: list[str]) -> dict:
-    rev = _generate(spec, revision, defects)
+async def _step(room, spec: LoopSpec, revision: int, defects: list[str],
+                code_attempts: dict, tests: dict) -> dict:
+    rev = _generate(spec, revision, defects, code_attempts)
     await room.post(
         sender=HANDLE,
         text=f"revision {revision}: drafted a change" +
@@ -71,25 +67,36 @@ async def _step(room, spec: LoopSpec, revision: int, defects: list[str]) -> dict
         mentions=[c.handle for c in spec.critics] or ["RivalReviewer"],
         payload={"revision": rev, "loop_spec": spec},
     )
-    failures = _run_checks(spec, revision)
+    # REAL QA: run the required checks against this revision's actual code.
+    # Posted with no dispatching @mention — QA runs inside the runner's own turn,
+    # so re-triggering the runner here would recurse.
+    failures, results = _run_checks(spec, rev["code"], tests)
+    report = "  ".join(f"{r.name} {r.icon}" for r in results)
+    await room.post(
+        sender="QA",
+        text=f"ran the checks on revision {revision} (real subprocess): {report}",
+        mentions=[],
+        payload={"qa_results": [(r.name, r.passed, r.detail) for r in results]},
+    )
     objections = _critic_objections(spec, revision)
-    return {"failures": failures, "objections": objections, "rev": rev}
+    return {"failures": failures, "objections": objections, "rev": rev, "results": results}
 
 
-async def run_loop(room, spec: LoopSpec) -> dict:
+async def run_loop(room, spec: LoopSpec, code_attempts: dict, tests: dict) -> dict:
     """The loop. Returns the final record (revisions taken, gate outcome, status)."""
     defects: list[str] = []
     revision = 0
     record = {"revisions": 0, "gate": "n/a", "status": "in_progress",
-              "fingerprint": spec.fingerprint()}
+              "fingerprint": spec.fingerprint(), "qa": []}
 
     while revision <= spec.max_revisions:
-        result = await _step(room, spec, revision, defects)
+        result = await _step(room, spec, revision, defects, code_attempts, tests)
         failures, objections = result["failures"], result["objections"]
         record["revisions"] = revision
+        record["qa"] = [(r.name, r.passed) for r in result["results"]]
 
         if not failures and not objections:
-            break  # exit condition satisfied
+            break  # exit condition satisfied — REAL checks passed
 
         defects = failures + objections
         bullet = "\n".join(f"  • {d}" for d in defects)
@@ -135,7 +142,9 @@ async def run_loop(room, spec: LoopSpec) -> dict:
 
 async def handle(room, message) -> None:
     spec: LoopSpec = message.payload["loop_spec"]
-    await run_loop(room, spec)
+    code_attempts = message.payload.get("code_attempts", {"buggy": "", "fixed": ""})
+    tests = message.payload.get("tests", {})
+    await run_loop(room, spec, code_attempts, tests)
 
 
 def specialist():
@@ -143,7 +152,7 @@ def specialist():
 
     def adapter_factory():
         from pydantic_ai import Agent as PydanticAgent
-        from thenvoi.adapters.pydantic_ai import PydanticAIAdapter
+        from band.adapters.pydantic_ai import PydanticAIAdapter
 
         agent = PydanticAgent("openai:gpt-4o")
         return PydanticAIAdapter(agent)

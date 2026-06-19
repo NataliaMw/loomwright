@@ -1,6 +1,6 @@
 """
-band_harness — a thin, batteries-included wrapper over the Band SDK (`thenvoi`)
-shared by every project in this hackathon.
+band_harness — a thin, batteries-included wrapper over the Band SDK (`band`,
+v1.0.0; the old `thenvoi` package/import is deprecated).
 
 Band is the coordination layer: agents live in chat rooms and hand work off to
 each other by @mentioning the next specialist. This module gives every project
@@ -22,8 +22,8 @@ from dataclasses import dataclass, field
 from typing import Any, Awaitable, Callable, Optional
 
 try:
-    from thenvoi import Agent
-    from thenvoi.config import load_agent_config
+    from band import Agent
+    from band.config import load_agent_config
     _HAS_BAND = True
 except ImportError:
     Agent = None
@@ -65,11 +65,11 @@ class Specialist:
 
 
 def make_band_agent(spec: Specialist, mission: str):
-    """Create a live Band-connected agent for a specialist. Requires `thenvoi`."""
+    """Create a live Band-connected agent for a specialist. Requires `band`."""
     if not _HAS_BAND:
         raise RuntimeError(
-            "thenvoi SDK not installed. Run `uv add band-sdk[<adapter>]`, or use "
-            "run_local_room() for an offline demo."
+            "Band SDK not installed. Run `uv add band-sdk[<adapter>]` (import root "
+            "is `band` as of v1.0.0), or use the offline LocalRoom demo."
         )
     config_key = spec.config_key or spec.handle.lower()
     agent_id, api_key = load_agent_config(config_key)
