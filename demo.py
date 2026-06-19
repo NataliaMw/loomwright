@@ -29,8 +29,9 @@ sys.path.insert(0, os.path.join(_here, "shared"))
 sys.path.insert(0, _here)
 
 from band_harness import LocalRoom
+from loopspec import Task
 from specialists import architect, critic, runner, author, qaagent, reviewer
-from tasks import REGISTRY
+from tasks import REGISTRY, GALLERY, make_task
 
 
 HUMAN = "TechLead"
@@ -120,17 +121,69 @@ async def _run_task(entry: dict, label: str) -> str:
     return _print_loop(room, label)
 
 
-async def main() -> None:
-    fp_a = await _run_task(REGISTRY["a"], "TASK A")
-    fp_b = await _run_task(REGISTRY["b"], "TASK B")
+def _design_only(task: Task, label: str) -> str:
+    """Synthesize and print the loop for any task (no executable code attached).
+    This is the generality: feed it anything, it designs the fitting loop."""
+    spec = architect.propose(task)
+    _banner(f"{label}: {task.title}  "
+            f"[{task.kind}, touches: {', '.join(task.touches) or 'nothing risky'}]")
+    print(spec.render())
+    print(f"\n  fingerprint: {spec.fingerprint()}")
+    return spec.fingerprint()
 
-    _banner("PROOF: two tasks, two DIFFERENT loops")
-    print(f"  loop A: {fp_a}")
-    print(f"  loop B: {fp_b}")
-    print(f"\n  same room, same agents — different loop. "
-          f"{'DIFFERENT ✅' if fp_a != fp_b else 'IDENTICAL ❌'}")
-    print("  that difference is the whole point: the loop is engineered for the task,\n"
-          "  not copy-pasted. loop engineering, run by a band of agents.\n")
+
+async def _run_gallery() -> None:
+    _banner("ANY TASK → THE LOOP IT NEEDS")
+    print("  Feed the room any task. It reads the kind and the surfaces it touches,\n"
+          "  and synthesizes the verification loop that task needs — different checks,\n"
+          "  different critics, different gates. Nothing here is hardcoded per task.\n")
+    seen = {}
+    # Tasks A and B run for real (the loop executes tests and gates on the result).
+    fp_a = await _run_task(REGISTRY["a"], "REAL-QA TASK 1")
+    fp_b = await _run_task(REGISTRY["b"], "REAL-QA TASK 2")
+    seen["1 " + REGISTRY["a"]["task"].title] = fp_a
+    seen["2 " + REGISTRY["b"]["task"].title] = fp_b
+    # The rest show synthesis across a wide range of kinds and surfaces.
+    for i, task in enumerate(GALLERY[2:], start=3):
+        seen[f"{i} {task.title}"] = _design_only(task, f"TASK {i}")
+
+    _banner(f"PROOF: {len(seen)} tasks → {len(set(seen.values()))} DISTINCT loops")
+    for name, fp in seen.items():
+        print(f"  • {name[2:][:42]:44s} {fp.split(' critics')[0]}")
+    distinct = len(set(seen.values()))
+    print(f"\n  {distinct} of {len(seen)} loops are unique — the loop is engineered for\n"
+          f"  the task, not copy-pasted. that generality is the whole point.\n")
+
+
+async def _run_freeform(title: str, kind: str, touches: list[str]) -> None:
+    task = make_task(title, kind=kind, touches=touches)
+    # If it matches a task we have real code for, run it for real; else design it.
+    for entry in REGISTRY.values():
+        if entry["task"].title.lower() == title.lower():
+            await _run_task(entry, "YOUR TASK")
+            return
+    _banner("YOUR TASK → THE LOOP IT NEEDS")
+    _design_only(task, "YOUR TASK")
+    print("\n  (attach real buggy/fixed code + tests in tasks.py to have the loop\n"
+          "   actually execute and gate on results, like the demo's real-QA tasks.)\n")
+
+
+async def main() -> None:
+    import argparse
+    p = argparse.ArgumentParser(
+        description="Loomwright — a Band room that engineers the loop a task needs, then runs it.")
+    p.add_argument("title", nargs="?", help="free-form task title; omit to run the gallery")
+    p.add_argument("--kind", default="feature",
+                   choices=["bugfix", "refactor", "feature", "migration"])
+    p.add_argument("--touches", default="",
+                   help="comma-separated surfaces, e.g. auth,db,ui,payments,pii,api,concurrency,perf")
+    args = p.parse_args()
+
+    if args.title:
+        touches = [t.strip() for t in args.touches.split(",") if t.strip()]
+        await _run_freeform(args.title, args.kind, touches)
+    else:
+        await _run_gallery()
 
 
 if __name__ == "__main__":

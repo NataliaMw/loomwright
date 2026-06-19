@@ -96,3 +96,32 @@ REGISTRY = {
     "a": {"task": TASK_A, "buggy": A_BUGGY, "fixed": A_FIXED, "tests": A_TESTS},
     "b": {"task": TASK_B, "buggy": B_BUGGY, "fixed": B_FIXED, "tests": B_TESTS},
 }
+
+
+# A gallery of varied tasks to show the loop is synthesized per task, not hardcoded.
+# Tasks A and B carry real executable code (the loop really runs and gates on tests);
+# the rest are synthesis examples — the room still designs a real, distinct loop for
+# each, proving generality across kinds and surfaces.
+GALLERY = [
+    TASK_A,
+    TASK_B,
+    Task("Refactor the checkout module for clarity",
+         "extract pure helpers; no behavior change", ["payments"], "refactor"),
+    Task("Migrate the users table to UUID primary keys",
+         "online migration with backfill", ["db", "schema"], "migration"),
+    Task("Add a dark-mode toggle to settings",
+         "persisted per-user theme preference", ["ui"], "feature"),
+    Task("Speed up the search endpoint",
+         "cut p95 latency without changing results", ["perf", "api"], "refactor"),
+    Task("Add export-to-CSV including user emails",
+         "admin export of account data", ["pii", "api"], "feature"),
+    Task("Fix a race condition in the job queue",
+         "two workers occasionally double-process a job", ["concurrency"], "bugfix"),
+]
+
+
+def make_task(title: str, kind: str = "feature", touches: list[str] | None = None,
+              description: str = "") -> Task:
+    """Build an arbitrary task — this is the point: ANY task, not a fixed two."""
+    return Task(title=title, description=description or title,
+                touches=touches or [], kind=kind)

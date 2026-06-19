@@ -42,13 +42,51 @@ def _base_checks(task: Task) -> list[Check]:
         checks.append(Check("acceptance-test", "the new behavior is demonstrated end to end"))
     if task.kind == "migration":
         checks.append(Check("rollback-plan", "every migration needs a tested way back"))
+    # Surface-driven checks: each surface the task touches adds the gate it needs.
+    seen = {c.name for c in checks}
+    for surface in (t.lower() for t in task.touches):
+        spec = SURFACE_CHECKS.get(surface)
+        if spec and spec[0] not in seen:
+            checks.append(Check(spec[0], spec[1], required=spec[2]))
+            seen.add(spec[0])
     return checks
+
+
+# Each surface the task touches pulls in the critic(s) and check(s) that surface
+# actually needs. This is what makes the loop fit the task: a UI change recruits an
+# accessibility critic, a payments change recruits a security critic and adds an
+# idempotency check, a db change adds a data-integrity check, and so on. Any
+# combination of surfaces composes into a loop nobody hardcoded.
+SURFACE_CRITICS = {
+    "ui": ("A11yCritic", "accessibility"),
+    "auth": ("SecurityCritic", "security"),
+    "payments": ("SecurityCritic", "security"),
+    "billing": ("SecurityCritic", "security"),
+    "pii": ("PrivacyCritic", "data privacy"),
+    "api": ("ContractCritic", "API contract / backwards-compat"),
+    "concurrency": ("RaceCritic", "concurrency / race conditions"),
+    "perf": ("PerfCritic", "performance"),
+}
+
+SURFACE_CHECKS = {
+    "payments": ("idempotency-test", "a retried payment must not double-charge", True),
+    "billing": ("idempotency-test", "a retried charge must not double-bill", True),
+    "db": ("data-integrity-test", "no orphaned or corrupted rows after the change", True),
+    "schema": ("data-integrity-test", "the schema change preserves existing rows", True),
+    "api": ("contract-test", "existing clients must not break", True),
+    "concurrency": ("race-test", "no lost updates under concurrent access", True),
+    "perf": ("perf-budget", "stay within the latency budget", False),
+}
 
 
 def _critics_for(task: Task) -> list[Critic]:
     critics = [Critic("RivalReviewer", "adversarial correctness")]
-    if "ui" in [t.lower() for t in task.touches]:
-        critics.append(Critic("A11yCritic", "accessibility", recruited_on_demand=True))
+    seen = {"RivalReviewer"}
+    for surface in (t.lower() for t in task.touches):
+        spec = SURFACE_CRITICS.get(surface)
+        if spec and spec[0] not in seen:
+            critics.append(Critic(spec[0], spec[1], recruited_on_demand=True))
+            seen.add(spec[0])
     return critics
 
 

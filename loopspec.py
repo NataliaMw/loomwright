@@ -28,8 +28,9 @@ class Task:
 
     @property
     def high_stakes(self) -> bool:
-        risky = {"auth", "billing", "payments", "migration", "schema", "pii"}
-        return bool({t.lower() for t in self.touches} & risky)
+        risky = {"auth", "billing", "payments", "migration", "schema", "pii",
+                 "db", "secrets", "infra", "data-deletion"}
+        return bool({t.lower() for t in self.touches} & risky) or self.kind == "migration"
 
 
 @dataclass
