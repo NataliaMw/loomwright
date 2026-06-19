@@ -65,10 +65,25 @@ def specialist():
     from band_harness import Specialist
 
     def adapter_factory():
+        import os
         from band.adapters.pydantic_ai import PydanticAIAdapter
+        from pydantic_ai.models.openai import OpenAIChatModel
+        from pydantic_ai.providers.openai import OpenAIProvider
 
-        # Deliberately a DIFFERENT model from the Author's gpt-4o-mini, so the
-        # reviewer is a genuine second opinion rather than the author grading itself.
+        # The rival reviewer runs a genuinely DIFFERENT vendor + model than the author.
+        # The author/architect/runner reason on AI/ML API (frontier); the reviewer runs
+        # a Featherless OSS model (Qwen2.5-72B). That cross-provider split is the point:
+        # an adversarial review is only real if a different brain does it — not the same
+        # model grading its own work. Featherless is OpenAI-compatible, so we point a
+        # pydantic-ai OpenAI model at the Featherless gateway. Falls back to AI/ML API's
+        # gpt-4o if no Featherless key is present, so the demo still runs.
+        fkey = os.getenv("FEATHERLESS_API_KEY")
+        if fkey:
+            model = OpenAIChatModel(
+                os.getenv("OUROBOROS_FEATHERLESS_MODEL", "Qwen/Qwen2.5-72B-Instruct"),
+                provider=OpenAIProvider(base_url="https://api.featherless.ai/v1", api_key=fkey),
+            )
+            return PydanticAIAdapter(model=model)
         return PydanticAIAdapter(model="openai-chat:gpt-4o")
 
     return Specialist(
