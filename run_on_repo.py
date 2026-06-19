@@ -1,6 +1,6 @@
-"""Loomwright on YOUR repo — the useful path.
+"""Ouroboros on YOUR repo — the useful path.
 
-Point it at a real project and a real test command. Loomwright runs the loop on
+Point it at a real project and a real test command. Ouroboros runs the loop on
 your actual code: run your tests → if they fail, a model patches the target file
 using the real failure output → re-run → repeat until your tests pass or the budget
 is spent. Every step is real: your test command is the exit gate, the model only
@@ -12,7 +12,7 @@ ever ships a patch your own tests accept.
         --goal "fix the discount rounding bug"
 
 With no model key it still runs your tests and shows the loop; with AIMLAPI_API_KEY
-(or OPENAI_API_KEY) it actually proposes fixes. It writes a .loomwright.bak backup
+(or OPENAI_API_KEY) it actually proposes fixes. It writes a .ouroboros.bak backup
 and restores it if you abort, so it never eats your file.
 """
 
@@ -67,7 +67,7 @@ def _propose_fix(client, goal: str, path: str, source: str, failure: str) -> str
 
 
 def main() -> int:
-    p = argparse.ArgumentParser(description="Run the Loomwright loop on your own repo.")
+    p = argparse.ArgumentParser(description="Run the Ouroboros loop on your own repo.")
     p.add_argument("--repo", required=True, help="path to your project (the loop's cwd)")
     p.add_argument("--test", required=True, help='your test command, e.g. "pytest -q"')
     p.add_argument("--file", help="the source file the loop may patch")

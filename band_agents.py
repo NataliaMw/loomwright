@@ -1,4 +1,4 @@
-"""Live Band path for Loomwright.
+"""Live Band path for Ouroboros.
 
 Run: `python band_agents.py`
 

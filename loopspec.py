@@ -1,8 +1,8 @@
-"""The LoopSpec — the artifact Loomwright exists to produce.
+"""The LoopSpec — the artifact Ouroboros exists to produce.
 
 Loop engineering (Osmani / Cherny, June 2026) says the unit of agentic coding is
 no longer the prompt — it's the *loop*: act, observe, decide, repeat until a real
-exit condition holds. Today people hand-design those loops. Loomwright has a room
+exit condition holds. Today people hand-design those loops. Ouroboros has a room
 of agents design one per task, on demand, then run it.
 
 A LoopSpec is that design made inspectable: which checks gate the work, which

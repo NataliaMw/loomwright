@@ -1,5 +1,5 @@
 [project]
-name = "loomwright"
+name = "ouroboros"
 version = "0.1.0"
 description = "A Band room that engineers a verification loop per task, then runs it. Loop engineering, run by a band of agents — Track 2, Band of Agents Hackathon."
 requires-python = ">=3.10"
@@ -17,6 +17,6 @@ live = [
     "langchain-openai>=0.2",
 ]
 
-[tool.loomwright]
+[tool.ouroboros]
 offline-demo = "python demo.py"
 live-room = "python band_agents.py"

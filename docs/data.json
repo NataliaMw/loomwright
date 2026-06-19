@@ -108,17 +108,17 @@
             [
               "compiles",
               true,
-              "__loomwright_ok__"
+              "__ouroboros_ok__"
             ],
             [
               "unit-tests",
               false,
-              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpub16qrx3/candidate.py\", line 14, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpub16qrx3/candidate.py\", line 9, in _run_tests\n    assert page(data, 0, 3) == [0, 1, 2]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError"
+              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmppzz518_s/candidate.py\", line 14, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmppzz518_s/candidate.py\", line 9, in _run_tests\n    assert page(data, 0, 3) == [0, 1, 2]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError"
             ],
             [
               "repro-test",
               false,
-              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp7u6cf3c6/candidate.py\", line 13, in <module>\n    _repro()\n    ~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp7u6cf3c6/candidate.py\", line 9, in _repro\n    assert len(page(list(range(10)), 0, 3)) == 3, \"page returned a short page\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: page returned a short page"
+              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp4wfg_41z/candidate.py\", line 13, in <module>\n    _repro()\n    ~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp4wfg_41z/candidate.py\", line 9, in _repro\n    assert len(page(list(range(10)), 0, 3)) == 3, \"page returned a short page\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: page returned a short page"
             ]
           ]
         },
@@ -132,17 +132,17 @@
             [
               "compiles",
               true,
-              "__loomwright_ok__"
+              "__ouroboros_ok__"
             ],
             [
               "unit-tests",
               false,
-              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpub16qrx3/candidate.py\", line 14, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpub16qrx3/candidate.py\", line 9, in _run_tests\n    assert page(data, 0, 3) == [0, 1, 2]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError"
+              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmppzz518_s/candidate.py\", line 14, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmppzz518_s/candidate.py\", line 9, in _run_tests\n    assert page(data, 0, 3) == [0, 1, 2]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError"
             ],
             [
               "repro-test",
               false,
-              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp7u6cf3c6/candidate.py\", line 13, in <module>\n    _repro()\n    ~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp7u6cf3c6/candidate.py\", line 9, in _repro\n    assert len(page(list(range(10)), 0, 3)) == 3, \"page returned a short page\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: page returned a short page"
+              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp4wfg_41z/candidate.py\", line 13, in <module>\n    _repro()\n    ~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp4wfg_41z/candidate.py\", line 9, in _repro\n    assert len(page(list(range(10)), 0, 3)) == 3, \"page returned a short page\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: page returned a short page"
             ]
           ]
         },
@@ -156,17 +156,17 @@
             [
               "compiles",
               true,
-              "__loomwright_ok__"
+              "__ouroboros_ok__"
             ],
             [
               "unit-tests",
               false,
-              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpub16qrx3/candidate.py\", line 14, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpub16qrx3/candidate.py\", line 9, in _run_tests\n    assert page(data, 0, 3) == [0, 1, 2]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError"
+              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmppzz518_s/candidate.py\", line 14, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmppzz518_s/candidate.py\", line 9, in _run_tests\n    assert page(data, 0, 3) == [0, 1, 2]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError"
             ],
             [
               "repro-test",
               false,
-              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp7u6cf3c6/candidate.py\", line 13, in <module>\n    _repro()\n    ~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp7u6cf3c6/candidate.py\", line 9, in _repro\n    assert len(page(list(range(10)), 0, 3)) == 3, \"page returned a short page\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: page returned a short page"
+              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp4wfg_41z/candidate.py\", line 13, in <module>\n    _repro()\n    ~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp4wfg_41z/candidate.py\", line 9, in _repro\n    assert len(page(list(range(10)), 0, 3)) == 3, \"page returned a short page\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: page returned a short page"
             ]
           ]
         },
@@ -180,7 +180,7 @@
             [
               "compiles",
               true,
-              "__loomwright_ok__"
+              "__ouroboros_ok__"
             ],
             [
               "unit-tests",
@@ -204,7 +204,7 @@
             [
               "compiles",
               true,
-              "__loomwright_ok__"
+              "__ouroboros_ok__"
             ],
             [
               "unit-tests",
@@ -233,58 +233,58 @@
           [
             "compiles",
             true,
-            "__loomwright_ok__"
+            "__ouroboros_ok__"
           ],
           [
             "unit-tests",
             false,
-            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpub16qrx3/candidate.py\", line 14, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpub16qrx3/candidate.py\", line 9, in _run_tests\n    assert page(data, 0, 3) == [0, 1, 2]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError"
+            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmppzz518_s/candidate.py\", line 14, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmppzz518_s/candidate.py\", line 9, in _run_tests\n    assert page(data, 0, 3) == [0, 1, 2]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError"
           ],
           [
             "repro-test",
             false,
-            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp7u6cf3c6/candidate.py\", line 13, in <module>\n    _repro()\n    ~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp7u6cf3c6/candidate.py\", line 9, in _repro\n    assert len(page(list(range(10)), 0, 3)) == 3, \"page returned a short page\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: page returned a short page"
+            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp4wfg_41z/candidate.py\", line 13, in <module>\n    _repro()\n    ~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp4wfg_41z/candidate.py\", line 9, in _repro\n    assert len(page(list(range(10)), 0, 3)) == 3, \"page returned a short page\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: page returned a short page"
           ]
         ],
         [
           [
             "compiles",
             true,
-            "__loomwright_ok__"
+            "__ouroboros_ok__"
           ],
           [
             "unit-tests",
             false,
-            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpub16qrx3/candidate.py\", line 14, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpub16qrx3/candidate.py\", line 9, in _run_tests\n    assert page(data, 0, 3) == [0, 1, 2]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError"
+            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmppzz518_s/candidate.py\", line 14, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmppzz518_s/candidate.py\", line 9, in _run_tests\n    assert page(data, 0, 3) == [0, 1, 2]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError"
           ],
           [
             "repro-test",
             false,
-            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp7u6cf3c6/candidate.py\", line 13, in <module>\n    _repro()\n    ~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp7u6cf3c6/candidate.py\", line 9, in _repro\n    assert len(page(list(range(10)), 0, 3)) == 3, \"page returned a short page\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: page returned a short page"
+            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp4wfg_41z/candidate.py\", line 13, in <module>\n    _repro()\n    ~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp4wfg_41z/candidate.py\", line 9, in _repro\n    assert len(page(list(range(10)), 0, 3)) == 3, \"page returned a short page\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: page returned a short page"
           ]
         ],
         [
           [
             "compiles",
             true,
-            "__loomwright_ok__"
+            "__ouroboros_ok__"
           ],
           [
             "unit-tests",
             false,
-            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpub16qrx3/candidate.py\", line 14, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpub16qrx3/candidate.py\", line 9, in _run_tests\n    assert page(data, 0, 3) == [0, 1, 2]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError"
+            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmppzz518_s/candidate.py\", line 14, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmppzz518_s/candidate.py\", line 9, in _run_tests\n    assert page(data, 0, 3) == [0, 1, 2]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError"
           ],
           [
             "repro-test",
             false,
-            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp7u6cf3c6/candidate.py\", line 13, in <module>\n    _repro()\n    ~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp7u6cf3c6/candidate.py\", line 9, in _repro\n    assert len(page(list(range(10)), 0, 3)) == 3, \"page returned a short page\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: page returned a short page"
+            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp4wfg_41z/candidate.py\", line 13, in <module>\n    _repro()\n    ~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp4wfg_41z/candidate.py\", line 9, in _repro\n    assert len(page(list(range(10)), 0, 3)) == 3, \"page returned a short page\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: page returned a short page"
           ]
         ],
         [
           [
             "compiles",
             true,
-            "__loomwright_ok__"
+            "__ouroboros_ok__"
           ],
           [
             "unit-tests",
@@ -301,7 +301,7 @@
           [
             "compiles",
             true,
-            "__loomwright_ok__"
+            "__ouroboros_ok__"
           ],
           [
             "unit-tests",
@@ -447,7 +447,7 @@
             [
               "compiles",
               true,
-              "__loomwright_ok__"
+              "__ouroboros_ok__"
             ],
             [
               "unit-tests",
@@ -457,7 +457,7 @@
             [
               "acceptance-test",
               false,
-              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmplm3dq2fi/candidate.py\", line 16, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmplm3dq2fi/candidate.py\", line 11, in _run_tests\n    assert out[\"refresh_token\"] != \"r0\", \"refresh token was not rotated\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: refresh token was not rotated"
+              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp7d6zedgf/candidate.py\", line 16, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp7d6zedgf/candidate.py\", line 11, in _run_tests\n    assert out[\"refresh_token\"] != \"r0\", \"refresh token was not rotated\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: refresh token was not rotated"
             ]
           ]
         },
@@ -471,7 +471,7 @@
             [
               "compiles",
               true,
-              "__loomwright_ok__"
+              "__ouroboros_ok__"
             ],
             [
               "unit-tests",
@@ -481,7 +481,7 @@
             [
               "acceptance-test",
               false,
-              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmplm3dq2fi/candidate.py\", line 16, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmplm3dq2fi/candidate.py\", line 11, in _run_tests\n    assert out[\"refresh_token\"] != \"r0\", \"refresh token was not rotated\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: refresh token was not rotated"
+              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp7d6zedgf/candidate.py\", line 16, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp7d6zedgf/candidate.py\", line 11, in _run_tests\n    assert out[\"refresh_token\"] != \"r0\", \"refresh token was not rotated\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: refresh token was not rotated"
             ]
           ]
         },
@@ -495,7 +495,7 @@
             [
               "compiles",
               true,
-              "__loomwright_ok__"
+              "__ouroboros_ok__"
             ],
             [
               "unit-tests",
@@ -505,7 +505,7 @@
             [
               "acceptance-test",
               false,
-              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmplm3dq2fi/candidate.py\", line 16, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmplm3dq2fi/candidate.py\", line 11, in _run_tests\n    assert out[\"refresh_token\"] != \"r0\", \"refresh token was not rotated\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: refresh token was not rotated"
+              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp7d6zedgf/candidate.py\", line 16, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp7d6zedgf/candidate.py\", line 11, in _run_tests\n    assert out[\"refresh_token\"] != \"r0\", \"refresh token was not rotated\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: refresh token was not rotated"
             ]
           ]
         },
@@ -519,7 +519,7 @@
             [
               "compiles",
               true,
-              "__loomwright_ok__"
+              "__ouroboros_ok__"
             ],
             [
               "unit-tests",
@@ -543,7 +543,7 @@
             [
               "compiles",
               true,
-              "__loomwright_ok__"
+              "__ouroboros_ok__"
             ],
             [
               "unit-tests",
@@ -588,7 +588,7 @@
           [
             "compiles",
             true,
-            "__loomwright_ok__"
+            "__ouroboros_ok__"
           ],
           [
             "unit-tests",
@@ -598,14 +598,14 @@
           [
             "acceptance-test",
             false,
-            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmplm3dq2fi/candidate.py\", line 16, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmplm3dq2fi/candidate.py\", line 11, in _run_tests\n    assert out[\"refresh_token\"] != \"r0\", \"refresh token was not rotated\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: refresh token was not rotated"
+            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp7d6zedgf/candidate.py\", line 16, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp7d6zedgf/candidate.py\", line 11, in _run_tests\n    assert out[\"refresh_token\"] != \"r0\", \"refresh token was not rotated\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: refresh token was not rotated"
           ]
         ],
         [
           [
             "compiles",
             true,
-            "__loomwright_ok__"
+            "__ouroboros_ok__"
           ],
           [
             "unit-tests",
@@ -615,14 +615,14 @@
           [
             "acceptance-test",
             false,
-            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmplm3dq2fi/candidate.py\", line 16, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmplm3dq2fi/candidate.py\", line 11, in _run_tests\n    assert out[\"refresh_token\"] != \"r0\", \"refresh token was not rotated\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: refresh token was not rotated"
+            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp7d6zedgf/candidate.py\", line 16, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp7d6zedgf/candidate.py\", line 11, in _run_tests\n    assert out[\"refresh_token\"] != \"r0\", \"refresh token was not rotated\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: refresh token was not rotated"
           ]
         ],
         [
           [
             "compiles",
             true,
-            "__loomwright_ok__"
+            "__ouroboros_ok__"
           ],
           [
             "unit-tests",
@@ -632,14 +632,14 @@
           [
             "acceptance-test",
             false,
-            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmplm3dq2fi/candidate.py\", line 16, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmplm3dq2fi/candidate.py\", line 11, in _run_tests\n    assert out[\"refresh_token\"] != \"r0\", \"refresh token was not rotated\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: refresh token was not rotated"
+            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp7d6zedgf/candidate.py\", line 16, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp7d6zedgf/candidate.py\", line 11, in _run_tests\n    assert out[\"refresh_token\"] != \"r0\", \"refresh token was not rotated\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: refresh token was not rotated"
           ]
         ],
         [
           [
             "compiles",
             true,
-            "__loomwright_ok__"
+            "__ouroboros_ok__"
           ],
           [
             "unit-tests",
@@ -656,7 +656,7 @@
           [
             "compiles",
             true,
-            "__loomwright_ok__"
+            "__ouroboros_ok__"
           ],
           [
             "unit-tests",

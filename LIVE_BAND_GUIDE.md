@@ -1,10 +1,10 @@
-# Running Loomwright on the real Band platform
+# Running Ouroboros on the real Band platform
 
-The offline `python demo.py` proves the choreography. This guide takes Loomwright onto the live Band platform so the agents connect over WebSocket and coordinate in a real Band room — which is what you'll record for the "live" portion of a demo and what a judge sees if they inspect `band_agents.py`.
+The offline `python demo.py` proves the choreography. This guide takes Ouroboros onto the live Band platform so the agents connect over WebSocket and coordinate in a real Band room — which is what you'll record for the "live" portion of a demo and what a judge sees if they inspect `band_agents.py`.
 
 > Time budget: ~20–30 min.
 >
-> **Loomwright agents:** `LoopArchitect`, `LoopCritic`, `LoopRunner` (Remote Agents), plus `SecurityCritic` / `A11yCritic` which the room recruits on demand, and a human `TechLead` (you) for the high-stakes gate.
+> **Ouroboros agents:** `LoopArchitect`, `LoopCritic`, `LoopRunner` (Remote Agents), plus `SecurityCritic` / `A11yCritic` which the room recruits on demand, and a human `TechLead` (you) for the high-stakes gate.
 
 ---
 
@@ -28,7 +28,7 @@ Each specialist in a project is one **Remote Agent** on Band. For a project with
 ## 2. Fill credentials (per project)
 
 ```bash
-cd loomwright
+cd ouroboros
 cp .env.example .env
 cp agent_config.example.yaml agent_config.yaml
 ```
@@ -87,7 +87,7 @@ critic on a sensitive surface"* and **recruits `@SecurityCritic` into the room a
 runtime** (`band_add_participant`), followed by the `@TechLead` gate you approve
 inline. Same room, same agents, **two different loops** — the loop was engineered for
 the task, live, through Band. (The live demo page shows the same two loops side by
-side: https://nataliamw.github.io/loomwright/)
+side: https://nataliamw.github.io/ouroboros/)
 
 ## Troubleshooting
 

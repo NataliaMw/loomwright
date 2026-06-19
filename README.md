@@ -1,8 +1,10 @@
-# 🧵 Loomwright
+# 🐍 Ouroboros
 
 ### any task → the loop it needs
 
-> **Try it:** https://nataliamw.github.io/loomwright/ — describe *your* task; the loop synthesizes live.
+*The snake that eats its own tail — the oldest symbol for a loop that feeds itself until it's whole.*
+
+> **Try it:** https://nataliamw.github.io/ouroboros/ — describe *your* task; the loop synthesizes live.
 > **Run the loop on YOUR repo:**
 > ```bash
 > python run_on_repo.py --repo ../your-project --test "pytest -q" --file src/thing.py --goal "fix the bug"
@@ -21,7 +23,7 @@
 
 ## Why it's useful (not a toy)
 
-Point Loomwright at a real project and a real test command. It runs the loop on
+Point Ouroboros at a real project and a real test command. It runs the loop on
 *your* code: your tests are the exit gate, a model patches the target file using the
 **real failure output**, and it only ships a change your own suite accepts. Verified
 end-to-end — on a real repo with a real `pytest` bug, the loop failed on a genuine
@@ -47,7 +49,7 @@ work** — and every coding-agent tool ships the *same* loop for everything. A C
 tweak and a database migration get the identical Planner→Coder→Reviewer pipeline.
 That's vibe coding with extra steps.
 
-**Loomwright closes that gap.** It's a Band room where agents *engineer the loop for
+**Ouroboros closes that gap.** It's a Band room where agents *engineer the loop for
 the specific task*, then *run it* — and pull in the specialists that task needs, on
 demand. Loop engineering, done by a band of agents instead of by hand.
 
@@ -117,10 +119,10 @@ user ──"new task"──▶ @LoopArchitect ──proposes loop──▶ @Loop
   **recruitment** (the room grows its own membership to fit the task) and a visible
   **design-then-execute** handoff chain, all as `@mention` routing on one trail.
 - **Originality** — nobody else turns *loop engineering itself* into the multi-agent
-  product. Every other Track-2 entry runs a fixed pipeline; Loomwright **synthesizes
+  product. Every other Track-2 entry runs a fixed pipeline; Ouroboros **synthesizes
   the pipeline per task**. The thing it generates is the artifact (`LoopSpec`).
 - **Business Value** — the failure mode of agentic coding is confident-but-wrong code
-  shipping because the loop's exit condition was too weak. Loomwright makes the loop
+  shipping because the loop's exit condition was too weak. Ouroboros makes the loop
   *inspectable and task-appropriate*, with a human gate where the stakes demand one.
 - **Presentation** — the whole thesis is one screen: two tasks, two loops, side by
   side, with the difference highlighted. Open the transcript to see it happen.

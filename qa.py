@@ -1,6 +1,6 @@
 """Real QA execution — the loop's checks actually run.
 
-This is what makes Loomwright a real loop and not a story about one: a check does
+This is what makes Ouroboros a real loop and not a story about one: a check does
 not "decide" pass/fail from a fixture, it WRITES the candidate code and its test to
 a temp dir and RUNS them in a fresh Python subprocess. The check passes only if the
 interpreter says so. If the generated code is wrong, the test really fails, the loop
@@ -51,8 +51,8 @@ def _run_python(code: str, timeout: float = 10.0) -> tuple[bool, str]:
 
 def run_compiles(code: str) -> CheckResult:
     """Does the candidate even import/parse and run to completion?"""
-    ok, detail = _run_python(code + "\n\nprint('__loomwright_ok__')")
-    ok = ok and "__loomwright_ok__" in detail
+    ok, detail = _run_python(code + "\n\nprint('__ouroboros_ok__')")
+    ok = ok and "__ouroboros_ok__" in detail
     return CheckResult("compiles", ok, detail)
 
 

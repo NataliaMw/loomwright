@@ -1,4 +1,4 @@
-"""Model client factory for Loomwright.
+"""Model client factory for Ouroboros.
 
 Two partner backends, one uniform surface (`.complete(prompt) -> str`):
 
@@ -25,8 +25,8 @@ from typing import Optional
 AIMLAPI_BASE_URL = "https://api.aimlapi.com/v1"
 FEATHERLESS_BASE_URL = "https://api.featherless.ai/v1"
 
-AIMLAPI_MODEL = os.getenv("LOOMWRIGHT_AIMLAPI_MODEL", "gpt-4o-mini")
-FEATHERLESS_MODEL = os.getenv("LOOMWRIGHT_FEATHERLESS_MODEL", "Qwen/Qwen2.5-72B-Instruct")
+AIMLAPI_MODEL = os.getenv("OUROBOROS_AIMLAPI_MODEL", "gpt-4o-mini")
+FEATHERLESS_MODEL = os.getenv("OUROBOROS_FEATHERLESS_MODEL", "Qwen/Qwen2.5-72B-Instruct")
 
 
 def _normalize(role: str) -> str:

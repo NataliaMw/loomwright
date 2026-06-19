@@ -1,4 +1,4 @@
-"""Loomwright — offline demo. Zero credentials, fully deterministic.
+"""Ouroboros — offline demo. Zero credentials, fully deterministic.
 
 Run: `python demo.py`
 
@@ -171,7 +171,7 @@ async def _run_freeform(title: str, kind: str, touches: list[str]) -> None:
 async def main() -> None:
     import argparse
     p = argparse.ArgumentParser(
-        description="Loomwright — a Band room that engineers the loop a task needs, then runs it.")
+        description="Ouroboros — a Band room that engineers the loop a task needs, then runs it.")
     p.add_argument("title", nargs="?", help="free-form task title; omit to run the gallery")
     p.add_argument("--kind", default="feature",
                    choices=["bugfix", "refactor", "feature", "migration"])
