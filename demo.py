@@ -29,7 +29,7 @@ sys.path.insert(0, os.path.join(_here, "shared"))
 sys.path.insert(0, _here)
 
 from band_harness import LocalRoom
-from specialists import architect, critic, runner
+from specialists import architect, critic, runner, author, qaagent, reviewer
 from tasks import REGISTRY
 
 
@@ -71,6 +71,9 @@ def _build_room() -> LocalRoom:
     room.join(architect.HANDLE, architect.handle)
     room.join(critic.HANDLE, critic.handle)
     room.join(runner.HANDLE, runner.handle)
+    room.join(author.HANDLE, author.handle)
+    room.join(qaagent.HANDLE, qaagent.handle)
+    room.join(reviewer.HANDLE, reviewer.handle)
     room.join_human(HUMAN, auto_reply="APPROVE — reviewed the diff and the loop, ship it.")
     for h in ("SecurityCritic", "A11yCritic"):
         room.register_recruitable(h, _recruitable_critic(h))

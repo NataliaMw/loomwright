@@ -28,7 +28,7 @@ sys.path.insert(0, _here)
 
 from band_harness import run_band_room
 
-from specialists import architect, critic, runner
+from specialists import architect, critic, runner, author, qaagent, reviewer
 
 
 MISSION = (
@@ -47,6 +47,9 @@ def build_specialists():
         architect.specialist(),
         critic.specialist(),
         runner.specialist(),
+        author.specialist(),
+        qaagent.specialist(),
+        reviewer.specialist(),
     ]
 
 

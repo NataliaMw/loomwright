@@ -55,21 +55,7 @@
         "revisions": 1,
         "gate": "n/a",
         "status": "shipped",
-        "fingerprint": "checks=[compiles,unit-tests,repro-test] critics=[RivalReviewer] max_rev=2 gate=none",
-        "qa": [
-          [
-            "compiles",
-            true
-          ],
-          [
-            "unit-tests",
-            true
-          ],
-          [
-            "repro-test",
-            true
-          ]
-        ]
+        "fingerprint": "checks=[compiles,unit-tests,repro-test] critics=[RivalReviewer] max_rev=2 gate=none"
       },
       "transcript": [
         {
@@ -99,15 +85,25 @@
         {
           "sender": "LoopRunner",
           "mentions": [
-            "RivalReviewer"
+            "CodeAuthor"
           ],
-          "text": "revision 0: drafted a change",
+          "text": "loop approved \u2014 starting it. @CodeAuthor draft revision 0; @QA will run the checks and @RivalReviewer will judge each turn.",
+          "qa": null
+        },
+        {
+          "sender": "CodeAuthor",
+          "mentions": [
+            "QA"
+          ],
+          "text": "revision 0: first draft. @QA \u2014 run the loop's checks on this.",
           "qa": null
         },
         {
           "sender": "QA",
-          "mentions": [],
-          "text": "ran the checks on revision 0 (real subprocess): compiles \u2705  unit-tests \u274c  repro-test \u274c",
+          "mentions": [
+            "RivalReviewer"
+          ],
+          "text": "ran the checks on revision 0 (real subprocess): compiles \u2705  unit-tests \u274c  repro-test \u274c \u2014 2 check(s) failing. @RivalReviewer over to you.",
           "qa": [
             [
               "compiles",
@@ -117,35 +113,93 @@
             [
               "unit-tests",
               false,
-              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp999mbhdo/candidate.py\", line 14, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp999mbhdo/candidate.py\", line 9, in _run_tests\n    assert page(data, 0, 3) == [0, 1, 2]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError"
+              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpwx3sa2jn/candidate.py\", line 14, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpwx3sa2jn/candidate.py\", line 9, in _run_tests\n    assert page(data, 0, 3) == [0, 1, 2]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError"
             ],
             [
               "repro-test",
               false,
-              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpbh06d0p7/candidate.py\", line 13, in <module>\n    _repro()\n    ~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpbh06d0p7/candidate.py\", line 9, in _repro\n    assert len(page(list(range(10)), 0, 3)) == 3, \"page returned a short page\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: page returned a short page"
+              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpfe1wxhdm/candidate.py\", line 13, in <module>\n    _repro()\n    ~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpfe1wxhdm/candidate.py\", line 9, in _repro\n    assert len(page(list(range(10)), 0, 3)) == 3, \"page returned a short page\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: page returned a short page"
             ]
           ]
         },
         {
-          "sender": "LoopRunner",
+          "sender": "RivalReviewer",
           "mentions": [
-            "RivalReviewer"
+            "CodeAuthor"
           ],
-          "text": "exit condition not met \u2014 looping again:\n  \u2022 unit-tests failing \u2014 AssertionError\n  \u2022 repro-test failing \u2014 AssertionError: page returned a short page\n  \u2022 @RivalReviewer (adversarial correctness) wants another pass",
-          "qa": null
+          "text": "not signing off (round 0). I broke it:\n  \u2022 unit-tests failing \u2014 AssertionError\n  \u2022 repro-test failing \u2014 AssertionError: page returned a short page\n@CodeAuthor revise and resubmit.",
+          "qa": [
+            [
+              "compiles",
+              true,
+              "__loomwright_ok__"
+            ],
+            [
+              "unit-tests",
+              false,
+              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpwx3sa2jn/candidate.py\", line 14, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpwx3sa2jn/candidate.py\", line 9, in _run_tests\n    assert page(data, 0, 3) == [0, 1, 2]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError"
+            ],
+            [
+              "repro-test",
+              false,
+              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpfe1wxhdm/candidate.py\", line 13, in <module>\n    _repro()\n    ~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpfe1wxhdm/candidate.py\", line 9, in _repro\n    assert len(page(list(range(10)), 0, 3)) == 3, \"page returned a short page\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: page returned a short page"
+            ]
+          ]
         },
         {
-          "sender": "LoopRunner",
+          "sender": "CodeAuthor",
           "mentions": [
-            "RivalReviewer"
+            "QA"
           ],
-          "text": "revision 1: drafted a change addressing 3 defect(s)",
-          "qa": null
+          "text": "revision 1 [deterministic]: reworked to address 2 defect(s). @QA \u2014 run the loop's checks on this.",
+          "qa": [
+            [
+              "compiles",
+              true,
+              "__loomwright_ok__"
+            ],
+            [
+              "unit-tests",
+              false,
+              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpwx3sa2jn/candidate.py\", line 14, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpwx3sa2jn/candidate.py\", line 9, in _run_tests\n    assert page(data, 0, 3) == [0, 1, 2]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError"
+            ],
+            [
+              "repro-test",
+              false,
+              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpfe1wxhdm/candidate.py\", line 13, in <module>\n    _repro()\n    ~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpfe1wxhdm/candidate.py\", line 9, in _repro\n    assert len(page(list(range(10)), 0, 3)) == 3, \"page returned a short page\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: page returned a short page"
+            ]
+          ]
         },
         {
           "sender": "QA",
-          "mentions": [],
-          "text": "ran the checks on revision 1 (real subprocess): compiles \u2705  unit-tests \u2705  repro-test \u2705",
+          "mentions": [
+            "RivalReviewer"
+          ],
+          "text": "ran the checks on revision 1 (real subprocess): compiles \u2705  unit-tests \u2705  repro-test \u2705 \u2014 all checks pass. @RivalReviewer over to you.",
+          "qa": [
+            [
+              "compiles",
+              true,
+              "__loomwright_ok__"
+            ],
+            [
+              "unit-tests",
+              true,
+              "__tests_passed__"
+            ],
+            [
+              "repro-test",
+              true,
+              "__repro_passed__"
+            ]
+          ]
+        },
+        {
+          "sender": "RivalReviewer",
+          "mentions": [
+            "LoopRunner"
+          ],
+          "text": "I tried to break it and couldn't \u2014 every required check passes. @LoopRunner the exit condition is met; finalize it.",
           "qa": [
             [
               "compiles",
@@ -184,12 +238,63 @@
           [
             "unit-tests",
             false,
-            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp999mbhdo/candidate.py\", line 14, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp999mbhdo/candidate.py\", line 9, in _run_tests\n    assert page(data, 0, 3) == [0, 1, 2]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError"
+            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpwx3sa2jn/candidate.py\", line 14, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpwx3sa2jn/candidate.py\", line 9, in _run_tests\n    assert page(data, 0, 3) == [0, 1, 2]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError"
           ],
           [
             "repro-test",
             false,
-            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpbh06d0p7/candidate.py\", line 13, in <module>\n    _repro()\n    ~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpbh06d0p7/candidate.py\", line 9, in _repro\n    assert len(page(list(range(10)), 0, 3)) == 3, \"page returned a short page\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: page returned a short page"
+            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpfe1wxhdm/candidate.py\", line 13, in <module>\n    _repro()\n    ~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpfe1wxhdm/candidate.py\", line 9, in _repro\n    assert len(page(list(range(10)), 0, 3)) == 3, \"page returned a short page\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: page returned a short page"
+          ]
+        ],
+        [
+          [
+            "compiles",
+            true,
+            "__loomwright_ok__"
+          ],
+          [
+            "unit-tests",
+            false,
+            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpwx3sa2jn/candidate.py\", line 14, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpwx3sa2jn/candidate.py\", line 9, in _run_tests\n    assert page(data, 0, 3) == [0, 1, 2]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError"
+          ],
+          [
+            "repro-test",
+            false,
+            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpfe1wxhdm/candidate.py\", line 13, in <module>\n    _repro()\n    ~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpfe1wxhdm/candidate.py\", line 9, in _repro\n    assert len(page(list(range(10)), 0, 3)) == 3, \"page returned a short page\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: page returned a short page"
+          ]
+        ],
+        [
+          [
+            "compiles",
+            true,
+            "__loomwright_ok__"
+          ],
+          [
+            "unit-tests",
+            false,
+            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpwx3sa2jn/candidate.py\", line 14, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpwx3sa2jn/candidate.py\", line 9, in _run_tests\n    assert page(data, 0, 3) == [0, 1, 2]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError"
+          ],
+          [
+            "repro-test",
+            false,
+            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpfe1wxhdm/candidate.py\", line 13, in <module>\n    _repro()\n    ~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpfe1wxhdm/candidate.py\", line 9, in _repro\n    assert len(page(list(range(10)), 0, 3)) == 3, \"page returned a short page\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: page returned a short page"
+          ]
+        ],
+        [
+          [
+            "compiles",
+            true,
+            "__loomwright_ok__"
+          ],
+          [
+            "unit-tests",
+            true,
+            "__tests_passed__"
+          ],
+          [
+            "repro-test",
+            true,
+            "__repro_passed__"
           ]
         ],
         [
@@ -281,21 +386,7 @@
         "revisions": 1,
         "gate": "TechLead: approved",
         "status": "shipped",
-        "fingerprint": "checks=[compiles,unit-tests,acceptance-test] critics=[RivalReviewer,SecurityCritic] max_rev=3 gate=TechLead",
-        "qa": [
-          [
-            "compiles",
-            true
-          ],
-          [
-            "unit-tests",
-            true
-          ],
-          [
-            "acceptance-test",
-            true
-          ]
-        ]
+        "fingerprint": "checks=[compiles,unit-tests,acceptance-test] critics=[RivalReviewer,SecurityCritic] max_rev=3 gate=TechLead"
       },
       "transcript": [
         {
@@ -333,22 +424,25 @@
         {
           "sender": "LoopRunner",
           "mentions": [
-            "RivalReviewer",
-            "SecurityCritic"
+            "CodeAuthor"
           ],
-          "text": "revision 0: drafted a change",
+          "text": "loop approved \u2014 starting it. @CodeAuthor draft revision 0; @QA will run the checks and @RivalReviewer will judge each turn.",
           "qa": null
         },
         {
-          "sender": "SecurityCritic",
-          "mentions": [],
-          "text": "joined as the security critic \u2014 voting on every revision from here.",
+          "sender": "CodeAuthor",
+          "mentions": [
+            "QA"
+          ],
+          "text": "revision 0: first draft. @QA \u2014 run the loop's checks on this.",
           "qa": null
         },
         {
           "sender": "QA",
-          "mentions": [],
-          "text": "ran the checks on revision 0 (real subprocess): compiles \u2705  unit-tests \u2705  acceptance-test \u274c",
+          "mentions": [
+            "RivalReviewer"
+          ],
+          "text": "ran the checks on revision 0 (real subprocess): compiles \u2705  unit-tests \u2705  acceptance-test \u274c \u2014 1 check(s) failing. @RivalReviewer over to you.",
           "qa": [
             [
               "compiles",
@@ -363,32 +457,88 @@
             [
               "acceptance-test",
               false,
-              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpufwy6a9g/candidate.py\", line 16, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpufwy6a9g/candidate.py\", line 11, in _run_tests\n    assert out[\"refresh_token\"] != \"r0\", \"refresh token was not rotated\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: refresh token was not rotated"
+              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp6l0bqarg/candidate.py\", line 16, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp6l0bqarg/candidate.py\", line 11, in _run_tests\n    assert out[\"refresh_token\"] != \"r0\", \"refresh token was not rotated\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: refresh token was not rotated"
             ]
           ]
         },
         {
-          "sender": "LoopRunner",
+          "sender": "RivalReviewer",
           "mentions": [
-            "RivalReviewer",
-            "SecurityCritic"
+            "CodeAuthor"
           ],
-          "text": "exit condition not met \u2014 looping again:\n  \u2022 acceptance-test failing \u2014 AssertionError: refresh token was not rotated\n  \u2022 @RivalReviewer (adversarial correctness) wants another pass\n  \u2022 @SecurityCritic (security) wants another pass",
-          "qa": null
+          "text": "not signing off (round 0). I broke it:\n  \u2022 acceptance-test failing \u2014 AssertionError: refresh token was not rotated\n@CodeAuthor revise and resubmit.",
+          "qa": [
+            [
+              "compiles",
+              true,
+              "__loomwright_ok__"
+            ],
+            [
+              "unit-tests",
+              true,
+              "__tests_passed__"
+            ],
+            [
+              "acceptance-test",
+              false,
+              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp6l0bqarg/candidate.py\", line 16, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp6l0bqarg/candidate.py\", line 11, in _run_tests\n    assert out[\"refresh_token\"] != \"r0\", \"refresh token was not rotated\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: refresh token was not rotated"
+            ]
+          ]
         },
         {
-          "sender": "LoopRunner",
+          "sender": "CodeAuthor",
           "mentions": [
-            "RivalReviewer",
-            "SecurityCritic"
+            "QA"
           ],
-          "text": "revision 1: drafted a change addressing 3 defect(s)",
-          "qa": null
+          "text": "revision 1 [deterministic]: reworked to address 1 defect(s). @QA \u2014 run the loop's checks on this.",
+          "qa": [
+            [
+              "compiles",
+              true,
+              "__loomwright_ok__"
+            ],
+            [
+              "unit-tests",
+              true,
+              "__tests_passed__"
+            ],
+            [
+              "acceptance-test",
+              false,
+              "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp6l0bqarg/candidate.py\", line 16, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp6l0bqarg/candidate.py\", line 11, in _run_tests\n    assert out[\"refresh_token\"] != \"r0\", \"refresh token was not rotated\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: refresh token was not rotated"
+            ]
+          ]
         },
         {
           "sender": "QA",
-          "mentions": [],
-          "text": "ran the checks on revision 1 (real subprocess): compiles \u2705  unit-tests \u2705  acceptance-test \u2705",
+          "mentions": [
+            "RivalReviewer"
+          ],
+          "text": "ran the checks on revision 1 (real subprocess): compiles \u2705  unit-tests \u2705  acceptance-test \u2705 \u2014 all checks pass. @RivalReviewer over to you.",
+          "qa": [
+            [
+              "compiles",
+              true,
+              "__loomwright_ok__"
+            ],
+            [
+              "unit-tests",
+              true,
+              "__tests_passed__"
+            ],
+            [
+              "acceptance-test",
+              true,
+              "__tests_passed__"
+            ]
+          ]
+        },
+        {
+          "sender": "RivalReviewer",
+          "mentions": [
+            "LoopRunner"
+          ],
+          "text": "I tried to break it and couldn't \u2014 every required check passes. @LoopRunner the exit condition is met; finalize it.",
           "qa": [
             [
               "compiles",
@@ -412,7 +562,7 @@
           "mentions": [
             "TechLead"
           ],
-          "text": "\u26d4 ESCALATION \u2014 awaiting @TechLead: High-stakes loop for 'Add SSO token refresh to the login flow' converged after 1 revision(s). Reply APPROVE to ship or REJECT to hold.",
+          "text": "\u26d4 ESCALATION \u2014 awaiting @TechLead: High-stakes loop for 'Add SSO token refresh to the login flow' converged after 1 revision(s), all checks green. Reply APPROVE to ship or REJECT to hold.",
           "qa": null
         },
         {
@@ -448,7 +598,58 @@
           [
             "acceptance-test",
             false,
-            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpufwy6a9g/candidate.py\", line 16, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmpufwy6a9g/candidate.py\", line 11, in _run_tests\n    assert out[\"refresh_token\"] != \"r0\", \"refresh token was not rotated\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: refresh token was not rotated"
+            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp6l0bqarg/candidate.py\", line 16, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp6l0bqarg/candidate.py\", line 11, in _run_tests\n    assert out[\"refresh_token\"] != \"r0\", \"refresh token was not rotated\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: refresh token was not rotated"
+          ]
+        ],
+        [
+          [
+            "compiles",
+            true,
+            "__loomwright_ok__"
+          ],
+          [
+            "unit-tests",
+            true,
+            "__tests_passed__"
+          ],
+          [
+            "acceptance-test",
+            false,
+            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp6l0bqarg/candidate.py\", line 16, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp6l0bqarg/candidate.py\", line 11, in _run_tests\n    assert out[\"refresh_token\"] != \"r0\", \"refresh token was not rotated\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: refresh token was not rotated"
+          ]
+        ],
+        [
+          [
+            "compiles",
+            true,
+            "__loomwright_ok__"
+          ],
+          [
+            "unit-tests",
+            true,
+            "__tests_passed__"
+          ],
+          [
+            "acceptance-test",
+            false,
+            "Traceback (most recent call last):\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp6l0bqarg/candidate.py\", line 16, in <module>\n    _run_tests()\n    ~~~~~~~~~~^^\n  File \"/var/folders/7t/30_72_tx5sb0wbq2x4tpdfs00000gp/T/tmp6l0bqarg/candidate.py\", line 11, in _run_tests\n    assert out[\"refresh_token\"] != \"r0\", \"refresh token was not rotated\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: refresh token was not rotated"
+          ]
+        ],
+        [
+          [
+            "compiles",
+            true,
+            "__loomwright_ok__"
+          ],
+          [
+            "unit-tests",
+            true,
+            "__tests_passed__"
+          ],
+          [
+            "acceptance-test",
+            true,
+            "__tests_passed__"
           ]
         ],
         [
